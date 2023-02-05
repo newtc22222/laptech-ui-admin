@@ -1,28 +1,31 @@
-import FetchAPI from "../custom/fetch-api";
+import FetchAPI from '../custom/fetch-api';
 import {
   fetchBrandStart,
   fetchBrandFailed,
-  getBrandsSuccess,
+  getBrandSuccess,
   createBrandSuccess,
   updateBrandSuccess,
-  removeBrandSuccess,
-} from '../../redux-features/product/brand.slice'
-import { handleShowToast, NotificationType } from "../../utils/HandleNotification";
+  removeBrandSuccess
+} from '../../redux-feature/product_slice/brand.slice';
+import {
+  handleShowToast,
+  NotificationType
+} from '../../utils/HandleNotification';
 
 const apiBrands = {
-  getAllBrands: async (dispatch) => {
+  getAllBrands: async dispatch => {
     await FetchAPI.GET_ALL(
       'brands',
       null,
       null,
       () => dispatch(fetchBrandStart()),
-      (brandList) => dispatch(getBrandsSuccess(brandList)),
+      brandList => dispatch(getBrandSuccess(brandList)),
       () => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Không thể kết nối với Server!"
+          'Lỗi hệ thống',
+          'Không thể kết nối với Server!'
         );
         dispatch(fetchBrandFailed());
       }
@@ -34,12 +37,12 @@ const apiBrands = {
       brand,
       token,
       () => dispatch(fetchBrandStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Thêm thông tin thành công",
-          "Một thương hiệu vừa được thêm vào cơ sở dữ liệu!"
+          'Thêm thông tin thành công',
+          'Một thương hiệu vừa được thêm vào cơ sở dữ liệu!'
         );
         dispatch(createBrandSuccess(result.data));
       },
@@ -47,11 +50,12 @@ const apiBrands = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Dữ liệu lỗi, không thể gửi đến server!"
+          'Lỗi hệ thống',
+          'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchBrandFailed());
-      });
+      }
+    );
   },
   updateBrand: async (dispatch, updateBrand, brandId, token) => {
     await FetchAPI.PUT(
@@ -59,14 +63,14 @@ const apiBrands = {
       updateBrand,
       token,
       () => dispatch(fetchBrandStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Thay đổi thông tin thành công",
-          "Dữ liệu của thương hiệu vừa được cập nhật vào cơ sở dữ liệu!"
+          'Thay đổi thông tin thành công',
+          'Dữ liệu của thương hiệu vừa được cập nhật vào cơ sở dữ liệu!'
         );
-        console.table(result)
+        console.table(result);
         updateBrand.id = brandId;
         dispatch(updateBrandSuccess(updateBrand));
       },
@@ -74,11 +78,12 @@ const apiBrands = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Dữ liệu lỗi, không thể gửi đến server!"
+          'Lỗi hệ thống',
+          'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchBrandFailed());
-      });
+      }
+    );
   },
   removeBrand: async (dispatch, brandId, token) => {
     await FetchAPI.DELETE(
@@ -86,12 +91,12 @@ const apiBrands = {
       null,
       token,
       () => dispatch(fetchBrandStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Xóa thông tin thành công",
-          "Dữ liệu đã được xóa khỏi hệ thống!"
+          'Xóa thông tin thành công',
+          'Dữ liệu đã được xóa khỏi hệ thống!'
         );
         console.table(result);
         dispatch(removeBrandSuccess(brandId));
@@ -100,12 +105,13 @@ const apiBrands = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Không thể xóa thương hiệu này khỏi hệ thống!"
+          'Lỗi hệ thống',
+          'Không thể xóa thương hiệu này khỏi hệ thống!'
         );
         dispatch(fetchBrandFailed());
-      });
+      }
+    );
   }
-}
+};
 
 export default apiBrands;

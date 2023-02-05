@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import apiBrands from '../../apis/product/brand.api';
 import apiUpload from '../../apis/upload.api';
-import { addToast } from '../../redux-features/toast_notify';
+import { addToast } from '../../redux-feature/toast_notify';
 
 const BrandForm = ({ brand, handleBack }) => {
   let editMode = false;

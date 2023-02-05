@@ -2,27 +2,30 @@ import FetchAPI from '../custom/fetch-api';
 import {
   fetchCategoryStart,
   fetchCategoryFailed,
-  getCategoriesSuccess,
+  getCategorySuccess,
   createCategorySuccess,
   updateCategorySuccess,
-  removeCategorySuccess,
-} from "../../redux-features/product/category.slide";
-import { handleShowToast, NotificationType } from "../../utils/HandleNotification";
+  removeCategorySuccess
+} from '../../redux-feature/product_slice/category.slide';
+import {
+  handleShowToast,
+  NotificationType
+} from '../../utils/HandleNotification';
 
 const apiCategories = {
-  getAllCategories: async (dispatch) => {
+  getAllCategories: async dispatch => {
     await FetchAPI.GET_ALL(
       'categories',
       null,
       null,
       () => dispatch(fetchCategoryStart()),
-      (categoryList) => dispatch(getCategoriesSuccess(categoryList)),
+      categoryList => dispatch(getCategorySuccess(categoryList)),
       () => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Không thể kết nối với Server!"
+          'Lỗi hệ thống',
+          'Không thể kết nối với Server!'
         );
         dispatch(fetchCategoryFailed());
       }
@@ -34,12 +37,12 @@ const apiCategories = {
       category,
       token,
       () => dispatch(fetchCategoryStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Thêm thông tin thành công",
-          "Một danh mục mới vừa được thêm vào cơ sở dữ liệu!"
+          'Thêm thông tin thành công',
+          'Một danh mục mới vừa được thêm vào cơ sở dữ liệu!'
         );
         dispatch(createCategorySuccess(result.data));
       },
@@ -47,11 +50,12 @@ const apiCategories = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Dữ liệu lỗi, không thể gửi đến server!"
+          'Lỗi hệ thống',
+          'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchCategoryFailed());
-      });
+      }
+    );
   },
   updateCategory: async (dispatch, updateCategory, categoryId, token) => {
     await FetchAPI.PUT(
@@ -59,14 +63,14 @@ const apiCategories = {
       updateCategory,
       token,
       () => dispatch(fetchCategoryStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Thay đổi thông tin thành công",
-          "Dữ liệu của danh mục vừa được cập nhật vào cơ sở dữ liệu!"
+          'Thay đổi thông tin thành công',
+          'Dữ liệu của danh mục vừa được cập nhật vào cơ sở dữ liệu!'
         );
-        console.table(result)
+        console.table(result);
         updateCategory.id = categoryId;
         dispatch(updateCategorySuccess(updateCategory));
       },
@@ -74,20 +78,21 @@ const apiCategories = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Dữ liệu lỗi, không thể gửi đến server!"
+          'Lỗi hệ thống',
+          'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchCategoryFailed());
-      });
+      }
+    );
   },
   removeCategory: async (dispatch, categoryId, token) => {
     dispatch(fetchCategoryStart());
     try {
       const response = await fetch(`${BASE_URL}/categories/${categoryId}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
       const result = await handleResponse(response);
       if (result.status) {
@@ -95,23 +100,23 @@ const apiCategories = {
         dispatch(removeCategorySuccess(categoryId));
         dispatch(
           addToast({
-            type: "success",
-            title: "Xóa thông tin thành công",
-            content: "Danh mục đã được xóa khỏi hệ thống!",
+            type: 'success',
+            title: 'Xóa thông tin thành công',
+            content: 'Danh mục đã được xóa khỏi hệ thống!'
           })
         );
       }
     } catch (err) {
       dispatch(
         addToast({
-          type: "error",
-          title: "Lỗi hệ thống",
-          content: "Không thể xóa danh mục này khỏi hệ thống!",
+          type: 'error',
+          title: 'Lỗi hệ thống',
+          content: 'Không thể xóa danh mục này khỏi hệ thống!'
         })
       );
       dispatch(fetchCategoryFailed());
     }
-  },
+  }
 };
 
 export default apiCategories;

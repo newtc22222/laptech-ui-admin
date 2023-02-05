@@ -1,45 +1,41 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-function srcPath(subdir) {
-  return path.join(__dirname, 'src', subdir);
-}
+// function srcPath(subdir) {
+//   return path.join(__dirname, 'src', subdir);
+// }
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: './src/index.js',
   output: {
-    path: path.join(__dirname, "/build"),
-    filename: "bundle.js",
-    publicPath: "/",
-    assetModuleFilename: '[name][ext]',
+    path: path.join(__dirname, '/build'),
+    filename: 'bundle.js',
+    publicPath: '/',
+    assetModuleFilename: '[name][ext]'
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ["babel-loader"]
+        use: ['babel-loader']
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.s[ac]ss$/,
-        use: [
-          "style-loader",
-          "css-loader",
-          "sass-loader",
-        ],
+        use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
         type: 'asset/resource'
-      },
+      }
     ]
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx']
     // https://decembersoft.com/posts/say-goodbye-to-relative-paths-in-typescript-imports/
     // alias: {
     //   'apis': srcPath('apis'),
@@ -56,7 +52,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./public/index.html"
+      template: './public/index.html'
     })
   ]
 };

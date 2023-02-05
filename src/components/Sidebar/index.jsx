@@ -8,9 +8,7 @@ const linkCSS = {
 
 const Sidebar = () => {
   // Active tab
-  const [isActive, setIsActive] = useState(
-    window.location.pathname.replace('/', '')
-  );
+  const [isActive, setIsActive] = useState('');
   const handleActive = name => {
     setIsActive(name);
   };

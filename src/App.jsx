@@ -19,7 +19,6 @@ import {
   BrandPage,
   Category,
   PageNotFound,
-  Receipt,
   Statistic,
   Login,
   Setting
@@ -44,7 +43,7 @@ const router = createBrowserRouter(
       <Route path="product" element={<ProductPage />} />
       <Route path="brand" element={<BrandPage />} />
       <Route path="category" element={<Category />} />
-      <Route path="invoice/*" element={<Receipt />} />
+      {/* <Route path="invoice/*" element={<Receipt />} /> */}
       <Route path="statistic" element={<Statistic />} />
       <Route path="/*" element={<PageNotFound />} />
     </Route>

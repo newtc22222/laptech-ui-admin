@@ -1,6 +1,9 @@
-import { setCredentials } from "../../redux-features/auth.slice";
-import { handleShowToast, NotificationType } from "../../utils/HandleNotification";
-import FetchAPI from "../custom/fetch-api";
+import { setCredentials } from '../../redux-feature/auth.slice';
+import {
+  handleShowToast,
+  NotificationType
+} from '../../utils/HandleNotification';
+import FetchAPI from '../custom/fetch-api';
 
 const apiAuth = {
   login: async (dispatch, account) => {
@@ -9,13 +12,12 @@ const apiAuth = {
       `auth/login`,
       account,
       null,
-      () => { },
-      (result) => {
+      () => {},
+      result => {
         if (result.user.role !== 'USER') {
           localStorage.setItem('jwtToken', result.jwtToken);
           dispatch(setCredentials(result)); //auth
-        }
-        else {
+        } else {
           handleShowToast(
             dispatch,
             NotificationType.INFO,
@@ -29,11 +31,11 @@ const apiAuth = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Thông tin không chính xác",
-          "Vui lòng kiểm tra lại tài khoản của bạn!"
-        )
+          'Thông tin không chính xác',
+          'Vui lòng kiểm tra lại tài khoản của bạn!'
+        );
       }
-    )
+    );
     return auth;
   },
   updateUser: async (newInfor, userId, token) => {
@@ -41,19 +43,17 @@ const apiAuth = {
       `users/${userId}`,
       newInfor,
       token,
-      () => { },
-      (result) => {
-
-      },
+      () => {},
+      result => {},
       () => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Thông tin không chính xác",
-          "Vui lòng kiểm tra lại dữ liệu cá nhân của bạn!"
-        )
+          'Thông tin không chính xác',
+          'Vui lòng kiểm tra lại dữ liệu cá nhân của bạn!'
+        );
       }
-    )
+    );
   },
 
   // { oldPassword, newPassword }
@@ -62,20 +62,18 @@ const apiAuth = {
       `users/${userId}`,
       passwordForm,
       token,
-      () => { },
-      (result) => {
-
-      },
+      () => {},
+      result => {},
       () => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Thông tin không chính xác",
-          "Vui lòng kiểm tra lại mật khẩu của bạn!"
-        )
+          'Thông tin không chính xác',
+          'Vui lòng kiểm tra lại mật khẩu của bạn!'
+        );
       }
-    )
-  },
-}
+    );
+  }
+};
 
 export default apiAuth;
