@@ -1,3 +1,6 @@
+# ide
+.vscode
+
 # build
 /build
 /dist
