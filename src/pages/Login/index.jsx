@@ -8,7 +8,6 @@ import HashString from '../../utils/HandleStoreLocal';
  * @link: https://startbootstrap.com/previews/sb-admin-2
  * @since 2022-12-31
  */
-
 const Login = () => {
   const storeDataHash = localStorage.getItem('storeData');
   let rmb_phone = '',

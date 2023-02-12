@@ -1,4 +1,7 @@
-import { setCredentials, setNewAccessToken } from '../../redux-feature/auth.slice';
+import {
+  setCredentials,
+  setNewAccessToken
+} from '../../redux-feature/auth.slice';
 import {
   handleShowToast,
   NotificationType
@@ -12,7 +15,7 @@ const apiAuth = {
       `auth/login`,
       account,
       null,
-      () => { },
+      () => {},
       result => {
         if (result.user.role !== 'USER') {
           localStorage.setItem('laptechUser', JSON.stringify(result.user));
@@ -47,7 +50,7 @@ const apiAuth = {
       `auth/refreshToken`,
       newAccessToken,
       null,
-      () => { },
+      () => {},
       result => {
         localStorage.setItem('accessToken', result.accessToken);
         dispatch(setNewAccessToken(result.accessToken));
@@ -68,8 +71,8 @@ const apiAuth = {
       `users/${userId}`,
       newInfor,
       token,
-      () => { },
-      result => { },
+      () => {},
+      result => {},
       () => {
         handleShowToast(
           dispatch,
@@ -86,8 +89,8 @@ const apiAuth = {
       `users/${userId}`,
       passwordForm,
       token,
-      () => { },
-      result => { },
+      () => {},
+      result => {},
       () => {
         handleShowToast(
           dispatch,

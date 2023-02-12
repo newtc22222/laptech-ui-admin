@@ -5,6 +5,9 @@ import apiUpload from '../../apis/upload.api';
 import useForm from '../../hooks/useForm';
 import { addToast } from '../../redux-feature/toast_notify';
 
+const hintToChooseImage_vi = 'Nhấn trực tiếp vào hình ảnh để chọn file';
+const hintToChooseImage_en = 'Click image to choose file';
+
 const BrandForm = ({ brand, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
@@ -140,9 +143,7 @@ const BrandForm = ({ brand, handleBack }) => {
         <div className="mb-3">
           <p>
             Logo của hãng{' '}
-            <small className="text-primary">
-              Click image to choose file
-            </small>
+            <small className="text-primary">{hintToChooseImage_vi}</small>
           </p>
           <label htmlFor="formFile" className="form-label">
             <img
