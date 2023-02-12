@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { logout, setCredentials } from '../../redux-feature/auth.slice';
 
 /**
  * @since 2022-12-22
@@ -14,8 +15,23 @@ const linkCSS = {
 const headerTabs = ['features', 'pricing', 'faqs', 'about'];
 
 const Header = () => {
+  const navigate = useNavigate();
+
   // get User
   const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  // check current user (handle Reload page)
+  if (auth.user === null) {
+    if (localStorage.getItem('laptechUser')) {
+      const payload = {
+        user: localStorage.getItem('laptechUser'),
+        accessToken: localStorage.getItem('accessToken'),
+        refreshToken: localStorage.getItem('refreshToken')
+      };
+      dispatch(setCredentials(payload));
+    }
+  }
 
   // Check link
   const [linkActive, setLinkActive] = useState(
@@ -31,8 +47,12 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    
-  }
+    localStorage.removeItem('laptechUser');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    dispatch(logout());
+    navigate('/auth/login');
+  };
 
   return (
     <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap shadow pt-2 pb-2">
@@ -101,9 +121,9 @@ const Header = () => {
           </li>
           <li>
             {auth.user ? (
-              <Link className="dropdown-item" to="/logout">
+              <p className="dropdown-item" onClick={() => handleLogout()}>
                 Đăng xuất
-              </Link>
+              </p>
             ) : (
               <Link className="dropdown-item" to="/auth/login">
                 Đăng nhập

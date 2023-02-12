@@ -1,4 +1,4 @@
-import { setCredentials } from '../../redux-feature/auth.slice';
+import { setCredentials, setNewAccessToken } from '../../redux-feature/auth.slice';
 import {
   handleShowToast,
   NotificationType
@@ -12,10 +12,13 @@ const apiAuth = {
       `auth/login`,
       account,
       null,
-      () => {},
+      () => { },
       result => {
         if (result.user.role !== 'USER') {
-          localStorage.setItem('jwtToken', result.jwtToken);
+          localStorage.setItem('laptechUser', JSON.stringify(result.user));
+          localStorage.setItem('accessToken', result.accessToken);
+          localStorage.setItem('refreshToken', result.refreshToken);
+
           dispatch(setCredentials(result)); //auth
         } else {
           handleShowToast(
@@ -38,13 +41,35 @@ const apiAuth = {
     );
     return auth;
   },
+  refreshToken: async (dispatch, newAccessToken) => {
+    let auth;
+    await FetchAPI.POST(
+      `auth/refreshToken`,
+      newAccessToken,
+      null,
+      () => { },
+      result => {
+        localStorage.setItem('accessToken', result.accessToken);
+        dispatch(setNewAccessToken(result.accessToken));
+      },
+      () => {
+        handleShowToast(
+          dispatch,
+          NotificationType.INFO,
+          'Hết thời hạn đăng nhập',
+          'Vui lòng đăng nhập lại vào hệ thống!'
+        );
+      }
+    );
+    return auth;
+  },
   updateUser: async (newInfor, userId, token) => {
     await FetchAPI.PUT(
       `users/${userId}`,
       newInfor,
       token,
-      () => {},
-      result => {},
+      () => { },
+      result => { },
       () => {
         handleShowToast(
           dispatch,
@@ -55,15 +80,14 @@ const apiAuth = {
       }
     );
   },
-
   // { oldPassword, newPassword }
   updatePassword: async (passwordForm, userId, token) => {
     await FetchAPI.PATCH(
       `users/${userId}`,
       passwordForm,
       token,
-      () => {},
-      result => {},
+      () => { },
+      result => { },
       () => {
         handleShowToast(
           dispatch,

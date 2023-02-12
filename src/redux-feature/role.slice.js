@@ -37,7 +37,7 @@ const roleSlice = createSlice({
         return role;
       });
     },
-    removeRoleSuccess: (state, action) => {
+    deleteRoleSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.roleList = state.roleList.filter(role => role.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getRoleSuccess,
   createRoleSuccess,
   updateRoleSuccess,
-  removeRoleSuccess,
+  deleteRoleSuccess,
 } = roleSlice.actions;
 
 export default roleSlice.reducer;

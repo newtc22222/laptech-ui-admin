@@ -1,82 +1,63 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import useWorkspace from '../../hooks/useWorkspace';
+import WorkMode from '../../common/WorkMode';
 import apiBrands from '../../apis/product/brand.api';
 
 import BrandTable from './BrandTable';
-import ModalCustom from '../../components/Modal';
 import BrandForm from './BrandForm';
 
-const WorkMode = {
-  view: 'VIEW',
-  create: 'CREATE',
-  edit: 'EDIT'
-};
+import ModalCustom from '../../components/Modal';
+import Loading from '../../components/common/Loading';
+
+const pageName = 'Thương hiệu';
+const objectName = 'brands';
+const titleButtonAdd = 'Thêm thông tin';
 
 const BrandPage = () => {
-  const token = localStorage.getItem('jwtToken');
-  const dispatch = useDispatch();
-  const { brandList, isFetching, error } = useSelector(state => state.brands);
-  const [workMode, setWorkMode] = useState(WorkMode.view);
-  const [brandEdit, setBrandEdit] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalValue, setModalValue] = useState(null);
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const { brandList, isFetching, error } = useSelector(
+    state => state[objectName]
+  );
 
+  const [dispatch, workMode, showModal, brandEdit, modalValue, action] =
+    useWorkspace();
+
+  // Loading
   useEffect(() => {
     apiBrands.getAllBrands(dispatch);
   }, []);
 
-  const handleSetCreateMode = () => {
-    setBrandEdit(null);
-    setWorkMode(WorkMode.create);
-  };
-
-  const handleSetUpdateMode = useCallback(brand => {
-    setBrandEdit(brand);
-    setWorkMode(WorkMode.edit);
-  }, []);
-
-  const handleDelete = useCallback(brandId => {
-    apiBrands.removeBrand(dispatch, brandId, token);
-  }, []);
-
+  // Show delete modal
   const handleShowDeleteModal = useCallback((brandId, brandName) => {
-    setModalValue({
-      title: 'Xác nhận xoá thông tin thương hiệu',
-      content: `Bạn có thực sự muốn loại bỏ thương hiệu ${brandName} khỏi hệ thống không?`,
-      handleDelete: () => {
-        handleDelete(brandId);
-        setShowModal(false);
+    action.addModalValue(
+      'Xác nhận xoá thông tin thương hiệu',
+      `Bạn có thực sự muốn loại bỏ thương hiệu ${brandName} khỏi hệ thống không?`,
+      () => {
+        apiBrands.deleteBrand(dispatch, brandId, accessToken);
+        action.showModal(false);
       }
-    });
-    setShowModal(true);
+    );
+    action.showModal(true);
   }, []);
 
+  // Change work mode
   if (workMode === WorkMode.create) {
-    return <BrandForm handleBack={() => setWorkMode(WorkMode.view)} />;
+    return (
+      <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+    );
   }
-
   if (workMode === WorkMode.edit) {
     return (
       <BrandForm
         brand={brandEdit}
-        handleBack={() => setWorkMode(WorkMode.view)}
+        handleBack={() => action.changeWorkMode(WorkMode.view)}
       />
     );
   }
 
   if (isFetching) {
-    return (
-      <div className="text-center">
-        <div
-          className="spinner-grow text-primary"
-          role="status"
-          style={{ width: '3rem', height: '3rem' }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
@@ -84,22 +65,22 @@ const BrandPage = () => {
       {showModal && (
         <ModalCustom
           show={showModal}
-          setShow={setShowModal}
+          setShow={action.showModal}
           props={modalValue}
         />
       )}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">Thương hiệu</h1>
+        <h1 className="h2">{pageName}</h1>
         <button
           className="btn btn-primary fw-bold"
-          onClick={handleSetCreateMode}
+          onClick={action.setCreateMode}
         >
-          Thêm thông tin
+          {titleButtonAdd}
         </button>
       </div>
       <BrandTable
         brandList={brandList}
-        handleSetUpdateMode={brand => handleSetUpdateMode(brand)}
+        handleSetUpdateMode={brand => action.setUpdateMode(brand)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />
     </div>

@@ -5,7 +5,7 @@ import {
   getProductSuccess,
   createProductSuccess,
   updateProductSuccess,
-  removeProductSuccess
+  deleteProductSuccess
 } from '../../redux-feature/product_slice/product.slice';
 import {
   handleShowToast,
@@ -85,7 +85,7 @@ const apiProducts = {
       }
     );
   },
-  removeProduct: async (dispatch, productId, token) => {
+  deleteProduct: async (dispatch, productId, token) => {
     await FetchAPI.DELETE(
       `products/${productId}`,
       null,
@@ -99,7 +99,7 @@ const apiProducts = {
           'Dữ liệu đã được xóa khỏi hệ thống!'
         );
         console.table(result);
-        dispatch(removeProductSuccess(productId));
+        dispatch(deleteProductSuccess(productId));
       },
       () => {
         handleShowToast(

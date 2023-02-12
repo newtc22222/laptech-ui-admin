@@ -5,9 +5,12 @@ import {
   getFeedbacksSuccess,
   createFeedbackSuccess,
   updateFeedbackSuccess,
-  removeFeedbackSuccess,
+  deleteFeedbackSuccess,
 } from '../../redux-features/product/feedback.slice'
-import { handleShowToast, NotificationType } from "../../utils/HandleNotification";
+import {
+  handleShowToast,
+  NotificationType
+} from "../../utils/HandleNotification";
 
 const apiFeedbacks = {
   getAllFeedbacks: async (dispatch, productId) => {
@@ -80,7 +83,7 @@ const apiFeedbacks = {
         dispatch(fetchFeedbackFailed());
       });
   },
-  removeFeedback: async (dispatch, feedbackId, token) => {
+  deleteFeedback: async (dispatch, feedbackId, token) => {
     await FetchAPI.DELETE(
       `feedbacks/${feedbackId}`,
       null,
@@ -94,7 +97,7 @@ const apiFeedbacks = {
           "Dữ liệu đã được xóa khỏi hệ thống!"
         );
         console.table(result);
-        dispatch(removeFeedbackSuccess(feedbackId));
+        dispatch(deleteFeedbackSuccess(feedbackId));
       },
       () => {
         handleShowToast(

@@ -37,7 +37,7 @@ const discountSlice = createSlice({
         return discount;
       });
     },
-    removeDiscountSuccess: (state, action) => {
+    deleteDiscountSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.discountList = state.discountList.filter(discount => discount.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getDiscountSuccess,
   createDiscountSuccess,
   updateDiscountSuccess,
-  removeDiscountSuccess,
+  deleteDiscountSuccess,
 } = discountSlice.actions;
 
 export default discountSlice.reducer;

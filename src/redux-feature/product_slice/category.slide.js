@@ -37,7 +37,7 @@ const categorySlice = createSlice({
         return category;
       });
     },
-    removeCategorySuccess: (state, action) => {
+    deleteCategorySuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.categoryList = state.categoryList.filter(category => category.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getCategorySuccess,
   createCategorySuccess,
   updateCategorySuccess,
-  removeCategorySuccess,
+  deleteCategorySuccess,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

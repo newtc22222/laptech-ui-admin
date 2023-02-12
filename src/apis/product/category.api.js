@@ -5,7 +5,7 @@ import {
   getCategorySuccess,
   createCategorySuccess,
   updateCategorySuccess,
-  removeCategorySuccess
+  deleteCategorySuccess
 } from '../../redux-feature/product_slice/category.slide';
 import {
   handleShowToast,
@@ -85,37 +85,31 @@ const apiCategories = {
       }
     );
   },
-  removeCategory: async (dispatch, categoryId, token) => {
-    dispatch(fetchCategoryStart());
-    try {
-      const response = await fetch(`${BASE_URL}/categories/${categoryId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      const result = await handleResponse(response);
-      if (result.status) {
-        // 'OK'
-        dispatch(removeCategorySuccess(categoryId));
-        dispatch(
-          addToast({
-            type: 'success',
-            title: 'Xóa thông tin thành công',
-            content: 'Danh mục đã được xóa khỏi hệ thống!'
-          })
+  deleteCategory: async (dispatch, categoryId, token) => {
+    await FetchAPI.DELETE(
+      `categories/${categoryId}`,
+      null,
+      token,
+      () => dispatch(fetchCategoryStart()),
+      result => {
+        handleShowToast(
+          dispatch,
+          NotificationType.SUCCESS,
+          'Xóa thông tin thành công',
+          'Dữ liệu đã được xóa khỏi hệ thống!'
         );
+        dispatch(deleteCategorySuccess(categoryId));
+      },
+      () => {
+        handleShowToast(
+          dispatch,
+          NotificationType.ERROR,
+          'Lỗi hệ thống',
+          'Không thể xóa thương hiệu này khỏi hệ thống!'
+        );
+        dispatch(fetchCategoryFailed());
       }
-    } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể xóa danh mục này khỏi hệ thống!'
-        })
-      );
-      dispatch(fetchCategoryFailed());
-    }
+    );
   }
 };
 

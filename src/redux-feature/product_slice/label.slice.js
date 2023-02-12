@@ -37,7 +37,7 @@ const labelSlice = createSlice({
         return label;
       });
     },
-    removeLabelSuccess: (state, action) => {
+    deleteLabelSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.labelList = state.labelList.filter(label => label.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getLabelSuccess,
   createLabelSuccess,
   updateLabelSuccess,
-  removeLabelSuccess,
+  deleteLabelSuccess,
 } = labelSlice.actions;
 
 export default labelSlice.reducer;

@@ -37,7 +37,7 @@ const userSlice = createSlice({
         return user;
       });
     },
-    removeUserSuccess: (state, action) => {
+    deleteUserSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.userList = state.userList.filter(user => user.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getUserSuccess,
   createUserSuccess,
   updateUserSuccess,
-  removeUserSuccess,
+  deleteUserSuccess,
 } = userSlice.actions;
 
 export default userSlice.reducer;

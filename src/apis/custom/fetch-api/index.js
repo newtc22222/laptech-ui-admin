@@ -8,11 +8,12 @@ import { BASE_URL, handleResponse } from '../../config';
  */
 function handleOption(token, httpMethod, object) {
   const fetchOption = { method: httpMethod };
+  fetchOption.headers = {
+    'Content-Type': 'application/json',
+  };
+
   if (httpMethod === 'POST' || httpMethod === 'PUT' || httpMethod === 'PATCH') {
     fetchOption.body = JSON.stringify(object);
-    fetchOption.headers = {
-      'Content-Type': 'application/json',
-    };
   }
   if (httpMethod === 'DELETE') {
     fetchOption.headers = {};
@@ -47,7 +48,7 @@ async function handleFetch(url, option, cb_start, cb_success, cb_failed) {
 /**
  * @param {String} object_path path of a thing you want to use
  * @param {Object} object your input data
- * @param {String|null} token your jwtToken
+ * @param {String|null} token your accessToken
  * @param {() => {}} cb_start callback (fetch started)
  * @param {(data) => {}} cb_success callback (fetch success)
  * @param {() => {}} cb_failed callback (fetch failed)
@@ -63,7 +64,7 @@ async function GET_ALL(object_path, object, token, cb_start, cb_success, cb_fail
 /**
  * @param {String} object_path path of a thing you want to use
  * @param {Object} object your input data
- * @param {String|null} token your jwtToken
+ * @param {String|null} token your accessToken
  * @param {() => {}} cb_start callback (fetch started)
  * @param {() => {}} cb_success callback (fetch success)
  * @param {() => {}} cb_failed callback (fetch failed)
@@ -79,7 +80,7 @@ async function POST(object_path, object, token, cb_start, cb_success, cb_failed)
 /**
  * @param {String} object_path path of a thing you want to use
  * @param {Object} object your input data
- * @param {String|null} token your jwtToken
+ * @param {String|null} token your accessToken
  * @param {() => {}} cb_start callback (fetch started)
  * @param {() => {}} cb_success callback (fetch success)
  * @param {() => {}} cb_failed callback (fetch failed)
@@ -95,7 +96,7 @@ async function PUT(object_path, object, token, cb_start, cb_success, cb_failed) 
 /**
  * @param {String} object_path path of a thing you want to use
  * @param {Object} object your input data
- * @param {String|null} token your jwtToken
+ * @param {String|null} token your accessToken
  * @param {() => {}} cb_start callback (fetch started)
  * @param {() => {}} cb_success callback (fetch success)
  * @param {() => {}} cb_failed callback (fetch failed)
@@ -111,7 +112,7 @@ async function PATCH(object_path, object, token, cb_start, cb_success, cb_failed
 /**
  * @param {String} object_path path of a thing you want to use
  * @param {Object} object your input data
- * @param {String|null} token your jwtToken
+ * @param {String|null} token your accessToken
  * @param {() => {}} cb_start callback (fetch started)
  * @param {() => {}} cb_success callback (fetch success)
  * @param {() => {}} cb_failed callback (fetch failed)

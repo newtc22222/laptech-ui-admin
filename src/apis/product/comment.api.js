@@ -5,9 +5,12 @@ import {
   getCommentsSuccess,
   createCommentSuccess,
   updateCommentSuccess,
-  removeCommentSuccess,
+  deleteCommentSuccess,
 } from '../../redux-features/product/comment.slice'
-import { handleShowToast, NotificationType } from "../../utils/HandleNotification";
+import {
+  handleShowToast,
+  NotificationType
+} from "../../utils/HandleNotification";
 
 const apiComments = {
   getAllComments: async (dispatch, productId) => {
@@ -80,7 +83,7 @@ const apiComments = {
         dispatch(fetchCommentFailed());
       });
   },
-  removeComment: async (dispatch, commentId, token) => {
+  deleteComment: async (dispatch, commentId, token) => {
     await FetchAPI.DELETE(
       `comments/${commentId}`,
       null,
@@ -94,7 +97,7 @@ const apiComments = {
           "Dữ liệu đã được xóa khỏi hệ thống!"
         );
         console.table(result);
-        dispatch(removeCommentSuccess(commentId));
+        dispatch(deleteCommentSuccess(commentId));
       },
       () => {
         handleShowToast(

@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import apiBrands from '../../apis/product/brand.api';
+import apiCategories from '../../apis/product/category.api';
 import apiUpload from '../../apis/upload.api';
 import useForm from '../../hooks/useForm';
 import { addToast } from '../../redux-feature/toast_notify';
 
-const BrandForm = ({ brand, handleBack }) => {
+const CategoryForm = ({ category, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
@@ -13,8 +13,8 @@ const BrandForm = ({ brand, handleBack }) => {
   const countryRef = useRef();
   const dateRef = useRef();
   const [logo, setLogo] = useState({
-    image: brand?.logo || null,
-    file: brand?.logo || '',
+    image: category?.logo || null,
+    file: category?.logo || '',
     filename: ''
   });
 
@@ -38,14 +38,14 @@ const BrandForm = ({ brand, handleBack }) => {
       formData.append('file', logo.file, logo.filename);
       const result = await apiUpload.uploadImage(formData, accessToken);
 
-      const newBrand = {
+      const newCategory = {
         name: nameRef.current.value,
         country: countryRef.current.value,
         establishDate: dateRef.current.value,
         logo: result.data
       };
 
-      await apiBrands.createNewBrand(dispatch, newBrand, accessToken);
+      await apiCategories.createNewCategory(dispatch, newCategory, accessToken);
       handleBack();
     } catch (err) {
       console.log(err);
@@ -62,20 +62,25 @@ const BrandForm = ({ brand, handleBack }) => {
   const handleSaveData = async () => {
     try {
       let result;
-      if (logo.image != null && logo.image != brand.logo) {
+      if (logo.image != null && logo.image != category.logo) {
         const formData = new FormData();
         formData.append('file', logo.file, logo.filename);
         result = await apiUpload.uploadImage(formData, accessToken);
       }
 
-      const updateBrand = {
+      const updateCategory = {
         name: nameRef.current.value,
         country: countryRef.current.value,
         establishDate: dateRef.current.value,
-        logo: result?.data || brand.logo
+        logo: result?.data || category.logo
       };
 
-      await apiBrands.updateBrand(dispatch, updateBrand, brand.id, accessToken);
+      await apiCategories.updateCategory(
+        dispatch,
+        updateCategory,
+        category.id,
+        accessToken
+      );
       handleBack();
     } catch (err) {
       console.log(err);
@@ -90,48 +95,48 @@ const BrandForm = ({ brand, handleBack }) => {
   };
 
   return useForm(
-    brand,
+    category,
     handleBack,
     () => {
-      brand ? handleSaveData() : handleCreateData();
+      category ? handleSaveData() : handleCreateData();
     },
     () => (
       <>
         <div className="mb-3">
-          <label htmlFor="brand-name" className="form-label">
+          <label htmlFor="category-name" className="form-label">
             Tên thương hiệu
           </label>
           <input
             type="text"
             className="form-control"
-            id="brand-name"
-            defaultValue={brand?.name}
+            id="category-name"
+            defaultValue={category?.name}
             ref={nameRef}
             placeholder="ASUS, ACER, DELL, ..."
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="brand-country" className="form-label">
+          <label htmlFor="category-country" className="form-label">
             Quốc gia
           </label>
           <input
             type="text"
             className="form-control"
-            id="brand-country"
-            defaultValue={brand?.country}
+            id="category-country"
+            defaultValue={category?.country}
             ref={countryRef}
             placeholder="China, USA, ..."
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="brand-name" className="form-label">
+          <label htmlFor="category-name" className="form-label">
             Ngày thành lập
           </label>
           <input
             type="date"
             className="form-control"
-            id="brand-name"
-            defaultValue={new Date(brand?.establishDate || '2000-01-01')
+            id="category-name"
+            defaultValue={new Date(category?.establishDate || '2000-01-01')
               .toISOString()
               .slice(0, 10)}
             ref={dateRef}
@@ -140,15 +145,13 @@ const BrandForm = ({ brand, handleBack }) => {
         <div className="mb-3">
           <p>
             Logo của hãng{' '}
-            <small className="text-primary">
-              Click image to choose file
-            </small>
+            <small className="text-primary">Click image to choose file</small>
           </p>
           <label htmlFor="formFile" className="form-label">
             <img
               style={{ maxWidth: '200px', maxHeight: '150px' }}
               src={logo.image || 'https://via.placeholder.com/200x150'}
-              alt={brand?.name || 'new logo'}
+              alt={category?.name || 'new logo'}
             />
             <input
               className="form-control"
@@ -164,4 +167,4 @@ const BrandForm = ({ brand, handleBack }) => {
   );
 };
 
-export default BrandForm;
+export default CategoryForm;

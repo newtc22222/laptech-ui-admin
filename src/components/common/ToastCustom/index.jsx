@@ -1,7 +1,7 @@
 import React from 'react';
 import { Toast } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { removeToast } from '../../redux-feature/toast_notify';
+import { removeToast } from '../../../redux-feature/toast_notify';
 
 const bg = {
   info: 'primary',

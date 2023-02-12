@@ -37,7 +37,7 @@ const feedbackSlice = createSlice({
         return feedback;
       });
     },
-    removeFeedbackSuccess: (state, action) => {
+    deleteFeedbackSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.feedbackList = state.feedbackList.filter(feedback => feedback.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getFeedbackSuccess,
   createFeedbackSuccess,
   updateFeedbackSuccess,
-  removeFeedbackSuccess,
+  deleteFeedbackSuccess,
 } = feedbackSlice.actions;
 
 export default feedbackSlice.reducer;

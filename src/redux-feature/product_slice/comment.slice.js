@@ -37,7 +37,7 @@ const commentSlice = createSlice({
         return comment;
       });
     },
-    removeCommentSuccess: (state, action) => {
+    deleteCommentSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.commentList = state.commentList.filter(comment => comment.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getCommentSuccess,
   createCommentSuccess,
   updateCommentSuccess,
-  removeCommentSuccess,
+  deleteCommentSuccess,
 } = commentSlice.actions;
 
 export default commentSlice.reducer;

@@ -37,7 +37,7 @@ const brandSlice = createSlice({
         return brand;
       });
     },
-    removeBrandSuccess: (state, action) => {
+    deleteBrandSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.brandList = state.brandList.filter(brand => brand.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getBrandSuccess,
   createBrandSuccess,
   updateBrandSuccess,
-  removeBrandSuccess,
+  deleteBrandSuccess,
 } = brandSlice.actions;
 
 export default brandSlice.reducer;

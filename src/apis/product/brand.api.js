@@ -5,7 +5,7 @@ import {
   getBrandSuccess,
   createBrandSuccess,
   updateBrandSuccess,
-  removeBrandSuccess
+  deleteBrandSuccess
 } from '../../redux-feature/product_slice/brand.slice';
 import {
   handleShowToast,
@@ -70,7 +70,6 @@ const apiBrands = {
           'Thay đổi thông tin thành công',
           'Dữ liệu của thương hiệu vừa được cập nhật vào cơ sở dữ liệu!'
         );
-        console.table(result);
         updateBrand.id = brandId;
         dispatch(updateBrandSuccess(updateBrand));
       },
@@ -85,7 +84,7 @@ const apiBrands = {
       }
     );
   },
-  removeBrand: async (dispatch, brandId, token) => {
+  deleteBrand: async (dispatch, brandId, token) => {
     await FetchAPI.DELETE(
       `brands/${brandId}`,
       null,
@@ -98,8 +97,7 @@ const apiBrands = {
           'Xóa thông tin thành công',
           'Dữ liệu đã được xóa khỏi hệ thống!'
         );
-        console.table(result);
-        dispatch(removeBrandSuccess(brandId));
+        dispatch(deleteBrandSuccess(brandId));
       },
       () => {
         handleShowToast(

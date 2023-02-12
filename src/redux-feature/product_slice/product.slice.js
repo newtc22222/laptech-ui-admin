@@ -37,7 +37,7 @@ const productSlice = createSlice({
         return product;
       });
     },
-    removeProductSuccess: (state, action) => {
+    deleteProductSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
       state.productList = state.productList.filter(product => product.id !== action.payload);
@@ -51,7 +51,7 @@ export const {
   getProductSuccess,
   createProductSuccess,
   updateProductSuccess,
-  removeProductSuccess,
+  deleteProductSuccess,
 } = productSlice.actions;
 
 export default productSlice.reducer;

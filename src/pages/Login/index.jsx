@@ -14,6 +14,7 @@ const Login = () => {
   let rmb_phone = '',
     rmb_password = '',
     rmb_check = false;
+
   if (storeDataHash) {
     const storeData = HashString.decrypt(storeDataHash);
     [rmb_phone, rmb_password, rmb_check] = storeData.split(';');
@@ -23,12 +24,13 @@ const Login = () => {
   const dispatch = useDispatch();
   const [phone, setPhone] = useState(rmb_phone);
   const passwordRef = useRef();
-  const [remember, setRemember] = useState(rmb_check);
+  const [remember, setRemember] = useState(Boolean(rmb_check));
 
   const handleChangePhone = e => {
-    const re = /^[0-9/b]+$/;
-    if (re.test(e.target.value)) {
-      setPhone(e.target.value);
+    const re = /^[0-9/b]{1,14}$/;
+    const str = e.target.value;
+    if (re.test(str) || str === '') {
+      setPhone(str);
     }
   };
 
@@ -38,11 +40,17 @@ const Login = () => {
       password: passwordRef.current.value
     };
     const data = await apiAuth.login(dispatch, account);
-    if (data && data.user.role !== 'USER') {
+
+    // check permission account
+    const isNotOnlyUserRole =
+      data.roleList.filter(role => role.name !== 'USER').length > 0;
+
+    if (data && isNotOnlyUserRole) {
       if (remember) {
         const storeData = `${phone};${HashString.encrypt(
           passwordRef.current.value
         )};${remember}`;
+
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
       navigate('/');
