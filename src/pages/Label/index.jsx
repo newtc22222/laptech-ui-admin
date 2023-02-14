@@ -2,25 +2,29 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
-import apiCategories from '../../apis/product/category.api';
+import apiLabel from '../../apis/product/label.api';
+
+import LabelTable from './LabelTable';
+import LabelForm from './LabelForm';
 
 import ModalCustom from '../../components/Modal';
 import Loading from '../../components/common/Loading';
-import CategoryTable from './CategoryTable';
-import CategoryForm from './CategoryForm';
 
-const pageName = 'Phân loại hàng hóa';
-const objectName = 'categories';
+const pageName = 'Nhãn thuộc tính của sản phẩm';
+const objectName = 'labels';
 const titleButtonAdd = 'Thêm thông tin';
 
-const Category = () => {
+/**
+ * @since 2023-02-13
+ */
+const Label = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const [
     dispatch,
     navigate,
     workMode,
     showModal,
-    categoryEdit,
+    labelEdit,
     modalValue,
     action
   ] = useWorkspace();
@@ -28,37 +32,36 @@ const Category = () => {
   if (accessToken === null || accessToken === undefined)
     navigate('/auth/login');
 
-  const { categoryList, isFetching, error } = useSelector(
+  const { labelList, isFetching, error } = useSelector(
     state => state[objectName]
   );
 
   useEffect(() => {
-    if (accessToken === null || accessToken === undefined)
-      navigate('/auth/login');
-    apiCategories.getAllCategories(dispatch);
+    apiLabel.getAllLabels(dispatch);
   }, []);
 
-  const handleShowDeleteModal = useCallback((categoryId, categoryName) => {
+  const handleShowDeleteModal = useCallback((labelId, labelName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${labelName} khỏi hệ thống không?`,
       () => {
-        apiCategories.deleteCategory(dispatch, categoryId, accessToken);
+        apiLabel.deleteLabel(dispatch, labelId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
   }, []);
 
+  // Change work mode
   if (workMode === WorkMode.create) {
     return (
-      <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
     );
   }
   if (workMode === WorkMode.edit) {
     return (
-      <CategoryForm
-        category={categoryEdit}
+      <LabelForm
+        label={labelEdit}
         handleBack={() => action.changeWorkMode(WorkMode.view)}
       />
     );
@@ -86,13 +89,13 @@ const Category = () => {
           {titleButtonAdd}
         </button>
       </div>
-      <CategoryTable
-        categoryList={categoryList}
-        handleSetUpdateMode={category => action.setUpdateMode(category)}
+      <LabelTable
+        labelList={labelList}
+        handleSetUpdateMode={label => action.setUpdateMode(label)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />
     </div>
   );
 };
 
-export default Category;
+export default Label;

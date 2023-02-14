@@ -1,10 +1,13 @@
 import React from 'react';
 import useTable from '../../hooks/useTable';
 
+const titleButtonUpdate = 'Cập nhật';
+const titleButtonDelete = 'Xóa';
+
 function BrandTable({ brandList, handleSetUpdateMode, handleShowDeleteModal }) {
   return useTable(
     [
-      'Mã thương hiệu',
+      'ID',
       'Tên thương hiệu',
       'Quốc gia',
       'Ngày thành lập',
@@ -24,25 +27,25 @@ function BrandTable({ brandList, handleSetUpdateMode, handleShowDeleteModal }) {
               src={brand.logo}
               alt={brand.name + ' logo'}
               className="rounded img-fluid img-thumbnail"
-              style={{ maxWidth: '10vw' }}
+              style={{ maxWidth: '8vw' }}
             />
           </td>
           <td>
             <p className="fw-bold">0</p>
           </td>
-          <td>
+          <td style={{ width: '10%' }}>
             <button
               className="btn btn-secondary w-100 mb-2"
               onClick={() => handleSetUpdateMode(brand)}
             >
-              Cập nhật
+              {titleButtonUpdate}
             </button>{' '}
             <br />
             <button
               className="btn btn-danger w-100"
               onClick={() => handleShowDeleteModal(brand.id, brand.name)}
             >
-              Xóa
+              {titleButtonDelete}
             </button>
           </td>
         </tr>

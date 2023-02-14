@@ -1,12 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import useForm from '../../hooks/useForm';
+
 import apiBrands from '../../apis/product/brand.api';
 import apiUpload from '../../apis/upload.api';
-import useForm from '../../hooks/useForm';
+
 import { addToast } from '../../redux-feature/toast_notify';
 
-const hintToChooseImage_vi = 'Nhấn trực tiếp vào hình ảnh để chọn file';
-const hintToChooseImage_en = 'Click image to choose file';
+const titleName = 'Tên Thương hiệu';
+const titleCountry = 'Quốc gia';
+const titleEstablishDate = 'Ngày thành lập';
+const titleLogo = 'Logo đại diện';
+const hintToChooseImage = 'Nhấn trực tiếp vào hình ảnh để chọn file';
 
 const BrandForm = ({ brand, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
@@ -45,7 +50,9 @@ const BrandForm = ({ brand, handleBack }) => {
         name: nameRef.current.value,
         country: countryRef.current.value,
         establishDate: dateRef.current.value,
-        logo: result.data
+        logo: result.data,
+        createdDate: new Date().toISOString(),
+        modifiedDate: new Date().toISOString()
       };
 
       await apiBrands.createNewBrand(dispatch, newBrand, accessToken);
@@ -75,7 +82,9 @@ const BrandForm = ({ brand, handleBack }) => {
         name: nameRef.current.value,
         country: countryRef.current.value,
         establishDate: dateRef.current.value,
-        logo: result?.data || brand.logo
+        logo: result?.data || brand.logo,
+        createdDate: brand.createdDate,
+        modifiedDate: new Date().toISOString()
       };
 
       await apiBrands.updateBrand(dispatch, updateBrand, brand.id, accessToken);
@@ -102,7 +111,7 @@ const BrandForm = ({ brand, handleBack }) => {
       <>
         <div className="mb-3">
           <label htmlFor="brand-name" className="form-label">
-            Tên thương hiệu
+            {titleName}
           </label>
           <input
             type="text"
@@ -115,7 +124,7 @@ const BrandForm = ({ brand, handleBack }) => {
         </div>
         <div className="mb-3">
           <label htmlFor="brand-country" className="form-label">
-            Quốc gia
+            {titleCountry}
           </label>
           <input
             type="text"
@@ -128,7 +137,7 @@ const BrandForm = ({ brand, handleBack }) => {
         </div>
         <div className="mb-3">
           <label htmlFor="brand-name" className="form-label">
-            Ngày thành lập
+            {titleEstablishDate}
           </label>
           <input
             type="date"
@@ -142,8 +151,8 @@ const BrandForm = ({ brand, handleBack }) => {
         </div>
         <div className="mb-3">
           <p>
-            Logo của hãng{' '}
-            <small className="text-primary">{hintToChooseImage_vi}</small>
+            {titleLogo + ' '}
+            <small className="text-primary">{hintToChooseImage}</small>
           </p>
           <label htmlFor="formFile" className="form-label">
             <img

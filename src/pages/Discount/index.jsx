@@ -2,63 +2,66 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
-import apiCategories from '../../apis/product/category.api';
+import apiDiscount from '../../apis/product/discount.api';
+
+import DiscountTable from './DiscountTable';
+import DiscountForm from './DiscountForm';
 
 import ModalCustom from '../../components/Modal';
 import Loading from '../../components/common/Loading';
-import CategoryTable from './CategoryTable';
-import CategoryForm from './CategoryForm';
 
-const pageName = 'Phân loại hàng hóa';
-const objectName = 'categories';
+const pageName = 'Mã chiết khấu sản phẩm';
+const objectName = 'discounts';
 const titleButtonAdd = 'Thêm thông tin';
 
-const Category = () => {
+/**
+ * @since 2023-02-13
+ */
+const Discount = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const [
     dispatch,
     navigate,
     workMode,
     showModal,
-    categoryEdit,
+    discountEdit,
     modalValue,
     action
   ] = useWorkspace();
 
-  if (accessToken === null || accessToken === undefined)
-    navigate('/auth/login');
-
-  const { categoryList, isFetching, error } = useSelector(
+  const { discountList, isFetching, error } = useSelector(
     state => state[objectName]
   );
 
+  if (accessToken === null || accessToken === undefined)
+    navigate('/auth/login');
+
   useEffect(() => {
-    if (accessToken === null || accessToken === undefined)
-      navigate('/auth/login');
-    apiCategories.getAllCategories(dispatch);
+    apiDiscount.getAllDiscounts(dispatch);
   }, []);
 
-  const handleShowDeleteModal = useCallback((categoryId, categoryName) => {
+  const handleShowDeleteModal = useCallback((discountId, discountName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountName} khỏi hệ thống không?`,
       () => {
-        apiCategories.deleteCategory(dispatch, categoryId, accessToken);
+        apiDiscount.deleteDiscount(dispatch, discountId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
   }, []);
 
+  // Change work mode
   if (workMode === WorkMode.create) {
     return (
-      <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      <DiscountForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
     );
   }
   if (workMode === WorkMode.edit) {
     return (
-      <CategoryForm
-        category={categoryEdit}
+      <DiscountForm
+        discount={discountEdit}
         handleBack={() => action.changeWorkMode(WorkMode.view)}
       />
     );
@@ -86,13 +89,13 @@ const Category = () => {
           {titleButtonAdd}
         </button>
       </div>
-      <CategoryTable
-        categoryList={categoryList}
-        handleSetUpdateMode={category => action.setUpdateMode(category)}
+      <DiscountTable
+        discountList={discountList}
+        handleSetUpdateMode={discount => action.setUpdateMode(discount)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />
     </div>
   );
 };
 
-export default Category;
+export default Discount;

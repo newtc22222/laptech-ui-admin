@@ -2,25 +2,29 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
-import apiCategories from '../../apis/product/category.api';
+import apiRole from '../../apis/role.api';
+
+import RoleTable from './RoleTable';
+import RoleForm from './RoleForm';
 
 import ModalCustom from '../../components/Modal';
 import Loading from '../../components/common/Loading';
-import CategoryTable from './CategoryTable';
-import CategoryForm from './CategoryForm';
 
-const pageName = 'Phân loại hàng hóa';
-const objectName = 'categories';
+const pageName = 'Quyền sử dụng người dùng';
+const objectName = 'roles';
 const titleButtonAdd = 'Thêm thông tin';
 
-const Category = () => {
+/**
+ * @since 2023-02-13
+ */
+const Role = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const [
     dispatch,
     navigate,
     workMode,
     showModal,
-    categoryEdit,
+    roleEdit,
     modalValue,
     action
   ] = useWorkspace();
@@ -28,37 +32,34 @@ const Category = () => {
   if (accessToken === null || accessToken === undefined)
     navigate('/auth/login');
 
-  const { categoryList, isFetching, error } = useSelector(
+  const { roleList, isFetching, error } = useSelector(
     state => state[objectName]
   );
 
   useEffect(() => {
-    if (accessToken === null || accessToken === undefined)
-      navigate('/auth/login');
-    apiCategories.getAllCategories(dispatch);
+    apiRole.getAllRoles(dispatch, accessToken);
   }, []);
 
-  const handleShowDeleteModal = useCallback((categoryId, categoryName) => {
+  const handleShowDeleteModal = useCallback((roleId, roleName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${roleName} khỏi hệ thống không?`,
       () => {
-        apiCategories.deleteCategory(dispatch, categoryId, accessToken);
+        apiRole.deleteRole(dispatch, roleId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
   }, []);
 
+  // Change work mode
   if (workMode === WorkMode.create) {
-    return (
-      <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-    );
+    return <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />;
   }
   if (workMode === WorkMode.edit) {
     return (
-      <CategoryForm
-        category={categoryEdit}
+      <RoleForm
+        role={roleEdit}
         handleBack={() => action.changeWorkMode(WorkMode.view)}
       />
     );
@@ -86,13 +87,13 @@ const Category = () => {
           {titleButtonAdd}
         </button>
       </div>
-      <CategoryTable
-        categoryList={categoryList}
-        handleSetUpdateMode={category => action.setUpdateMode(category)}
+      <RoleTable
+        roleList={roleList}
+        handleSetUpdateMode={role => action.setUpdateMode(role)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />
     </div>
   );
 };
 
-export default Category;
+export default Role;

@@ -1,7 +1,10 @@
 import React from 'react';
 
-const Receipt = () => {
-  return <div>Receipt</div>;
+/**
+ * @since 2023-02-14
+ */
+const Invoice = () => {
+  return <div>Invoice</div>;
 };
 
-export default Receipt;
+export default Invoice;

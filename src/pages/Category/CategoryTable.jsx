@@ -1,6 +1,9 @@
 import React from 'react';
 import useTable from '../../hooks/useTable';
 
+const titleButtonUpdate = 'Cập nhật';
+const titleButtonDelete = 'Xóa';
+
 function CategoryTable({
   categoryList,
   handleSetUpdateMode,
@@ -8,7 +11,7 @@ function CategoryTable({
 }) {
   return useTable(
     [
-      'Mã phân loại',
+      'ID',
       'Tên',
       'Mô tả',
       'Ảnh minh họa',
@@ -21,24 +24,24 @@ function CategoryTable({
           <tr className="text-center" key={index}>
             <td>{category.id}</td>
             <td className="fw-bolder">{category.name}</td>
-            <td>{category.description}</td>
+            <td style={{ maxWidth: '30vw' }}>{category.description}</td>
             <td>
               <img
                 src={category.image}
                 alt={category.name + ' images'}
                 className="rounded img-fluid img-thumbnail"
-                style={{ maxWidth: '10vw' }}
+                style={{ maxWidth: '8vw' }}
               />
             </td>
             <td>
               <p className="fw-bold">0</p>
             </td>
-            <td>
+            <td style={{ width: '10%' }}>
               <button
                 className="btn btn-secondary w-100 mb-2"
                 onClick={() => handleSetUpdateMode(category)}
               >
-                Cập nhật
+                {titleButtonUpdate}
               </button>{' '}
               <br />
               <button
@@ -47,7 +50,7 @@ function CategoryTable({
                   handleShowDeleteModal(category.id, category.name)
                 }
               >
-                Xóa
+                {titleButtonDelete}
               </button>
             </td>
           </tr>

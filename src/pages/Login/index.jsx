@@ -8,6 +8,7 @@ import HashString from '../../utils/HandleStoreLocal';
  * @link: https://startbootstrap.com/previews/sb-admin-2
  * @since 2022-12-31
  */
+
 const Login = () => {
   const storeDataHash = localStorage.getItem('storeData');
   let rmb_phone = '',
@@ -40,11 +41,7 @@ const Login = () => {
     };
     const data = await apiAuth.login(dispatch, account);
 
-    // check permission account
-    const isNotOnlyUserRole =
-      data.roleList.filter(role => role.name !== 'USER').length > 0;
-
-    if (data && isNotOnlyUserRole) {
+    if (data) {
       if (remember) {
         const storeData = `${phone};${HashString.encrypt(
           passwordRef.current.value

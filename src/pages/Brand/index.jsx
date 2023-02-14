@@ -16,12 +16,22 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const BrandPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
+  const [
+    dispatch,
+    navigate,
+    workMode,
+    showModal,
+    brandEdit,
+    modalValue,
+    action
+  ] = useWorkspace();
+
+  if (accessToken === null || accessToken === undefined)
+    navigate('/auth/login');
+
   const { brandList, isFetching, error } = useSelector(
     state => state[objectName]
   );
-
-  const [dispatch, workMode, showModal, brandEdit, modalValue, action] =
-    useWorkspace();
 
   // Loading
   useEffect(() => {
@@ -31,8 +41,8 @@ const BrandPage = () => {
   // Show delete modal
   const handleShowDeleteModal = useCallback((brandId, brandName) => {
     action.addModalValue(
-      'Xác nhận xoá thông tin thương hiệu',
-      `Bạn có thực sự muốn loại bỏ thương hiệu ${brandName} khỏi hệ thống không?`,
+      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
       () => {
         apiBrands.deleteBrand(dispatch, brandId, accessToken);
         action.showModal(false);
