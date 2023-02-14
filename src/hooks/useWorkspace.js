@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import WorkMode from "../common/WorkMode";
 
 /**
@@ -10,10 +11,11 @@ import WorkMode from "../common/WorkMode";
  * - addModalValue(properties:object)
  * - setCreateMode()
  * - setUpdateMode(object)
- * @returns {[]} [dispatch, workMode, showModal, objectEdit, modalValue, action]
+ * @returns {[]} [dispatch, navigate, workMode, showModal, objectEdit, modalValue, action]
  */
 const useWorkspace = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Work mode
   const [workMode, setWorkMode] = useState(WorkMode.view);
@@ -45,7 +47,7 @@ const useWorkspace = () => {
     }
   }
 
-  return [dispatch, workMode, showModal, objectEdit, modalValue, action];
+  return [dispatch, navigate, workMode, showModal, objectEdit, modalValue, action];
 }
 
 export default useWorkspace;
