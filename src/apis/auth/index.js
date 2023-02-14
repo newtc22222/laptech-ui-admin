@@ -1,7 +1,4 @@
-import {
-  setCredentials,
-  setNewAccessToken
-} from '../../redux-feature/auth.slice';
+import { setCredentials, setNewAccessToken } from '../../redux-feature/auth.slice';
 import {
   handleShowToast,
   NotificationType
@@ -15,23 +12,26 @@ const apiAuth = {
       `auth/login`,
       account,
       null,
-      () => {},
+      () => { },
       result => {
-        if (result.user.role !== 'USER') {
-          localStorage.setItem('laptechUser', JSON.stringify(result.user));
-          localStorage.setItem('accessToken', result.accessToken);
-          localStorage.setItem('refreshToken', result.refreshToken);
+        if (result) {
+          const listRoleNotUser = result.roleList.filter(x => x.name !== 'USER');
+          if (listRoleNotUser.length > 0) {
+            localStorage.setItem('laptechUser', JSON.stringify(result.user));
+            localStorage.setItem('accessToken', result.accessToken);
+            localStorage.setItem('refreshToken', result.refreshToken);
 
-          dispatch(setCredentials(result)); //auth
-        } else {
-          handleShowToast(
-            dispatch,
-            NotificationType.INFO,
-            'Tài khoản không hợp lệ',
-            'Vui lòng kiểm tra lại thông tin tài khoản!'
-          );
+            dispatch(setCredentials(result)); //auth
+            auth = result;
+          } else {
+            handleShowToast(
+              dispatch,
+              NotificationType.INFO,
+              'Tài khoản không hợp lệ',
+              'Vui lòng kiểm tra lại thông tin tài khoản!'
+            );
+          }
         }
-        auth = result;
       },
       () => {
         handleShowToast(
@@ -44,13 +44,13 @@ const apiAuth = {
     );
     return auth;
   },
-  refreshToken: async (dispatch, newAccessToken) => {
+  refreshToken: async (dispatch, refreshToken) => {
     let auth;
     await FetchAPI.POST(
       `auth/refreshToken`,
-      newAccessToken,
+      refreshToken,
       null,
-      () => {},
+      () => { },
       result => {
         localStorage.setItem('accessToken', result.accessToken);
         dispatch(setNewAccessToken(result.accessToken));
@@ -71,8 +71,8 @@ const apiAuth = {
       `users/${userId}`,
       newInfor,
       token,
-      () => {},
-      result => {},
+      () => { },
+      result => { },
       () => {
         handleShowToast(
           dispatch,
@@ -89,8 +89,8 @@ const apiAuth = {
       `users/${userId}`,
       passwordForm,
       token,
-      () => {},
-      result => {},
+      () => { },
+      result => { },
       () => {
         handleShowToast(
           dispatch,

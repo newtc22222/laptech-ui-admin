@@ -37,11 +37,16 @@ async function handleFetch(url, option, cb_start, cb_success, cb_failed) {
   try {
     const response = await fetch(url, option);
     const result = await handleResponse(response);
+    if (result.status === 'UNAUTHORIZED') {
+      throw new Error("Invalid token!");
+    }
+    if (result === undefined) {
+      throw new Error("Invalid data!");
+    }
     cb_success(result);
   }
   catch (err) {
-    console.log({ err });
-    cb_failed();
+    cb_failed(err);
   }
 }
 
