@@ -9,19 +9,24 @@ import AppContext from './context/AppContext';
 import AppLayout from './container/AppLayout';
 import {
   About,
-  DashBoard,
-  Customer,
-  FAQ,
-  Feature,
-  Notification,
-  Pricing,
-  ProductPage,
+  Banner,
   BrandPage,
   Category,
-  PageNotFound,
-  Statistic,
+  Discount,
+  DashBoard,
+  FAQ,
+  Feature,
+  Invoice,
+  Label,
   Login,
-  Setting
+  Notification,
+  PageNotFound,
+  Pricing,
+  ProductPage,
+  Statistic,
+  Setting,
+  Role,
+  User
 } from './pages';
 
 /**
@@ -32,19 +37,26 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<AppLayout />}>
       <Route index element={<DashBoard />} />
-      <Route path="about" element={<About />} />
+      {/* MAIN */}
       <Route path="auth/login" element={<Login />} />
-      <Route path="setting" element={<Setting />} />
-      <Route path="customer" element={<Customer />} />
-      <Route path="faqs" element={<FAQ />} />
-      <Route path="features" element={<Feature />} />
+      <Route path="role" element={<Role />} />
+      <Route path="user" element={<User />} />
       <Route path="notification" element={<Notification />} />
-      <Route path="pricing" element={<Pricing />} />
       <Route path="product" element={<ProductPage />} />
+      <Route path="banner" element={<Banner />} />
       <Route path="brand" element={<BrandPage />} />
       <Route path="category" element={<Category />} />
-      {/* <Route path="invoice/*" element={<Receipt />} /> */}
+      <Route path="discount" element={<Discount />} />
+      <Route path="label" element={<Label />} />
+      <Route path="invoice" element={<Invoice />} />
       <Route path="statistic" element={<Statistic />} />
+      {/* Extra */}
+      <Route path="about" element={<About />} />
+      <Route path="setting" element={<Setting />} />
+      <Route path="faqs" element={<FAQ />} />
+      <Route path="features" element={<Feature />} />
+      <Route path="pricing" element={<Pricing />} />
+      {/* DEFAULT ERROR PAGE */}
       <Route path="/*" element={<PageNotFound />} />
     </Route>
   )
