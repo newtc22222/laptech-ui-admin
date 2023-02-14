@@ -7,7 +7,12 @@ function ModalCustom({ show, setShow, props }) {
   const { title, content, handleDelete } = props;
 
   return (
-    <Modal show={show} onHide={handleClose} backdrop="static">
+    <Modal
+      show={show}
+      onHide={handleClose}
+      backdrop="static"
+      className="modal-lg"
+    >
       <Modal.Header>
         <Modal.Title>{title || ''}</Modal.Title>
       </Modal.Header>
