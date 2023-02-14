@@ -11,6 +11,7 @@ import {
   handleShowToast,
   NotificationType
 } from '../../utils/HandleNotification';
+import MakeRefreshToken from '../helper/MakeRefreshToken';
 
 const apiLabels = {
   getAllLabels: async dispatch => {
@@ -46,7 +47,7 @@ const apiLabels = {
         );
         dispatch(createLabelSuccess(result.data));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -54,6 +55,7 @@ const apiLabels = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchLabelFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -70,11 +72,10 @@ const apiLabels = {
           'Thay đổi thông tin thành công',
           'Dữ liệu của nhãn vừa được cập nhật vào cơ sở dữ liệu!!'
         );
-        console.table(result);
         updateLabel.id = labelId;
         dispatch(updateLabelSuccess(updateLabel));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -82,6 +83,7 @@ const apiLabels = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchLabelFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -98,10 +100,9 @@ const apiLabels = {
           'Xóa thông tin thành công',
           'Dữ liệu đã được xóa khỏi hệ thống!'
         );
-        console.table(result);
         dispatch(deleteLabelSuccess(labelId));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -109,6 +110,7 @@ const apiLabels = {
           'Không thể xóa nhãn này khỏi hệ thống!'
         );
         dispatch(fetchLabelFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   }

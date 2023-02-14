@@ -11,6 +11,7 @@ import {
   handleShowToast,
   NotificationType
 } from '../../utils/HandleNotification';
+import MakeRefreshToken from '../helper/MakeRefreshToken';
 
 const apiDiscounts = {
   getAllDiscounts: async dispatch => {
@@ -46,7 +47,7 @@ const apiDiscounts = {
         );
         dispatch(createDiscountSuccess(result.data));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -54,6 +55,7 @@ const apiDiscounts = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchDiscountFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -70,11 +72,10 @@ const apiDiscounts = {
           'Thay đổi thông tin thành công',
           'Dữ liệu của mã giảm giá  vừa được cập nhật vào cơ sở dữ liệu!!'
         );
-        console.table(result);
         updateDiscount.id = discountId;
         dispatch(updateDiscountSuccess(updateDiscount));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -82,6 +83,7 @@ const apiDiscounts = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchDiscountFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -98,10 +100,9 @@ const apiDiscounts = {
           'Xóa thông tin thành công',
           'Dữ liệu đã được xóa khỏi hệ thống!'
         );
-        console.table(result);
         dispatch(deleteDiscountSuccess(discountId));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -109,6 +110,7 @@ const apiDiscounts = {
           'Không thể xóa mã giảm giá  này khỏi hệ thống!'
         );
         dispatch(fetchDiscountFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   }

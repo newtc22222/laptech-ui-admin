@@ -11,6 +11,7 @@ import {
   handleShowToast,
   NotificationType
 } from '../../utils/HandleNotification';
+import MakeRefreshToken from '../helper/MakeRefreshToken';
 
 const apiBrands = {
   getAllBrands: async dispatch => {
@@ -46,7 +47,7 @@ const apiBrands = {
         );
         dispatch(createBrandSuccess(result.data));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -54,6 +55,7 @@ const apiBrands = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchBrandFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -73,7 +75,7 @@ const apiBrands = {
         updateBrand.id = brandId;
         dispatch(updateBrandSuccess(updateBrand));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -81,6 +83,7 @@ const apiBrands = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchBrandFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -99,7 +102,7 @@ const apiBrands = {
         );
         dispatch(deleteBrandSuccess(brandId));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -107,6 +110,7 @@ const apiBrands = {
           'Không thể xóa thương hiệu này khỏi hệ thống!'
         );
         dispatch(fetchBrandFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   }

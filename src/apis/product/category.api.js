@@ -11,6 +11,7 @@ import {
   handleShowToast,
   NotificationType
 } from '../../utils/HandleNotification';
+import MakeRefreshToken from '../helper/MakeRefreshToken';
 
 const apiCategories = {
   getAllCategories: async dispatch => {
@@ -46,7 +47,7 @@ const apiCategories = {
         );
         dispatch(createCategorySuccess(result.data));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -54,6 +55,7 @@ const apiCategories = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchCategoryFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -74,7 +76,7 @@ const apiCategories = {
         updateCategory.id = categoryId;
         dispatch(updateCategorySuccess(updateCategory));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -82,6 +84,7 @@ const apiCategories = {
           'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchCategoryFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   },
@@ -100,7 +103,7 @@ const apiCategories = {
         );
         dispatch(deleteCategorySuccess(categoryId));
       },
-      () => {
+      (err) => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -108,6 +111,7 @@ const apiCategories = {
           'Không thể xóa thương hiệu này khỏi hệ thống!'
         );
         dispatch(fetchCategoryFailed());
+        MakeRefreshToken(err, dispatch);
       }
     );
   }
