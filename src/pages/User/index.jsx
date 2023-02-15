@@ -11,8 +11,8 @@ const gender = {
 };
 
 const User = () => {
-  const auth = useSelector(state => state.auth);
-  if (auth.user === null) {
+  const user = useSelector(state => state.auth);
+  if (user === null) {
     return <Navigate to="/login" />;
   }
 

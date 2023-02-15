@@ -1,25 +1,15 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 
 function DashBoard() {
-  // if (localStorage.getItem('jwtToken') === null) {
-  //   return <Navigate to="/auth/login" />;
-  // }
-
-  const shareData = e => {
-    console.log('You click here: ', e.target);
-  };
+  const accessToken = useSelector(state => state.auth.accessToken);
+  if (accessToken === null || accessToken === undefined) {
+    return <Navigate to="/auth/login" />;
+  }
 
   return (
     <>
-      <div className="chartjs-size-monitor">
-        <div className="chartjs-size-monitor-expand">
-          <div className=""></div>
-        </div>
-        <div className="chartjs-size-monitor-shrink">
-          <div className=""></div>
-        </div>
-      </div>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 className="h2">Dashboard</h1>
         <div className="btn-toolbar mb-2 mb-md-0">
@@ -27,7 +17,7 @@ function DashBoard() {
             <button
               type="button"
               className="btn btn-sm btn-outline-secondary"
-              onClick={shareData}
+              onClick={() => {}}
             >
               Share chart
             </button>
@@ -155,14 +145,6 @@ function DashBoard() {
           </div>
         </div>
       </div>
-
-      <canvas
-        className="my-4 w-100 chartjs-render-monitor"
-        id="myChart"
-        width="1538"
-        height="649"
-        style={{ display: 'block', width: '1538px', height: '649px' }}
-      ></canvas>
 
       <h2>Section title</h2>
       <div className="table-responsive">

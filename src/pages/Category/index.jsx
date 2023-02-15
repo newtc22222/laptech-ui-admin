@@ -17,7 +17,7 @@ const Category = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const [
     dispatch,
-    navigate,
+    Navigate,
     workMode,
     showModal,
     categoryEdit,
@@ -26,15 +26,13 @@ const Category = () => {
   ] = useWorkspace();
 
   if (accessToken === null || accessToken === undefined)
-    navigate('/auth/login');
+    return <Navigate to="/auth/login" />;
 
   const { categoryList, isFetching, error } = useSelector(
     state => state[objectName]
   );
 
   useEffect(() => {
-    if (accessToken === null || accessToken === undefined)
-      navigate('/auth/login');
     apiCategories.getAllCategories(dispatch);
   }, []);
 
