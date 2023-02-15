@@ -1,7 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const BASE_URL = "http://localhost:8088/api/v1";
+const BASE_URL = 'http://localhost:8088/api/v1';
 
+/**
+ *
+ * @param {string} url
+ * @param {object} option
+ * @returns {object} { data, loading, error }
+ */
 function useFetch(url, option) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -13,17 +19,15 @@ function useFetch(url, option) {
       setLoading(true);
       await fetch(BASE_URL + url, option)
         .then(res => {
-          if (res.ok)
-            return res.json();
-          throw new Exception("Not found!");
+          if (res.ok) return res.json();
+          throw new Exception('Not found!');
         })
         .then(data => {
-          if (isMount)
-            setData(data);
+          if (isMount) setData(data);
         })
         .catch(err => setError(err))
-        .finally(setLoading(false))
-    }
+        .finally(setLoading(false));
+    };
 
     callApi();
 
