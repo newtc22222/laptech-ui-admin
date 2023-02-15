@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
-import WorkMode from "../common/WorkMode";
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Navigate } from 'react-router';
+import WorkMode from '../common/WorkMode';
 
 /**
  * **ACTION**
@@ -15,7 +15,6 @@ import WorkMode from "../common/WorkMode";
  */
 const useWorkspace = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   // Work mode
   const [workMode, setWorkMode] = useState(WorkMode.view);
@@ -28,26 +27,35 @@ const useWorkspace = () => {
   const [modalValue, setModalValue] = useState(null);
 
   const action = {
-    changeWorkMode: (mode) => setWorkMode(mode),
-    showModal: (isShow) => setShowModal(isShow),
-    setEdit: (object) => setObjectEdit(object),
+    changeWorkMode: mode => setWorkMode(mode),
+    showModal: isShow => setShowModal(isShow),
+    setEdit: object => setObjectEdit(object),
     addModalValue: (title, content, cb_delete) => {
       setModalValue({
-        title, content,
+        title,
+        content,
         handleDelete: cb_delete
-      })
+      });
     },
     setCreateMode: () => {
       setObjectEdit(null);
       setWorkMode(WorkMode.create);
     },
-    setUpdateMode: (object) => {
+    setUpdateMode: object => {
       setObjectEdit(object);
       setWorkMode(WorkMode.edit);
     }
-  }
+  };
 
-  return [dispatch, navigate, workMode, showModal, objectEdit, modalValue, action];
-}
+  return [
+    dispatch,
+    Navigate,
+    workMode,
+    showModal,
+    objectEdit,
+    modalValue,
+    action
+  ];
+};
 
 export default useWorkspace;
