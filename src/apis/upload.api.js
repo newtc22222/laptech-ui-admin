@@ -1,4 +1,6 @@
-import { BASE_URL, handleResponse } from "./config";
+import FetchAPI from './custom/fetch-api';
+import MakeRefreshToken from './helper/MakeRefreshToken';
+import { handleShowToast, NotificationType } from '../utils/HandleNotification';
 
 /**
  * **use for upload data**
@@ -8,22 +10,29 @@ import { BASE_URL, handleResponse } from "./config";
  */
 
 const apiUpload = {
-  uploadImage: async (data, token) => {
-    const response = await fetch(
-      `${BASE_URL}/uploads`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: data,
+  uploadImage: async (dispatch, data, token) => {
+    let result;
+    await FetchAPI.POST_FILE(
+      'uploads',
+      data,
+      token,
+      () => {},
+      response => {
+        result = response;
+      },
+      err => {
+        handleShowToast(
+          dispatch,
+          NotificationType.ERROR,
+          'Lỗi hệ thống',
+          'Không thể gửi file đến Server!'
+        );
+        MakeRefreshToken(err, dispatch);
       }
-    )
-    return handleResponse(response);
+    );
+    return result;
   },
-  uploadMultipleImage: (imageList, token) => {
-
-  },
-}
+  uploadMultipleImage: (imageList, token) => {}
+};
 
 export default apiUpload;
