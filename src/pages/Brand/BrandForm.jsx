@@ -44,7 +44,11 @@ const BrandForm = ({ brand, handleBack }) => {
     try {
       const formData = new FormData();
       formData.append('file', logo.file, logo.filename);
-      const result = await apiUpload.uploadImage(formData, accessToken);
+      const result = await apiUpload.uploadImage(
+        dispatch,
+        formData,
+        accessToken
+      );
 
       const newBrand = {
         name: nameRef.current.value,
@@ -72,10 +76,10 @@ const BrandForm = ({ brand, handleBack }) => {
   const handleSaveData = async () => {
     try {
       let result;
-      if (logo.image != null && logo.image != brand.logo) {
+      if (logo.image !== null && logo.image !== brand.logo) {
         const formData = new FormData();
         formData.append('file', logo.file, logo.filename);
-        result = await apiUpload.uploadImage(formData, accessToken);
+        result = await apiUpload.uploadImage(dispatch, formData, accessToken);
       }
 
       const updateBrand = {
