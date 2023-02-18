@@ -41,8 +41,11 @@ const linkCSS = {
  */
 const Sidebar = () => {
   // Active tab
-  const [isActive, setIsActive] = useState('');
-  const handleActive = name => {
+  const [isActive, setIsActive] = useState(
+    sessionStorage.getItem('active-tab') || ''
+  );
+  const handleActiveTab = name => {
+    sessionStorage.setItem('active-tab', name);
     setIsActive(name);
   };
   const setLinkCSS = name => {
@@ -67,14 +70,14 @@ const Sidebar = () => {
     <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-primary position-fixed add-scroll">
       <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
         <ul
-          className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
+          className="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
           id="menu"
         >
           <li className="nav-item">
             <Link
               to="/"
               className={setLinkCSS('home')}
-              onClick={() => handleActive('home')}
+              onClick={() => handleActiveTab('home')}
             >
               <i className="fs-4 bi-house-fill"></i>{' '}
               <span className="ms-1 d-none d-sm-inline">{titleHome}</span>
@@ -83,8 +86,8 @@ const Sidebar = () => {
           <li className="nav-item">
             <Link
               to="/notification"
-              className={setLinkCSS('notification') + ' text-warning'}
-              onClick={() => handleActive('notification')}
+              className={setLinkCSS('notification')}
+              onClick={() => handleActiveTab('notification')}
             >
               <i className="fs-4 bi bi-bell-fill"></i>{' '}
               <span className="ms-1 d-none d-sm-inline">
@@ -96,7 +99,7 @@ const Sidebar = () => {
             <Link
               to="/banner"
               className={setLinkCSS('banner')}
-              onClick={() => handleActive('banner')}
+              onClick={() => handleActiveTab('banner')}
             >
               <i className="fs-4 bi bi-badge-ad-fill"></i>{' '}
               <span className="ms-1 d-none d-sm-inline">{titleBanner}</span>
@@ -130,7 +133,7 @@ const Sidebar = () => {
                   <Link
                     to="/invoice/import"
                     className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActive('invoice')}
+                    onClick={() => handleActiveTab('invoice')}
                   >
                     <i className="fs-5 me-2 bi bi-box-arrow-in-down"></i>{' '}
                     <span className="d-none d-sm-inline">
@@ -142,7 +145,7 @@ const Sidebar = () => {
                   <Link
                     to="/invoice/order"
                     className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActive('invoice')}
+                    onClick={() => handleActiveTab('invoice')}
                   >
                     <i className="fs-5 me-2 bi bi-box-seam"></i>{' '}
                     <span className="d-none d-sm-inline">
@@ -154,7 +157,7 @@ const Sidebar = () => {
                   <Link
                     to="/invoice"
                     className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActive('invoice')}
+                    onClick={() => handleActiveTab('invoice')}
                   >
                     <i className="fs-5 me-2 bi bi-boxes"></i>{' '}
                     <span className="d-none d-sm-inline">
@@ -193,7 +196,7 @@ const Sidebar = () => {
                     <i className="fs-5 me-2 bi bi-globe"></i>{' '}
                     <span
                       className="d-none d-sm-inline"
-                      onClick={() => handleActive('product')}
+                      onClick={() => handleActiveTab('product')}
                     >
                       {titleProduct.brand}
                     </span>
@@ -207,7 +210,7 @@ const Sidebar = () => {
                     <i className="fs-5 me-2 bi bi-list-ul"></i>{' '}
                     <span
                       className="d-none d-sm-inline"
-                      onClick={() => handleActive('product')}
+                      onClick={() => handleActiveTab('product')}
                     >
                       {titleProduct.category}
                     </span>
@@ -221,7 +224,7 @@ const Sidebar = () => {
                     <i className="fs-5 me-2 bi bi-percent"></i>{' '}
                     <span
                       className="d-none d-sm-inline"
-                      onClick={() => handleActive('product')}
+                      onClick={() => handleActiveTab('product')}
                     >
                       {titleProduct.discount}
                     </span>
@@ -232,7 +235,7 @@ const Sidebar = () => {
                     <i className="fs-5 me-2 bi bi-tag"></i>{' '}
                     <span
                       className="d-none d-sm-inline"
-                      onClick={() => handleActive('product')}
+                      onClick={() => handleActiveTab('product')}
                     >
                       {titleProduct.label}
                     </span>
@@ -243,7 +246,7 @@ const Sidebar = () => {
                     <i className="fs-5 me-2 bi bi-laptop"></i>{' '}
                     <span
                       className="d-none d-sm-inline"
-                      onClick={() => handleActive('product')}
+                      onClick={() => handleActiveTab('product')}
                     >
                       {titleProduct.all}
                     </span>
@@ -256,7 +259,7 @@ const Sidebar = () => {
             <Link
               to="/statistic"
               className={setLinkCSS('statistic')}
-              onClick={() => handleActive('statistic')}
+              onClick={() => handleActiveTab('statistic')}
             >
               <i className="fs-4 bi bi-bar-chart-fill"></i>{' '}
               <span className="ms-1 d-none d-sm-inline">{titleStatistic}</span>
@@ -288,7 +291,7 @@ const Sidebar = () => {
                   <Link
                     to="/role"
                     className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActive('customer')}
+                    onClick={() => handleActiveTab('customer')}
                   >
                     <i className="fs-5 me-2 bi bi-person-fill-lock"></i>{' '}
                     <span className="d-none d-sm-inline">{titleUser.role}</span>
@@ -298,7 +301,7 @@ const Sidebar = () => {
                   <Link
                     to="/customer/:id/address"
                     className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActive('customer')}
+                    onClick={() => handleActiveTab('customer')}
                   >
                     <i className="fs-5 me-2 bi bi-person-vcard"></i>{' '}
                     <span className="d-none d-sm-inline">
@@ -310,7 +313,7 @@ const Sidebar = () => {
                   <Link
                     to="/customer"
                     className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActive('customer')}
+                    onClick={() => handleActiveTab('customer')}
                   >
                     <i className="fs-5 me-2 bi bi-people-fill"></i>{' '}
                     <span className="d-none d-sm-inline">{titleUser.all}</span>
@@ -323,7 +326,7 @@ const Sidebar = () => {
             <Link
               to="/setting"
               className={setLinkCSS('setting')}
-              onClick={() => handleActive('setting')}
+              onClick={() => handleActiveTab('setting')}
             >
               <i className="fs-4 bi bi-wrench-adjustable"></i>{' '}
               <span className="ms-1 d-none d-sm-inline">{titleSetting}</span>

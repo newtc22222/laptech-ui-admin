@@ -35,14 +35,14 @@ const Header = () => {
 
   // Check link
   const [linkActive, setLinkActive] = useState(
-    window.location.pathname.replace('/', '')
+    sessionStorage.getItem('active-tab') || ''
   );
   const compareLink = name => {
-    if (name === 'home' && linkActive === '') return linkCSS.active;
     return linkActive === name ? linkCSS.active : linkCSS.normal;
   };
 
-  const handleClick = name => {
+  const handleActiveTab = name => {
+    sessionStorage.setItem('active-tab', name);
     setLinkActive(name);
   };
 
@@ -67,23 +67,12 @@ const Header = () => {
       </Link>
 
       <ul className="nav nav-pills">
-        <li className="nav-item">
-          <Link
-            to="/"
-            className={compareLink('home')}
-            aria-current="page"
-            onClick={() => handleClick('home')}
-          >
-            HOME
-          </Link>
-        </li>
-        {/* Another tab */}
         {headerTabs.map((item, index) => (
           <li className="nav-item" key={index}>
             <Link
               to={'/' + item}
               className={compareLink(item)}
-              onClick={() => handleClick(item)}
+              onClick={() => handleActiveTab(item)}
             >
               {item.toLocaleUpperCase()}
             </Link>
