@@ -112,4 +112,3 @@ function usePaging(show_record_data, total_record_data) {
 }
 
 export default usePaging;
-ra;
