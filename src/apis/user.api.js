@@ -1,11 +1,11 @@
-import { addToast } from '../redux-features/toast_notify';
-import { BASE_URL, handleResponse } from './api.config';
 import {
   fetchUserStart,
   fetchUserFailed,
-  getUsersSuccess,
-  blockUserSuccess
-} from '../redux-features/users.slice';
+  getUserSuccess,
+  createUserSuccess,
+  updateUserSuccess,
+  deleteUserSuccess
+} from '../redux-feature/user.slice';
 
 const apiUsers = {
   getAllUser: async (dispatch, token) => {
@@ -18,7 +18,7 @@ const apiUsers = {
         }
       });
       const data = await handleResponse(response);
-      dispatch(getUsersSuccess(data));
+      dispatch(getUserSuccess(data));
     } catch (err) {
       dispatch(
         addToast({
