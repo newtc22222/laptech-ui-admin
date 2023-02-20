@@ -38,10 +38,10 @@ async function handleFetch(url, option, cb_start, cb_success, cb_failed) {
     const response = await fetch(url, option);
     const result = await handleResponse(response);
     console.log(result);
-    if (result.status === '500') {
+    if (result.status === 500) {
       throw new Error('Failed to connect server!');
     }
-    if (result.status === '401') {
+    if (result.status === 401) {
       throw new Error('Invalid token!');
     }
     if (result === undefined) {
