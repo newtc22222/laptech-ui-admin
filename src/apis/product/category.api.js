@@ -47,7 +47,7 @@ const apiCategories = {
         );
         dispatch(createCategorySuccess(result.data));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -72,11 +72,10 @@ const apiCategories = {
           'Thay đổi thông tin thành công',
           'Dữ liệu của danh mục vừa được cập nhật vào cơ sở dữ liệu!'
         );
-        console.table(result);
         updateCategory.id = categoryId;
         dispatch(updateCategorySuccess(updateCategory));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -103,7 +102,7 @@ const apiCategories = {
         );
         dispatch(deleteCategorySuccess(categoryId));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
