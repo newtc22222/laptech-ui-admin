@@ -40,7 +40,11 @@ const CategoryForm = ({ category, handleBack }) => {
     try {
       const formData = new FormData();
       formData.append('file', image.file, image.filename);
-      const result = await apiUpload.uploadImage(formData, accessToken);
+      const result = await apiUpload.uploadImage(
+        dispatch,
+        formData,
+        accessToken
+      );
 
       const newCategory = {
         name: nameRef.current.value,
@@ -70,7 +74,7 @@ const CategoryForm = ({ category, handleBack }) => {
       if (image.image != null && image.image != category.image) {
         const formData = new FormData();
         formData.append('file', image.file, image.filename);
-        result = await apiUpload.uploadImage(formData, accessToken);
+        result = await apiUpload.uploadImage(dispatch, formData, accessToken);
       }
 
       const updateCategory = {

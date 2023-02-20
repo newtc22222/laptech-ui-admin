@@ -48,20 +48,6 @@ const Category = () => {
     action.showModal(true);
   }, []);
 
-  if (workMode === WorkMode.create) {
-    return (
-      <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-    );
-  }
-  if (workMode === WorkMode.edit) {
-    return (
-      <CategoryForm
-        category={categoryEdit}
-        handleBack={() => action.changeWorkMode(WorkMode.view)}
-      />
-    );
-  }
-
   if (isFetching) {
     return <Loading />;
   }
@@ -73,6 +59,15 @@ const Category = () => {
           show={showModal}
           setShow={action.showModal}
           props={modalValue}
+        />
+      )}
+      {workMode === WorkMode.create && (
+        <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <CategoryForm
+          category={categoryEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
