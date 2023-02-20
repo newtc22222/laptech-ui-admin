@@ -6,8 +6,6 @@
  * @returns {number[]} [idx_start, idx_end]
  */
 function getPagingIndex(current_page, range_in_page, list_length) {
-  if (list === undefined || list === null) return;
-
   const idx_start = (current_page - 1) * range_in_page;
   const idx_end =
     current_page * range_in_page < list_length
