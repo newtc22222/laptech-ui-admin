@@ -1,29 +1,36 @@
 import React from 'react';
+import Loading from '../../components/common/Loading';
 import useTable from '../../hooks/useTable';
 
 const titleButtonUpdate = 'Cập nhật';
 const titleButtonDelete = 'Xóa';
+const headerList = [
+  'ID',
+  'Tiêu đề',
+  'Ảnh mô tả',
+  'Nội dung gợi ý',
+  'Mô tả chi tiết',
+  'Mẫu hiển thị',
+  'Thiết lập'
+];
 
 /**
  * @since 2023-02-13
  */
 const LabelTable = ({
   labelList,
+  labelTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
+  if (labelList === null || labelList === undefined) return <Loading />;
+
   return useTable(
-    [
-      'ID',
-      'Tiêu đề',
-      'Ảnh mô tả',
-      'Nội dung gợi ý',
-      'Mô tả chi tiết',
-      'Mẫu hiển thị',
-      'Thiết lập'
-    ],
-    () =>
-      labelList?.map(label => (
+    headerList,
+    labelList,
+    labelTotalRecord,
+    (idx_start, idx_end) =>
+      labelList.slice(idx_start, idx_end).map(label => (
         <tr key={label.id} className="text-center">
           <td>{label.id}</td>
           <td className="fw-bolder">{label.name}</td>

@@ -84,6 +84,7 @@ const BrandPage = () => {
       </div>
       <BrandTable
         brandList={brandList}
+        brandTotalRecord={brandList?.length}
         handleSetUpdateMode={brand => action.setUpdateMode(brand)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />

@@ -81,6 +81,7 @@ const Category = () => {
       </div>
       <CategoryTable
         categoryList={categoryList}
+        categoryTotalRecord={categoryList?.length}
         handleSetUpdateMode={category => action.setUpdateMode(category)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />

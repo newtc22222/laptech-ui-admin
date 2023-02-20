@@ -10,15 +10,18 @@ const getClassPageItem = condition => {
 };
 
 /**
- * @param {number} unit_in_page
- * @param {object[]} dataList
+ * @param {number} unitInPage
+ * @param {number} show_record_data the range of data show in page
+ * @param {number} total_record_data the range of data in database
  * @returns {any[]} [idx_start, idx_end, cb_handlePaging]
  * @since 2023-02-17
  */
-function usePaging(unit_in_page, dataList) {
-  const [currentPage, setCurrentPage] = useState(1);
+function usePaging(show_record_data, total_record_data) {
+  const [unitInPage, setUnitInPage] = useState(10);
+  const [current_page, setCurrentPage] = useState(1);
+
   const page_num = [];
-  const page_amount = Math.ceil(dataList.length / unit_in_page);
+  const page_amount = Math.ceil(total_record_data / unitInPage);
   if (page_amount > 1) {
     for (let i = 1; i <= page_amount; i++) {
       page_num.push(i);
@@ -27,17 +30,22 @@ function usePaging(unit_in_page, dataList) {
 
   const action = {
     firstPage: () => setCurrentPage(1),
-    prevPage: () => setCurrentPage(currentPage - 1),
+    prevPage: () => setCurrentPage(current_page - 1),
     choosePage: number => setCurrentPage(number),
-    nextPage: () => setCurrentPage(currentPage + 1),
-    lastPage: () => setCurrentPage(page_amount)
+    nextPage: () => setCurrentPage(current_page + 1),
+    lastPage: () => setCurrentPage(page_amount),
+    changeUnitInPage: number => setUnitInPage(number)
   };
 
-  const [idx_start, idx_end] = getPagingIndex(
-    currentPage,
-    unit_in_page,
-    dataList
+  let [idx_start, idx_end] = getPagingIndex(
+    current_page,
+    unitInPage,
+    show_record_data
   );
+
+  if (show_record_data <= unitInPage) {
+    [idx_start, idx_end] = [0, show_record_data];
+  }
 
   return [
     idx_start,
@@ -47,12 +55,12 @@ function usePaging(unit_in_page, dataList) {
         {page_amount > 1 && (
           <nav aria-label="Page navigation">
             <ul className="pagination justify-content-center">
-              <li className={getClassPageItem(currentPage === 1)}>
+              <li className={getClassPageItem(current_page === 1)}>
                 <a className="page-link" href="#" onClick={action.firstPage}>
                   First
                 </a>
               </li>
-              <li className={getClassPageItem(currentPage === 1)}>
+              <li className={getClassPageItem(current_page === 1)}>
                 <a className="page-link" href="#" onClick={action.prevPage}>
                   <span aria-hidden="true">&laquo;</span>
                 </a>
@@ -60,7 +68,7 @@ function usePaging(unit_in_page, dataList) {
               {page_num?.map(num => (
                 <li
                   className={
-                    num === currentPage ? 'page-item active' : 'page-item'
+                    num === current_page ? 'page-item active' : 'page-item'
                   }
                   key={num}
                 >
@@ -73,15 +81,27 @@ function usePaging(unit_in_page, dataList) {
                   </a>
                 </li>
               ))}
-              <li className={getClassPageItem(currentPage === page_amount)}>
+              <li className={getClassPageItem(current_page === page_amount)}>
                 <a className="page-link" href="#" onClick={action.nextPage}>
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>
-              <li className={getClassPageItem(currentPage === page_amount)}>
+              <li className={getClassPageItem(current_page === page_amount)}>
                 <a className="page-link" href="#" onClick={action.lastPage}>
                   Last
                 </a>
+              </li>
+              <li>
+                <select
+                  onChange={e => action.changeUnitInPage(e.target.value)}
+                  placeholder={unitInPage}
+                >
+                  {[5, 10, 20, 50].map(x => (
+                    <option key={x} value={x}>
+                      {x}
+                    </option>
+                  ))}
+                </select>
               </li>
             </ul>
           </nav>
@@ -92,3 +112,4 @@ function usePaging(unit_in_page, dataList) {
 }
 
 export default usePaging;
+ra;

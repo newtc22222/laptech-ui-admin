@@ -16,7 +16,12 @@ function ProductTable({
   const { data: brandList } = useFetch('/brands');
   const { data: categoryList } = useFetch('/categories');
 
-  if (brandList === null || categoryList === null) {
+  if (
+    brandList === null ||
+    categoryList === null ||
+    productList === undefined ||
+    productList === null
+  ) {
     return <Loading />;
   }
 

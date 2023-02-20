@@ -52,19 +52,6 @@ const Role = () => {
     action.showModal(true);
   }, []);
 
-  // Change work mode
-  if (workMode === WorkMode.create) {
-    return <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />;
-  }
-  if (workMode === WorkMode.edit) {
-    return (
-      <RoleForm
-        role={roleEdit}
-        handleBack={() => action.changeWorkMode(WorkMode.view)}
-      />
-    );
-  }
-
   if (isFetching) {
     return <Loading />;
   }
@@ -76,6 +63,15 @@ const Role = () => {
           show={showModal}
           setShow={action.showModal}
           props={modalValue}
+        />
+      )}
+      {workMode === WorkMode.create && (
+        <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <RoleForm
+          role={roleEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

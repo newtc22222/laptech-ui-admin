@@ -85,6 +85,7 @@ const Discount = () => {
       </div>
       <DiscountTable
         discountList={discountList}
+        discountTotalRecord={discountList?.length}
         handleSetUpdateMode={discount => action.setUpdateMode(discount)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />

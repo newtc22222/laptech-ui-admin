@@ -1,86 +1,95 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
-import useFetch from '../../hooks/useFetch';
+import useWorkspace from '../../hooks/useWorkspace';
+import WorkMode from '../../common/WorkMode';
+import apiUsers from '../../apis/user.api';
+
+import UserTable from './UserTable';
+import UserForm from './UserForm';
+
+import ModalCustom from '../../components/Modal';
+import Loading from '../../components/common/Loading';
+
 import { getStringBackTime } from '../../utils/HandleTimer';
 
-const gender = {
-  MALE: 'Nam',
-  FEMALE: 'Nữ',
-  OTHER: 'Khác'
-};
+const pageName = 'Người dùng hệ thống';
+const objectName = 'users';
+const titleButtonAdd = 'Thêm thông tin';
 
 const User = () => {
-  const user = useSelector(state => state.auth);
-  if (user === null) {
-    return <Navigate to="/login" />;
-  }
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const [
+    dispatch,
+    Navigate,
+    workMode,
+    showModal,
+    userEdit,
+    modalValue,
+    action
+  ] = useWorkspace();
 
-  const { data: users, loading, error } = useFetch('/users', { method: 'GET' });
+  if (accessToken === null || accessToken === undefined)
+    return <Navigate to="/auth/login" />;
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  const { userList, isFetching, error } = useSelector(
+    state => state[objectName]
+  );
 
-  if (error) {
-    return <p>{error}</p>;
+  // Loading
+  useEffect(() => {
+    apiUsers.getAllUser(dispatch);
+  }, []);
+
+  // Show delete modal
+  const handleShowDeleteModal = useCallback((userId, userName) => {
+    action.addModalValue(
+      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${userName} khỏi hệ thống không?`,
+      () => {
+        apiUsers.blockUser(dispatch, userId, accessToken);
+        action.showModal(false);
+      }
+    );
+    action.showModal(true);
+  }, []);
+
+  if (isFetching) {
+    return <Loading />;
   }
 
   return (
     <div>
+      {showModal && (
+        <ModalCustom
+          show={showModal}
+          setShow={action.showModal}
+          props={modalValue}
+        />
+      )}
+      {workMode === WorkMode.create && (
+        <UserForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <UserForm
+          user={userEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
+      )}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">Khách hàng</h1>
+        <h1 className="h2">{pageName}</h1>
+        <button
+          className="btn btn-primary fw-bold"
+          onClick={action.setCreateMode}
+        >
+          {titleButtonAdd}
+        </button>
       </div>
-      <div className="table-responsive">
-        <table className="table table-sm table-hover">
-          <thead className="bg-dark text-white">
-            <tr>
-              <th scope="col" className="p-2">
-                Tên người dùng
-              </th>
-              <th scope="col" className="p-2">
-                Số điện thoại
-              </th>
-              <th scope="col" className="p-2">
-                Giới tính
-              </th>
-              <th scope="col" className="p-2">
-                Ngày tạo tài khoản
-              </th>
-              <th scope="col" className="p-2">
-                Cập nhật mới nhất
-              </th>
-              <th scope="col" className="p-2">
-                Trạng thái tài khoản
-              </th>
-              <th scope="col" className="p-2">
-                Thiết lập
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {users?.map((user, index) => {
-              return (
-                <tr key={index}>
-                  <td className="ms-2">{user.name}</td>
-                  <td className="ms-2">{user.phone}</td>
-                  <td className="ms-2">{gender[user.gender]}</td>
-                  <td className="ms-2">{user.createdDate}</td>
-                  <td className="ms-2">
-                    {getStringBackTime(user.lastUpdatedDate)}
-                  </td>
-                  <td className="ms-2">
-                    <p className="fw-bold text-success">Đang sử dụng</p>
-                  </td>
-                  <td className="ms-2">
-                    <button className="btn btn-danger">Khóa tài khoản</button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <UserTable
+        userList={userList}
+        userTotalRecord={userList?.length}
+        handleSetUpdateMode={user => action.setUpdateMode(user)}
+        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+      />
     </div>
   );
 };

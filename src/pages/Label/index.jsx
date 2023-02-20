@@ -80,6 +80,15 @@ const Label = () => {
           props={modalValue}
         />
       )}
+      {workMode === WorkMode.create && (
+        <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <LabelForm
+          label={labelEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
+      )}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 className="h2">{pageName}</h1>
         <button
@@ -91,6 +100,7 @@ const Label = () => {
       </div>
       <LabelTable
         labelList={labelList}
+        labelTotalRecord={labelList?.length}
         handleSetUpdateMode={label => action.setUpdateMode(label)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />
