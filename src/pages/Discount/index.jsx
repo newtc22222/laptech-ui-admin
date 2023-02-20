@@ -52,21 +52,6 @@ const Discount = () => {
     action.showModal(true);
   }, []);
 
-  // Change work mode
-  if (workMode === WorkMode.create) {
-    return (
-      <DiscountForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-    );
-  }
-  if (workMode === WorkMode.edit) {
-    return (
-      <DiscountForm
-        discount={discountEdit}
-        handleBack={() => action.changeWorkMode(WorkMode.view)}
-      />
-    );
-  }
-
   if (isFetching) {
     return <Loading />;
   }
@@ -78,6 +63,15 @@ const Discount = () => {
           show={showModal}
           setShow={action.showModal}
           props={modalValue}
+        />
+      )}
+      {workMode === WorkMode.create && (
+        <DiscountForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <DiscountForm
+          discount={discountEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
