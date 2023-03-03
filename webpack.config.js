@@ -48,6 +48,7 @@ module.exports = {
   },
   devServer: {
     port: 3001,
+    allowedHosts: ['.preview.csb.app'],
     historyApiFallback: true
   },
   plugins: [
