@@ -1,4 +1,4 @@
-import { BASE_URL, handleResponse } from '../../config';
+import { BASE_URL, handleResponse, errorString } from '../../config';
 
 /**
  * @param {String} token
@@ -12,15 +12,15 @@ function handleOption(token, httpMethod, object) {
     'Content-Type': 'application/json'
   };
 
-  if (httpMethod === 'POST' || httpMethod === 'PUT' || httpMethod === 'PATCH') {
+  if (object) {
     fetchOption.body = JSON.stringify(object);
   }
-  if (httpMethod === 'DELETE') {
-    fetchOption.headers = {};
-  }
+
   if (token !== null) {
     fetchOption.headers['Authorization'] = `Bearer ${token}`;
   }
+  // fetchOption.credentials = 'include'; // for http-only cookies
+  console.log(fetchOption);
   return fetchOption;
 }
 
@@ -38,16 +38,14 @@ async function handleFetch(url, option, cb_start, cb_success, cb_failed) {
     const response = await fetch(url, option);
     const result = await handleResponse(response);
     console.log(result);
-    if (result.status === 500) {
-      throw new Error('Failed to connect server!');
-    }
-    if (result.status === 401) {
-      throw new Error('Invalid token!');
+    const status = Number(result.status);
+    if (status >= 400) {
+      throw new Error(errorString[status]);
     }
     if (result === undefined) {
       throw new Error('Invalid data!');
     }
-    cb_success(result);
+    cb_success(result.data);
   } catch (err) {
     cb_failed(err);
   }
@@ -123,6 +121,7 @@ async function POST_FILE(
   option.headers = {
     Authorization: `Bearer ${token}`,
     // 'Content-Type': 'multipart/form-data',
+    // credentials: 'includes',
     redirect: 'follow'
   };
   option.body = data;
