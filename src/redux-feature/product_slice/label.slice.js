@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   labelList: null,
   isFetching: false,
   error: false
-}
+};
 
 const labelSlice = createSlice({
   name: 'label',
   initialState,
   reducers: {
-    fetchLabelStart: (state) => {
+    fetchLabelStart: state => {
       state.isFetching = true;
     },
-    fetchLabelFailed: (state) => {
+    fetchLabelFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const labelSlice = createSlice({
     updateLabelSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.labelList = state.labelList.map((label) => {
+      state.labelList = state.labelList.map(label => {
         if (label.id === action.payload.id) {
-          return action.payload;
+          return { ...label, ...action.payload };
         }
         return label;
       });
@@ -40,9 +40,11 @@ const labelSlice = createSlice({
     deleteLabelSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.labelList = state.labelList.filter(label => label.id !== action.payload);
-    },
-  },
+      state.labelList = state.labelList.filter(
+        label => label.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getLabelSuccess,
   createLabelSuccess,
   updateLabelSuccess,
-  deleteLabelSuccess,
+  deleteLabelSuccess
 } = labelSlice.actions;
 
 export default labelSlice.reducer;

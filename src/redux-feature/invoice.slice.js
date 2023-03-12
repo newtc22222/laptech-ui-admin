@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   invoiceList: null,
   isFetching: false,
   error: false
-}
+};
 
 const invoiceSlice = createSlice({
   name: 'invoice',
   initialState,
   reducers: {
-    fetchInvoiceStart: (state) => {
+    fetchInvoiceStart: state => {
       state.isFetching = true;
     },
-    fetchInvoiceFailed: (state) => {
+    fetchInvoiceFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const invoiceSlice = createSlice({
     updateInvoiceSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.invoiceList = state.invoiceList.map((invoice) => {
+      state.invoiceList = state.invoiceList.map(invoice => {
         if (invoice.id === action.payload.id) {
-          return action.payload;
+          return { ...invoicem, ...action.payload };
         }
         return invoice;
       });
@@ -40,9 +40,11 @@ const invoiceSlice = createSlice({
     deleteInvoiceSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.invoiceList = state.invoiceList.filter(invoice => invoice.id !== action.payload);
-    },
-  },
+      state.invoiceList = state.invoiceList.filter(
+        invoice => invoice.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getInvoiceSuccess,
   createInvoiceSuccess,
   updateInvoiceSuccess,
-  deleteInvoiceSuccess,
+  deleteInvoiceSuccess
 } = invoiceSlice.actions;
 
 export default invoiceSlice.reducer;

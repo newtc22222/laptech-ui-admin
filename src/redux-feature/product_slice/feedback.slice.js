@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   feedbackList: null,
   isFetching: false,
   error: false
-}
+};
 
 const feedbackSlice = createSlice({
   name: 'feedback',
   initialState,
   reducers: {
-    fetchFeedbackStart: (state) => {
+    fetchFeedbackStart: state => {
       state.isFetching = true;
     },
-    fetchFeedbackFailed: (state) => {
+    fetchFeedbackFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const feedbackSlice = createSlice({
     updateFeedbackSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.feedbackList = state.feedbackList.map((feedback) => {
+      state.feedbackList = state.feedbackList.map(feedback => {
         if (feedback.id === action.payload.id) {
-          return action.payload;
+          return { ...feedback, ...action.payload };
         }
         return feedback;
       });
@@ -40,9 +40,11 @@ const feedbackSlice = createSlice({
     deleteFeedbackSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.feedbackList = state.feedbackList.filter(feedback => feedback.id !== action.payload);
-    },
-  },
+      state.feedbackList = state.feedbackList.filter(
+        feedback => feedback.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getFeedbackSuccess,
   createFeedbackSuccess,
   updateFeedbackSuccess,
-  deleteFeedbackSuccess,
+  deleteFeedbackSuccess
 } = feedbackSlice.actions;
 
 export default feedbackSlice.reducer;

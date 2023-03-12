@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   commentList: null,
   isFetching: false,
   error: false
-}
+};
 
 const commentSlice = createSlice({
   name: 'comment',
   initialState,
   reducers: {
-    fetchCommentStart: (state) => {
+    fetchCommentStart: state => {
       state.isFetching = true;
     },
-    fetchCommentFailed: (state) => {
+    fetchCommentFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const commentSlice = createSlice({
     updateCommentSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.commentList = state.commentList.map((comment) => {
+      state.commentList = state.commentList.map(comment => {
         if (comment.id === action.payload.id) {
-          return action.payload;
+          return { ...comment, ...action.payload };
         }
         return comment;
       });
@@ -40,9 +40,11 @@ const commentSlice = createSlice({
     deleteCommentSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.commentList = state.commentList.filter(comment => comment.id !== action.payload);
-    },
-  },
+      state.commentList = state.commentList.filter(
+        comment => comment.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getCommentSuccess,
   createCommentSuccess,
   updateCommentSuccess,
-  deleteCommentSuccess,
+  deleteCommentSuccess
 } = commentSlice.actions;
 
 export default commentSlice.reducer;

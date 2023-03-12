@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   brandList: null,
   isFetching: false,
   error: false
-}
+};
 
 const brandSlice = createSlice({
   name: 'brand',
   initialState,
   reducers: {
-    fetchBrandStart: (state) => {
+    fetchBrandStart: state => {
       state.isFetching = true;
     },
-    fetchBrandFailed: (state) => {
+    fetchBrandFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const brandSlice = createSlice({
     updateBrandSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.brandList = state.brandList.map((brand) => {
+      state.brandList = state.brandList.map(brand => {
         if (brand.id === action.payload.id) {
-          return action.payload;
+          return { ...brand, ...action.payload };
         }
         return brand;
       });
@@ -40,9 +40,11 @@ const brandSlice = createSlice({
     deleteBrandSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.brandList = state.brandList.filter(brand => brand.id !== action.payload);
-    },
-  },
+      state.brandList = state.brandList.filter(
+        brand => brand.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getBrandSuccess,
   createBrandSuccess,
   updateBrandSuccess,
-  deleteBrandSuccess,
+  deleteBrandSuccess
 } = brandSlice.actions;
 
 export default brandSlice.reducer;

@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   discountList: null,
   isFetching: false,
   error: false
-}
+};
 
 const discountSlice = createSlice({
   name: 'discount',
   initialState,
   reducers: {
-    fetchDiscountStart: (state) => {
+    fetchDiscountStart: state => {
       state.isFetching = true;
     },
-    fetchDiscountFailed: (state) => {
+    fetchDiscountFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const discountSlice = createSlice({
     updateDiscountSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.discountList = state.discountList.map((discount) => {
+      state.discountList = state.discountList.map(discount => {
         if (discount.id === action.payload.id) {
-          return action.payload;
+          return { ...discount, ...action.payload };
         }
         return discount;
       });
@@ -40,9 +40,11 @@ const discountSlice = createSlice({
     deleteDiscountSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.discountList = state.discountList.filter(discount => discount.id !== action.payload);
-    },
-  },
+      state.discountList = state.discountList.filter(
+        discount => discount.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getDiscountSuccess,
   createDiscountSuccess,
   updateDiscountSuccess,
-  deleteDiscountSuccess,
+  deleteDiscountSuccess
 } = discountSlice.actions;
 
 export default discountSlice.reducer;

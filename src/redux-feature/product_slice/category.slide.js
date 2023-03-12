@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   categoryList: null,
   isFetching: false,
   error: false
-}
+};
 
 const categorySlice = createSlice({
   name: 'category',
   initialState,
   reducers: {
-    fetchCategoryStart: (state) => {
+    fetchCategoryStart: state => {
       state.isFetching = true;
     },
-    fetchCategoryFailed: (state) => {
+    fetchCategoryFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const categorySlice = createSlice({
     updateCategorySuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.categoryList = state.categoryList.map((category) => {
+      state.categoryList = state.categoryList.map(category => {
         if (category.id === action.payload.id) {
-          return action.payload;
+          return { ...category, ...action.payload };
         }
         return category;
       });
@@ -40,9 +40,11 @@ const categorySlice = createSlice({
     deleteCategorySuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.categoryList = state.categoryList.filter(category => category.id !== action.payload);
-    },
-  },
+      state.categoryList = state.categoryList.filter(
+        category => category.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getCategorySuccess,
   createCategorySuccess,
   updateCategorySuccess,
-  deleteCategorySuccess,
+  deleteCategorySuccess
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

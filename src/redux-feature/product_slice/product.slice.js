@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   productList: null,
   isFetching: false,
   error: false
-}
+};
 
 const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    fetchProductStart: (state) => {
+    fetchProductStart: state => {
       state.isFetching = true;
     },
-    fetchProductFailed: (state) => {
+    fetchProductFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const productSlice = createSlice({
     updateProductSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.productList = state.productList.map((product) => {
+      state.productList = state.productList.map(product => {
         if (product.id === action.payload.id) {
-          return action.payload;
+          return { ...product, ...action.payload };
         }
         return product;
       });
@@ -40,9 +40,11 @@ const productSlice = createSlice({
     deleteProductSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.productList = state.productList.filter(product => product.id !== action.payload);
-    },
-  },
+      state.productList = state.productList.filter(
+        product => product.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getProductSuccess,
   createProductSuccess,
   updateProductSuccess,
-  deleteProductSuccess,
+  deleteProductSuccess
 } = productSlice.actions;
 
 export default productSlice.reducer;

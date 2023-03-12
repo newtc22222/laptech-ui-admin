@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   roleList: null,
   isFetching: false,
   error: false
-}
+};
 
 const roleSlice = createSlice({
   name: 'role',
   initialState,
   reducers: {
-    fetchRoleStart: (state) => {
+    fetchRoleStart: state => {
       state.isFetching = true;
     },
-    fetchRoleFailed: (state) => {
+    fetchRoleFailed: state => {
       state.isFetching = false;
       state.error = true;
     },
@@ -30,9 +30,9 @@ const roleSlice = createSlice({
     updateRoleSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.roleList = state.roleList.map((role) => {
+      state.roleList = state.roleList.map(role => {
         if (role.id === action.payload.id) {
-          return action.payload;
+          return { ...role, ...action.payload };
         }
         return role;
       });
@@ -40,9 +40,11 @@ const roleSlice = createSlice({
     deleteRoleSuccess: (state, action) => {
       state.isFetching = false;
       state.error = false;
-      state.roleList = state.roleList.filter(role => role.id !== action.payload);
-    },
-  },
+      state.roleList = state.roleList.filter(
+        role => role.id !== action.payload
+      );
+    }
+  }
 });
 
 export const {
@@ -51,7 +53,7 @@ export const {
   getRoleSuccess,
   createRoleSuccess,
   updateRoleSuccess,
-  deleteRoleSuccess,
+  deleteRoleSuccess
 } = roleSlice.actions;
 
 export default roleSlice.reducer;
