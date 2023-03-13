@@ -7,11 +7,9 @@ import {
   updateRoleSuccess,
   deleteRoleSuccess
 } from '../redux-feature/role.slice';
-import {
-  handleShowToast,
-  NotificationType
-} from '../utils/HandleNotification';
+import { handleShowToast, NotificationType } from '../utils/HandleNotification';
 import MakeRefreshToken from './helper/MakeRefreshToken';
+import { getUpdateByUserInSystem } from '../helper/getUser';
 
 const apiRoles = {
   getAllRoles: async (dispatch, token) => {
@@ -45,9 +43,9 @@ const apiRoles = {
           'Thêm thông tin thành công',
           'Một phân quyền vừa được thêm vào cơ sở dữ liệu!'
         );
-        dispatch(createRoleSuccess(result.data));
+        dispatch(createRoleSuccess(result));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -75,7 +73,7 @@ const apiRoles = {
         updateRole.id = roleId;
         dispatch(updateRoleSuccess(updateRole));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -90,7 +88,7 @@ const apiRoles = {
   deleteRole: async (dispatch, roleId, token) => {
     await FetchAPI.DELETE(
       `roles/${roleId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchRoleStart()),
       result => {
@@ -102,7 +100,7 @@ const apiRoles = {
         );
         dispatch(deleteRoleSuccess(roleId));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,

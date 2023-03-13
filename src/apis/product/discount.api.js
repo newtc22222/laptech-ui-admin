@@ -12,6 +12,7 @@ import {
   NotificationType
 } from '../../utils/HandleNotification';
 import MakeRefreshToken from '../helper/MakeRefreshToken';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const apiDiscounts = {
   getAllDiscounts: async dispatch => {
@@ -45,9 +46,9 @@ const apiDiscounts = {
           'Thêm thông tin thành công',
           'Một mã giảm giá  vừa được thêm vào cơ sở dữ liệu!'
         );
-        dispatch(createDiscountSuccess(result.data));
+        dispatch(createDiscountSuccess(result));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -75,7 +76,7 @@ const apiDiscounts = {
         updateDiscount.id = discountId;
         dispatch(updateDiscountSuccess(updateDiscount));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -90,7 +91,7 @@ const apiDiscounts = {
   deleteDiscount: async (dispatch, discountId, token) => {
     await FetchAPI.DELETE(
       `discounts/${discountId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchDiscountStart()),
       result => {
@@ -102,7 +103,7 @@ const apiDiscounts = {
         );
         dispatch(deleteDiscountSuccess(discountId));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,

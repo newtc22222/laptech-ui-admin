@@ -12,6 +12,7 @@ import {
   NotificationType
 } from '../../utils/HandleNotification';
 import MakeRefreshToken from '../helper/MakeRefreshToken';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const apiBrands = {
   getAllBrands: async dispatch => {
@@ -45,15 +46,19 @@ const apiBrands = {
           'Thêm thông tin thành công',
           'Một thương hiệu vừa được thêm vào cơ sở dữ liệu!'
         );
-        dispatch(createBrandSuccess(result.data));
+        dispatch(createBrandSuccess(result));
       },
-      (err) => {
-        handleShowToast(
-          dispatch,
-          NotificationType.ERROR,
-          'Lỗi hệ thống',
-          'Dữ liệu lỗi, không thể gửi đến server!'
-        );
+      err => {
+        console.log(err.toString());
+        const isResourceAlreadyExist = err
+          .toString()
+          .toLowerCase()
+          .includes('already existed');
+        const title = isResourceAlreadyExist ? 'Lỗi dữ liệu' : 'Lỗi hệ thống';
+        const content = isResourceAlreadyExist
+          ? 'Thông tin đã có sẵn trong hệ thống!'
+          : 'Dữ liệu lỗi, không thể gửi đến server!';
+        handleShowToast(dispatch, NotificationType.ERROR, title, content);
         dispatch(fetchBrandFailed());
         MakeRefreshToken(err, dispatch);
       }
@@ -75,7 +80,7 @@ const apiBrands = {
         updateBrand.id = brandId;
         dispatch(updateBrandSuccess(updateBrand));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -90,7 +95,7 @@ const apiBrands = {
   deleteBrand: async (dispatch, brandId, token) => {
     await FetchAPI.DELETE(
       `brands/${brandId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchBrandStart()),
       result => {
@@ -102,7 +107,7 @@ const apiBrands = {
         );
         dispatch(deleteBrandSuccess(brandId));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,

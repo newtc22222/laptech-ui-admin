@@ -11,6 +11,7 @@ import {
   handleShowToast,
   NotificationType
 } from '../../utils/HandleNotification';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const apiProducts = {
   getAllProducts: async dispatch => {
@@ -44,7 +45,7 @@ const apiProducts = {
           'Thêm thông tin thành công',
           'Một sản phẩm vừa được thêm vào cơ sở dữ liệu!'
         );
-        dispatch(createProductSuccess(result.data));
+        dispatch(createProductSuccess(result));
       },
       () => {
         handleShowToast(
@@ -88,7 +89,7 @@ const apiProducts = {
   deleteProduct: async (dispatch, productId, token) => {
     await FetchAPI.DELETE(
       `products/${productId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchProductStart()),
       result => {

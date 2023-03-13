@@ -12,6 +12,7 @@ import {
   NotificationType
 } from '../../utils/HandleNotification';
 import MakeRefreshToken from '../helper/MakeRefreshToken';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const apiLabels = {
   getAllLabels: async dispatch => {
@@ -45,9 +46,9 @@ const apiLabels = {
           'Thêm thông tin thành công',
           'Một nhãn mới vừa được thêm vào cơ sở dữ liệu!'
         );
-        dispatch(createLabelSuccess(result.data));
+        dispatch(createLabelSuccess(result));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -75,7 +76,7 @@ const apiLabels = {
         updateLabel.id = labelId;
         dispatch(updateLabelSuccess(updateLabel));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
@@ -90,7 +91,7 @@ const apiLabels = {
   deleteLabel: async (dispatch, labelId, token) => {
     await FetchAPI.DELETE(
       `labels/${labelId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchLabelStart()),
       result => {
@@ -102,7 +103,7 @@ const apiLabels = {
         );
         dispatch(deleteLabelSuccess(labelId));
       },
-      (err) => {
+      err => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,

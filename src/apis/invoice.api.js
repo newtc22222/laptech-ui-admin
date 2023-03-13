@@ -11,6 +11,7 @@ import {
   handleShowToast,
   NotificationType
 } from '../../utils/HandleNotification';
+import { getUpdateByUserInSystem } from '../helper/getUser';
 
 const apiInvoices = {
   getAllInvoices: async dispatch => {
@@ -44,7 +45,7 @@ const apiInvoices = {
           'Thêm thông tin thành công',
           'Một hóa đơn vừa được thêm vào cơ sở dữ liệu!'
         );
-        dispatch(createInvoiceSuccess(result.data));
+        dispatch(createInvoiceSuccess(result));
       },
       () => {
         handleShowToast(
@@ -88,7 +89,7 @@ const apiInvoices = {
   deleteInvoice: async (dispatch, invoiceId, token) => {
     await FetchAPI.DELETE(
       `invoices/${invoiceId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchInvoiceStart()),
       result => {

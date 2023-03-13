@@ -1,31 +1,32 @@
-import FetchAPI from "../custom/fetch-api";
+import FetchAPI from '../custom/fetch-api';
 import {
   fetchFeedbackStart,
   fetchFeedbackFailed,
   getFeedbacksSuccess,
   createFeedbackSuccess,
   updateFeedbackSuccess,
-  deleteFeedbackSuccess,
-} from '../../redux-features/product/feedback.slice'
+  deleteFeedbackSuccess
+} from '../../redux-features/product/feedback.slice';
 import {
   handleShowToast,
   NotificationType
-} from "../../utils/HandleNotification";
+} from '../../utils/HandleNotification';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const apiFeedbacks = {
   getAllFeedbacks: async (dispatch, productId) => {
     await FetchAPI.GET_ALL(
-      (productId) ? `products/${productId}/feedbacks` : 'feedbacks',
+      productId ? `products/${productId}/feedbacks` : 'feedbacks',
       null,
       null,
       () => dispatch(fetchFeedbackStart()),
-      (feedbackList) => dispatch(getFeedbacksSuccess(feedbackList)),
+      feedbackList => dispatch(getFeedbacksSuccess(feedbackList)),
       () => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Không thể kết nối với Server!"
+          'Lỗi hệ thống',
+          'Không thể kết nối với Server!'
         );
         dispatch(fetchFeedbackFailed());
       }
@@ -37,24 +38,25 @@ const apiFeedbacks = {
       feedback,
       token,
       () => dispatch(fetchFeedbackStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Thêm thông tin thành công",
-          "Một đánh giá vừa được thêm vào!"
+          'Thêm thông tin thành công',
+          'Một đánh giá vừa được thêm vào!'
         );
-        dispatch(createFeedbackSuccess(result.data));
+        dispatch(createFeedbackSuccess(result));
       },
       () => {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Dữ liệu lỗi, không thể gửi đến server!"
+          'Lỗi hệ thống',
+          'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchFeedbackFailed());
-      });
+      }
+    );
   },
   updateFeedback: async (dispatch, updateFeedback, feedbackId, token) => {
     await FetchAPI.PUT(
@@ -62,14 +64,14 @@ const apiFeedbacks = {
       updateFeedback,
       token,
       () => dispatch(fetchFeedbackStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Thay đổi thông tin thành công",
-          "Thông tin của đánh giá vừa được cập nhật!"
+          'Thay đổi thông tin thành công',
+          'Thông tin của đánh giá vừa được cập nhật!'
         );
-        console.table(result)
+        console.table(result);
         updateFeedback.id = feedbackId;
         dispatch(updateFeedbackSuccess(updateFeedback));
       },
@@ -77,24 +79,25 @@ const apiFeedbacks = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Dữ liệu lỗi, không thể gửi đến server!"
+          'Lỗi hệ thống',
+          'Dữ liệu lỗi, không thể gửi đến server!'
         );
         dispatch(fetchFeedbackFailed());
-      });
+      }
+    );
   },
   deleteFeedback: async (dispatch, feedbackId, token) => {
     await FetchAPI.DELETE(
       `feedbacks/${feedbackId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchFeedbackStart()),
-      (result) => {
+      result => {
         handleShowToast(
           dispatch,
           NotificationType.SUCCESS,
-          "Xóa thông tin thành công",
-          "Dữ liệu đã được xóa khỏi hệ thống!"
+          'Xóa thông tin thành công',
+          'Dữ liệu đã được xóa khỏi hệ thống!'
         );
         console.table(result);
         dispatch(deleteFeedbackSuccess(feedbackId));
@@ -103,12 +106,13 @@ const apiFeedbacks = {
         handleShowToast(
           dispatch,
           NotificationType.ERROR,
-          "Lỗi hệ thống",
-          "Không thể xóa đánh giá này khỏi hệ thống!"
+          'Lỗi hệ thống',
+          'Không thể xóa đánh giá này khỏi hệ thống!'
         );
         dispatch(fetchFeedbackFailed());
-      });
+      }
+    );
   }
-}
+};
 
 export default apiFeedbacks;

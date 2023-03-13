@@ -12,6 +12,7 @@ import {
   NotificationType
 } from '../../utils/HandleNotification';
 import MakeRefreshToken from '../helper/MakeRefreshToken';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const apiCategories = {
   getAllCategories: async dispatch => {
@@ -45,7 +46,7 @@ const apiCategories = {
           'Thêm thông tin thành công',
           'Một danh mục mới vừa được thêm vào cơ sở dữ liệu!'
         );
-        dispatch(createCategorySuccess(result.data));
+        dispatch(createCategorySuccess(result));
       },
       err => {
         handleShowToast(
@@ -90,7 +91,7 @@ const apiCategories = {
   deleteCategory: async (dispatch, categoryId, token) => {
     await FetchAPI.DELETE(
       `categories/${categoryId}`,
-      null,
+      getUpdateByUserInSystem(),
       token,
       () => dispatch(fetchCategoryStart()),
       result => {
