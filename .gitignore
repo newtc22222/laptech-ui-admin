@@ -8,5 +8,8 @@
 # modules
 /node_modules
 
+# samples
+/samples
+
 # lock file
 /package-lock.json
