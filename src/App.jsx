@@ -29,6 +29,8 @@ import {
   User
 } from './pages';
 
+import './common/css/laptech.css';
+
 /**
  * @since 2022-12-23
  */
