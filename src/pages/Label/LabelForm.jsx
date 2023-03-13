@@ -5,6 +5,7 @@ import useForm from '../../hooks/useForm';
 import apiLabels from '../../apis/product/label.api';
 
 import { addToast } from '../../redux-feature/toast_notify';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const titleName = 'Tiêu đề (hiển thị trực tiếp)';
 const titleIcon = 'Biểu tượng đại diện';
@@ -32,8 +33,7 @@ const LabelForm = ({ label, handleBack }) => {
         icon: iconRef.current.value,
         title: titleRef.current.value,
         description: descriptionRef.current.value,
-        createdDate: new Date().toISOString(),
-        modifiedDate: new Date().toISOString()
+        ...getUpdateByUserInSystem()
       };
 
       await apiLabels.createNewLabel(dispatch, newLabel, accessToken);
@@ -57,8 +57,8 @@ const LabelForm = ({ label, handleBack }) => {
         icon: iconRef.current.value,
         title: titleRef.current.value,
         description: descriptionRef.current.value,
-        createdDate: label.createdDate,
-        modifiedDate: new Date().toISOString()
+        modifiedDate: new Date().toISOString(),
+        ...getUpdateByUserInSystem()
       };
       await apiLabels.updateLabel(dispatch, newLabel, label.id, accessToken);
       handleBack();

@@ -1,9 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import useForm from '../../hooks/useForm';
+
 import apiCategories from '../../apis/product/category.api';
 import apiUpload from '../../apis/upload.api';
-import useForm from '../../hooks/useForm';
+
 import { addToast } from '../../redux-feature/toast_notify';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const titleName = 'Tên phân loại';
 const titleDescription = 'Mô tả chung';
@@ -36,26 +39,27 @@ const CategoryForm = ({ category, handleBack }) => {
     }
   };
 
-  const handleCreateData = async () => {
+  const handleCreateData = () => {
     try {
       const formData = new FormData();
       formData.append('file', image.file, image.filename);
-      const result = await apiUpload.uploadImage(
-        dispatch,
-        formData,
-        accessToken
-      );
+      const promise = new Promise((resolve, reject) => {
+        const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+        if (result) resolve(result);
+        reject(new Error('Cannot upload images!'));
+      });
 
-      const newCategory = {
-        name: nameRef.current.value,
-        description: descriptionRef.current.value,
-        image: result.data,
-        createdDate: new Date().toISOString(),
-        modifiedDate: new Date().toISOString()
-      };
+      promise.then(result => {
+        const newCategory = {
+          name: nameRef.current.value,
+          description: descriptionRef.current.value,
+          image: result,
+          ...getUpdateByUserInSystem()
+        };
 
-      await apiCategories.createNewCategory(dispatch, newCategory, accessToken);
-      handleBack();
+        apiCategories.createNewCategory(dispatch, newCategory, accessToken);
+        handleBack();
+      });
     } catch (err) {
       console.log(err);
       dispatch(
@@ -68,24 +72,32 @@ const CategoryForm = ({ category, handleBack }) => {
     }
   };
 
-  const handleSaveData = async () => {
+  const handleSaveData = () => {
     try {
-      let result;
+      let promise;
       if (image.image != null && image.image != category.image) {
         const formData = new FormData();
         formData.append('file', image.file, image.filename);
-        result = await apiUpload.uploadImage(dispatch, formData, accessToken);
+
+        promise = new Promise((resolve, reject) => {
+          const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+          if (result) resolve(result);
+          reject(new Error('Cannot upload images!'));
+        });
       }
 
       const updateCategory = {
         name: nameRef.current.value,
         description: descriptionRef.current.value,
-        image: result?.data || category.image,
-        createdDate: category.createdDate,
-        modifiedDate: new Date().toISOString()
+        image: category.image,
+        ...getUpdateByUserInSystem()
       };
 
-      await apiCategories.updateCategory(
+      promise?.then(result => {
+        updateCategory.image = result;
+      });
+
+      apiCategories.updateCategory(
         dispatch,
         updateCategory,
         category.id,

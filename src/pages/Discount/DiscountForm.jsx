@@ -5,6 +5,7 @@ import useForm from '../../hooks/useForm';
 import apiDiscounts from '../../apis/product/discount.api';
 
 import { addToast } from '../../redux-feature/toast_notify';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const titleCode = 'Mã được sử dụng';
 const titleAppliedType = 'Kiểu giảm giá';
@@ -23,7 +24,9 @@ const DiscountForm = ({ discount, handleBack }) => {
 
   const codeRef = useRef();
   const rateRef = useRef();
-  const [appliedType, setAppliedType] = useState(appliedTypeCombobox[0]);
+  const [appliedType, setAppliedType] = useState(
+    discount?.appliedType || appliedTypeCombobox[0]
+  );
   const maxAmountRef = useRef();
   const appliedDateRef = useRef();
   const endedDateRef = useRef();
@@ -37,8 +40,7 @@ const DiscountForm = ({ discount, handleBack }) => {
         maxAmount: maxAmountRef.current.value,
         appliedDate: appliedDateRef.current.value,
         endedDate: endedDateRef.current.value,
-        createdDate: new Date().toISOString(),
-        modifiedDate: new Date().toISOString()
+        ...getUpdateByUserInSystem()
       };
       await apiDiscounts.createNewDiscount(dispatch, newDiscount, accessToken);
       handleBack();
@@ -63,8 +65,8 @@ const DiscountForm = ({ discount, handleBack }) => {
         maxAmount: maxAmountRef.current.value,
         appliedDate: appliedDateRef.current.value,
         endedDate: endedDateRef.current.value,
-        createdDate: discount.createdDate,
-        modifiedDate: new Date().toISOString()
+        modifiedDate: new Date().toISOString(),
+        ...getUpdateByUserInSystem()
       };
       await apiDiscounts.updateDiscount(
         dispatch,
@@ -188,7 +190,10 @@ const DiscountForm = ({ discount, handleBack }) => {
                 type="datetime-local"
                 className="form-control"
                 defaultValue={
-                  discount?.endedDate || new Date().toJSON().slice(0, 19)
+                  discount?.endedDate ||
+                  new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
+                    .toJSON()
+                    .slice(0, 19)
                 }
                 ref={endedDateRef}
               />

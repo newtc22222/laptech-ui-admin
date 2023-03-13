@@ -5,6 +5,7 @@ import useForm from '../../hooks/useForm';
 import apiRoles from '../../apis/role.api';
 
 import { addToast } from '../../redux-feature/toast_notify';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const titleName = 'Tiêu đề (hiển thị trực tiếp)';
 const titleDescription = 'Thông tin chi tiết về phân quyền';
@@ -21,8 +22,7 @@ const RoleForm = ({ role, handleBack }) => {
       const newRole = {
         name: nameRef.current.value,
         description: descriptionRef.current.value,
-        createdDate: new Date().toISOString(),
-        modifiedDate: new Date().toISOString()
+        ...getUpdateByUserInSystem()
       };
 
       await apiRoles.createNewRole(dispatch, newRole, accessToken);
@@ -44,8 +44,8 @@ const RoleForm = ({ role, handleBack }) => {
       const newRole = {
         name: nameRef.current.value,
         description: descriptionRef.current.value,
-        createdDate: role.createdDate,
-        modifiedDate: new Date().toISOString()
+        modifiedDate: new Date().toISOString(),
+        ...getUpdateByUserInSystem()
       };
       await apiRoles.updateRole(dispatch, newRole, role.id, accessToken);
       handleBack();
@@ -69,9 +69,9 @@ const RoleForm = ({ role, handleBack }) => {
     () => (
       <>
         <div className="mb-3">
-          <role htmlFor="role-name" className="form-role">
+          <label htmlFor="role-name" className="form-role">
             {titleName}
-          </role>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -82,9 +82,9 @@ const RoleForm = ({ role, handleBack }) => {
           />
         </div>
         <div className="mb-3">
-          <role htmlFor="role-description" className="form-role">
+          <label htmlFor="role-description" className="form-role">
             {titleDescription}
-          </role>
+          </label>
           <textarea
             className="form-control"
             id="role-description"

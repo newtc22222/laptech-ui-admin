@@ -1,11 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useForm from '../../hooks/useForm';
+// import { removeVietnameseTones } from '../../utils/HandleText';
 
 import apiBrands from '../../apis/product/brand.api';
 import apiUpload from '../../apis/upload.api';
 
 import { addToast } from '../../redux-feature/toast_notify';
+import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const titleName = 'Tên Thương hiệu';
 const titleCountry = 'Quốc gia';
@@ -40,27 +42,27 @@ const BrandForm = ({ brand, handleBack }) => {
     }
   };
 
-  const handleCreateData = async () => {
+  const handleCreateData = () => {
     try {
       const formData = new FormData();
       formData.append('file', logo.file, logo.filename);
-      const result = await apiUpload.uploadImage(
-        dispatch,
-        formData,
-        accessToken
-      );
+      const promise = new Promise((resolve, reject) => {
+        const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+        if (result) resolve(result);
+        reject(new Error('Cannot upload images!'));
+      });
 
-      const newBrand = {
-        name: nameRef.current.value,
-        country: countryRef.current.value,
-        establishDate: dateRef.current.value,
-        logo: result.data,
-        createdDate: new Date().toISOString(),
-        modifiedDate: new Date().toISOString()
-      };
-
-      await apiBrands.createNewBrand(dispatch, newBrand, accessToken);
-      handleBack();
+      promise.then(result => {
+        const newBrand = {
+          name: nameRef.current.value,
+          country: countryRef.current.value,
+          establishDate: dateRef.current.value,
+          logo: result,
+          ...getUpdateByUserInSystem()
+        };
+        apiBrands.createNewBrand(dispatch, newBrand, accessToken);
+        handleBack();
+      });
     } catch (err) {
       console.log(err);
       dispatch(
@@ -73,25 +75,33 @@ const BrandForm = ({ brand, handleBack }) => {
     }
   };
 
-  const handleSaveData = async () => {
+  const handleSaveData = () => {
     try {
-      let result;
+      let promise;
       if (logo.image !== null && logo.image !== brand.logo) {
         const formData = new FormData();
         formData.append('file', logo.file, logo.filename);
-        result = await apiUpload.uploadImage(dispatch, formData, accessToken);
+        // upload new image
+        promise = new Promise((resolve, reject) => {
+          const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+          if (result) resolve(result);
+          reject(new Error('Cannot upload images!'));
+        });
       }
 
       const updateBrand = {
         name: nameRef.current.value,
         country: countryRef.current.value,
         establishDate: dateRef.current.value,
-        logo: result?.data || brand.logo,
-        createdDate: brand.createdDate,
-        modifiedDate: new Date().toISOString()
+        logo: brand.logo,
+        modifiedDate: new Date().toISOString(),
+        ...getUpdateByUserInSystem()
       };
+      promise?.then(result => {
+        updateBrand.logo = result;
+      });
 
-      await apiBrands.updateBrand(dispatch, updateBrand, brand.id, accessToken);
+      apiBrands.updateBrand(dispatch, updateBrand, brand.id, accessToken);
       handleBack();
     } catch (err) {
       console.log(err);
