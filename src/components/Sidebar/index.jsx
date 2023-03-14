@@ -1,337 +1,151 @@
-import React, { useState, memo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { memo } from 'react';
+
 import './style.css';
+import TabBar from './TabBar';
+import TabBarDropDown from './TabBarDropDown';
 
-const titleHome = 'Trang chủ';
-const titleNotification = 'Thông báo';
-const titleBanner = 'Bảng hiệu';
-const titleInvoice = {
-  all: 'Tất cả đơn hàng',
-  default: 'Đơn hàng',
-  import: 'Đơn nhập hàng',
-  sell: 'Đơn bán hàng'
-};
-const titleProduct = {
-  all: 'Tất cả sản phẩm',
-  default: 'Sản phẩm',
-  label: 'Nhãn thuộc tính',
-  brand: 'Thương hiệu',
-  category: 'Phân loại',
-  discount: 'Mã chiết khấu',
-  comment: 'Bình luận',
-  feedback: 'Đánh giá'
-};
-const titleStatistic = 'Thống kê';
-const titleSetting = 'Thiết lập ứng dụng';
-const titleUser = {
-  all: 'Tất cả người dùng',
-  default: 'Người dùng',
-  address: 'Địa chỉ',
-  feedback: 'Đánh giá',
-  role: 'Phân quyền'
-};
-
-const linkCSS = {
-  normal: 'nav-link link-light align-middle px-0',
-  active: 'nav-link link-light align-middle px-0 fs-5 fw-bold'
-};
+const sideBarTab = [
+  {
+    name: 'home',
+    title: 'Trang chủ',
+    url: '/',
+    icon: <i className="fs-4 bi-house-fill"></i>
+  },
+  {
+    name: 'notification',
+    title: 'Thông báo',
+    url: '/notification',
+    icon: <i className="fs-4 bi bi-bell-fill"></i>
+  },
+  {
+    name: 'banner',
+    title: 'Bảng hiệu',
+    url: '/banner',
+    icon: <i className="fs-4 bi bi-badge-ad-fill"></i>
+  },
+  {
+    name: 'invoice',
+    title: 'Đơn hàng',
+    icon: <i className="fs-4 bi-table"></i>,
+    subTab: [
+      {
+        name: 'import',
+        title: 'Đơn nhập hàng',
+        url: '/invoice/import',
+        icon: <i className="fs-5 me-2 bi bi-box-arrow-in-down"></i>
+      },
+      {
+        name: 'order',
+        title: 'Đơn bán hàng',
+        url: '/invoice/order',
+        icon: <i className="fs-5 me-2 bi bi-box-seam"></i>
+      },
+      {
+        name: 'all-invoice',
+        title: 'Tất cả đơn hàng',
+        url: '/invoice',
+        icon: <i className="fs-5 me-2 bi bi-boxes"></i>
+      }
+    ]
+  },
+  {
+    name: 'product',
+    title: 'Sản phẩm',
+    icon: <i className="fs-4 bi-grid-fill"></i>,
+    subTab: [
+      {
+        name: 'brand',
+        title: 'Thương hiệu',
+        url: '/brand',
+        icon: <i className="fs-5 me-2 bi bi-globe"></i>
+      },
+      {
+        name: 'category',
+        title: 'Phân loại',
+        url: '/category',
+        icon: <i className="fs-5 me-2 bi bi-list-ul"></i>
+      },
+      {
+        name: 'discount',
+        title: 'Mã chiết khấu',
+        url: '/discount',
+        icon: <i className="fs-5 me-2 bi bi-percent"></i>
+      },
+      {
+        name: 'label',
+        title: 'Nhãn thuộc tính',
+        url: '/label',
+        icon: <i className="fs-5 me-2 bi bi-tag"></i>
+      },
+      {
+        name: 'all-product',
+        title: 'Tất cả sản phẩm',
+        url: '/product',
+        icon: <i className="fs-5 me-2 bi bi-laptop"></i>
+      }
+    ]
+  },
+  {
+    name: 'statistic',
+    title: 'Thống kê',
+    url: '/statistic',
+    icon: <i className="fs-4 bi bi-bar-chart-fill"></i>
+  },
+  {
+    name: 'user',
+    title: 'Người dùng',
+    icon: <i className="fs-4 bi-person-circle"></i>,
+    subTab: [
+      {
+        name: 'role',
+        title: 'Phân quyền',
+        url: '/role',
+        icon: <i className="fs-5 me-2 bi bi-person-fill-lock"></i>
+      },
+      {
+        name: 'address',
+        title: 'Địa chỉ',
+        url: '/address',
+        icon: <i className="fs-5 me-2 bi bi-person-vcard"></i>
+      },
+      {
+        name: 'all-user',
+        title: 'Tất cả người dùng',
+        url: '/user',
+        icon: <i className="fs-4 bi bi-wrench-adjustable"></i>
+      }
+    ]
+  },
+  {
+    name: 'setting',
+    title: 'Thiết lập ứng dụng',
+    url: '/setting',
+    icon: <i className="fs-4 bi bi-wrench-adjustable"></i>
+  }
+];
 
 /**
  * @since 2023-02-14
  */
 const Sidebar = () => {
-  // Active tab
-  const [isActive, setIsActive] = useState(
-    sessionStorage.getItem('active-tab') || ''
-  );
-  const handleActiveTab = name => {
-    sessionStorage.setItem('active-tab', name);
-    setIsActive(name);
-  };
-  const setLinkCSS = name => {
-    if (isActive === '' && name === 'home') return linkCSS.active;
-    return isActive === name ? linkCSS.active : linkCSS.normal;
-  };
-
-  // Expand tab (Toggle)
-  const [showToggle, setShowToggle] = useState([]);
-  const handleShowToggle = name => {
-    if (showToggle.includes(name)) {
-      setShowToggle(prev => prev.filter(x => x !== name));
-    } else {
-      setShowToggle(prev => [...prev, name]);
-    }
-  };
-  const getToggle = name => {
-    return showToggle.includes(name) ? 'show' : '';
-  };
-
   return (
-    <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-primary position-fixed add-scroll">
-      <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
-        <ul
-          className="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
-          id="menu"
-        >
-          <li className="nav-item">
-            <Link
-              to="/"
-              className={setLinkCSS('home')}
-              onClick={() => handleActiveTab('home')}
-            >
-              <i className="fs-4 bi-house-fill"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">{titleHome}</span>
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/notification"
-              className={setLinkCSS('notification')}
-              onClick={() => handleActiveTab('notification')}
-            >
-              <i className="fs-4 bi bi-bell-fill"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">
-                {titleNotification}
-              </span>
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/banner"
-              className={setLinkCSS('banner')}
-              onClick={() => handleActiveTab('banner')}
-            >
-              <i className="fs-4 bi bi-badge-ad-fill"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">{titleBanner}</span>
-            </Link>
-          </li>
-          <li>
-            <div
-              className={setLinkCSS('invoice')}
-              data-bs-toggle="collapse"
-              data-bs-target="#invoice-collapse"
-              aria-expanded="false"
-              aria-controls="invoice-collapse"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleShowToggle('invoice')}
-            >
-              <i className="fs-4 bi-table"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">
-                {titleInvoice.default}
-              </span>
-            </div>
-            <div
-              className={'collapse ' + getToggle('invoice')}
-              id="invoice-collapse"
-            >
-              <ul
-                className="link-toggle-nav list-unstyled fw-normal pb-1 small"
-                id="submenu1"
-                data-bs-parent="#menu"
-              >
-                <li className="w-100">
-                  <Link
-                    to="/invoice/import"
-                    className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActiveTab('invoice')}
-                  >
-                    <i className="fs-5 me-2 bi bi-box-arrow-in-down"></i>{' '}
-                    <span className="d-none d-sm-inline">
-                      {titleInvoice.import}
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/invoice/order"
-                    className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActiveTab('invoice')}
-                  >
-                    <i className="fs-5 me-2 bi bi-box-seam"></i>{' '}
-                    <span className="d-none d-sm-inline">
-                      {titleInvoice.sell}
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/invoice"
-                    className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActiveTab('invoice')}
-                  >
-                    <i className="fs-5 me-2 bi bi-boxes"></i>{' '}
-                    <span className="d-none d-sm-inline">
-                      {titleInvoice.all}
-                    </span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <div
-              className={setLinkCSS('product')}
-              data-bs-toggle="collapse"
-              data-bs-target="#product-collapse"
-              aria-expanded="true"
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleShowToggle('product')}
-            >
-              <i className="fs-4 bi-grid-fill"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">
-                {titleProduct.default}
-              </span>
-            </div>
-            <div
-              className={'collapse ' + getToggle('product')}
-              id="product-collapse"
-            >
-              <ul
-                className="link-toggle-nav list-unstyled fw-normal pb-1 small"
-                id="submenu1"
-                data-bs-parent="#menu"
-              >
-                <li>
-                  <Link to="/brand" className="nav-link link-light px-0 ms-3">
-                    <i className="fs-5 me-2 bi bi-globe"></i>{' '}
-                    <span
-                      className="d-none d-sm-inline"
-                      onClick={() => handleActiveTab('product')}
-                    >
-                      {titleProduct.brand}
-                    </span>
-                  </Link>
-                </li>
-                <li className="w-100">
-                  <Link
-                    to="/category"
-                    className="nav-link link-light px-0 ms-3"
-                  >
-                    <i className="fs-5 me-2 bi bi-list-ul"></i>{' '}
-                    <span
-                      className="d-none d-sm-inline"
-                      onClick={() => handleActiveTab('product')}
-                    >
-                      {titleProduct.category}
-                    </span>
-                  </Link>
-                </li>
-                <li className="w-100">
-                  <Link
-                    to="/discount"
-                    className="nav-link link-light px-0 ms-3"
-                  >
-                    <i className="fs-5 me-2 bi bi-percent"></i>{' '}
-                    <span
-                      className="d-none d-sm-inline"
-                      onClick={() => handleActiveTab('product')}
-                    >
-                      {titleProduct.discount}
-                    </span>
-                  </Link>
-                </li>
-                <li className="w-100">
-                  <Link to="/label" className="nav-link link-light px-0 ms-3">
-                    <i className="fs-5 me-2 bi bi-tag"></i>{' '}
-                    <span
-                      className="d-none d-sm-inline"
-                      onClick={() => handleActiveTab('product')}
-                    >
-                      {titleProduct.label}
-                    </span>
-                  </Link>
-                </li>
-                <li className="w-100">
-                  <Link to="/product" className="nav-link link-light px-0 ms-3">
-                    <i className="fs-5 me-2 bi bi-laptop"></i>{' '}
-                    <span
-                      className="d-none d-sm-inline"
-                      onClick={() => handleActiveTab('product')}
-                    >
-                      {titleProduct.all}
-                    </span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/statistic"
-              className={setLinkCSS('statistic')}
-              onClick={() => handleActiveTab('statistic')}
-            >
-              <i className="fs-4 bi bi-bar-chart-fill"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">{titleStatistic}</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className={setLinkCSS('customer')}
-              data-bs-toggle="collapse"
-              data-bs-target="#customer-collapse"
-              aria-expanded="true"
-              onClick={() => handleShowToggle('customer')}
-            >
-              <i className="fs-4 bi-person-circle"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">
-                {titleUser.default}
-              </span>
-            </Link>
-            <div
-              className={'collapse ' + getToggle('customer')}
-              id="customer-collapse"
-            >
-              <ul
-                className="link-toggle-nav list-unstyled fw-normal pb-1 small"
-                id="submenu1"
-                data-bs-parent="#menu"
-              >
-                <li className="w-100">
-                  <Link
-                    to="/role"
-                    className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActiveTab('customer')}
-                  >
-                    <i className="fs-5 me-2 bi bi-person-fill-lock"></i>{' '}
-                    <span className="d-none d-sm-inline">{titleUser.role}</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/customer/:id/address"
-                    className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActiveTab('customer')}
-                  >
-                    <i className="fs-5 me-2 bi bi-person-vcard"></i>{' '}
-                    <span className="d-none d-sm-inline">
-                      {titleUser.address}
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/customer"
-                    className="nav-link link-light px-0 ms-3"
-                    onClick={() => handleActiveTab('customer')}
-                  >
-                    <i className="fs-5 me-2 bi bi-people-fill"></i>{' '}
-                    <span className="d-none d-sm-inline">{titleUser.all}</span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/setting"
-              className={setLinkCSS('setting')}
-              onClick={() => handleActiveTab('setting')}
-            >
-              <i className="fs-4 bi bi-wrench-adjustable"></i>{' '}
-              <span className="ms-1 d-none d-sm-inline">{titleSetting}</span>
-            </Link>
-          </li>
+    <div className="col-auto col-md-3 col-xl-2 px-0 bg-primary position-fixed add-scroll">
+      <div className="d-flex align-items-center align-items-sm-start">
+        <ul className="nav flex-column flex-fill" id="menu">
+          {sideBarTab.map((tab, idx) => {
+            return tab.subTab ? (
+              <TabBarDropDown key={idx} tab={tab} />
+            ) : (
+              <TabBar
+                key={idx}
+                name={tab.name}
+                title={tab.title}
+                url={tab.url}
+                icon={tab.icon}
+                subTab={tab.subTab}
+              />
+            );
+          })}
         </ul>
       </div>
     </div>
