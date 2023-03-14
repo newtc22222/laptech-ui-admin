@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import AppContext from './context/AppContext';
 import AppLayout from './container/AppLayout';
+import ThemeProvider from './context/ThemeContext';
 import {
   About,
   Banner,
@@ -67,7 +68,9 @@ const router = createBrowserRouter(
 const App = () => {
   return (
     <AppContext>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </AppContext>
   );
 };

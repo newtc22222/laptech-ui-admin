@@ -2,6 +2,7 @@ import React, { useState, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout, setCredentials } from '../../redux-feature/auth.slice';
+import { createLocalStorage } from '../../helper/CreateStorage';
 
 /**
  * @since 2022-12-22
@@ -16,6 +17,7 @@ const headerTabs = ['features', 'pricing', 'faqs', 'about'];
 
 const Header = () => {
   const navigate = useNavigate();
+  const storage = createLocalStorage('laptech');
 
   // get User
   const auth = useSelector(state => state.auth);
@@ -23,14 +25,18 @@ const Header = () => {
 
   // check current user (handle Reload page)
   if (auth.user === null) {
-    if (localStorage.getItem('laptechUser')) {
+    if (storage) {
       const payload = {
-        user: localStorage.getItem('laptechUser'),
-        accessToken: localStorage.getItem('accessToken'),
-        refreshToken: localStorage.getItem('refreshToken')
+        user: storage.get('user'),
+        accessToken: storage.get('accessToken'),
+        refreshToken: storage.get('refreshToken')
       };
       dispatch(setCredentials(payload));
     }
+  }
+
+  if (Date.now() > Number(storage.get('maxAgeToken'))) {
+    navigate('/auth/login');
   }
 
   // Check link
@@ -47,9 +53,9 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('laptechUser');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    storage.remove('user');
+    storage.remove('accessToken');
+    storage.remove('refreshToken');
     dispatch(logout());
     navigate('/auth/login');
   };
@@ -78,49 +84,55 @@ const Header = () => {
             </Link>
           </li>
         ))}
-      </ul>
-      <div className="dropdown ms-3 me-3">
-        <Link
-          className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-          id="dropdown1"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <span className="d-none d-sm-inline mx-1">TÀI KHOẢN</span>
-        </Link>
-        <ul
-          className="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small shadow m-0"
-          aria-labelledby="dropdown1"
-        >
-          <li>
-            <Link className="dropdown-item" to="/setting">
-              Thiết lập ứng dụng
-            </Link>
-          </li>
-          <li>
+        <li className="nav-item" key={'dropdown'}>
+          <div className="dropdown nav-link">
             <Link
-              className="dropdown-item"
-              to={auth.user ? '/profile' : '/login'}
+              className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+              id="dropdown1"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
             >
-              Thông tin cá nhân
+              <span className="d-none d-sm-inline mx-1">TÀI KHOẢN</span>
             </Link>
-          </li>
-          <li>
-            <hr className="dropdown-divider" />
-          </li>
-          <li>
-            {auth.user ? (
-              <p className="dropdown-item" onClick={() => handleLogout()}>
-                Đăng xuất
-              </p>
-            ) : (
-              <Link className="dropdown-item" to="/auth/login">
-                Đăng nhập
-              </Link>
-            )}
-          </li>
-        </ul>
-      </div>
+            <ul
+              className="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small shadow mt-2 me-1"
+              aria-labelledby="dropdown1"
+            >
+              <li>
+                <Link className="dropdown-item" to="/setting">
+                  Thiết lập ứng dụng
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="dropdown-item"
+                  to={auth.user ? '/profile' : '/login'}
+                >
+                  Thông tin cá nhân
+                </Link>
+              </li>
+              <li>
+                <hr className="dropdown-divider" />
+              </li>
+              <li className="pb-1">
+                {auth.user ? (
+                  <Link
+                    className="dropdown-item"
+                    onClick={() => handleLogout()}
+                    to="#"
+                  >
+                    Đăng xuất
+                  </Link>
+                ) : (
+                  <Link className="dropdown-item" to="/auth/login">
+                    Đăng nhập
+                  </Link>
+                )}
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
     </header>
   );
 };
