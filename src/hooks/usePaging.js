@@ -17,6 +17,7 @@ function getClassPageItem(condition) {
  *
  * @param {number} recordsShow the length of data put in list
  * @param {number} totalRecords the length of data in database
+ * @returns {[number, number, JSX.Element]}
  */
 const usePaging = (recordsShow, totalRecords) => {
   const [currentPage, setCurrentPage] = useState(1);

@@ -1,7 +1,7 @@
 import React from 'react';
 import Loading from '../../components/common/Loading';
 import useFetch from '../../hooks/useFetch';
-import useTable from '../../hooks/useTable';
+import useTable from '../../components/common/SoftTable';
 import { getCurrencyString } from '../../utils/HandleCurency';
 
 const titleButtonUpdate = 'Cập nhật';

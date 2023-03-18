@@ -16,8 +16,8 @@ import Pricing from './Pricing';
 import ProductPage from './Product';
 import Statistic from './Statistic';
 import Setting from './Setting';
-import Role from './Role'
-import User from './User'
+import Role from './Role';
+import User from './User';
 
 // const About = lazy(() => import('./About'));
 
@@ -40,5 +40,5 @@ export {
   Statistic,
   Setting,
   Role,
-  User,
+  User
 };

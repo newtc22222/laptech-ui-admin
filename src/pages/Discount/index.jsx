@@ -7,7 +7,7 @@ import apiDiscount from '../../apis/product/discount.api';
 import DiscountTable from './DiscountTable';
 import DiscountForm from './DiscountForm';
 
-import ModalCustom from '../../components/Modal';
+import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 
 const pageName = 'Mã chiết khấu sản phẩm';
@@ -37,7 +37,7 @@ const Discount = () => {
     return <Navigate to="/auth/login" />;
 
   useEffect(() => {
-    apiDiscount.getAllDiscounts(dispatch);
+    if (!discountList) apiDiscount.getAllDiscounts(dispatch);
   }, []);
 
   const handleShowDeleteModal = useCallback((discountId, discountName) => {
@@ -59,7 +59,7 @@ const Discount = () => {
   return (
     <div>
       {showModal && (
-        <ModalCustom
+        <ModalConfirm
           show={showModal}
           setShow={action.showModal}
           props={modalValue}

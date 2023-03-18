@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
@@ -7,7 +7,7 @@ import apiBrands from '../../apis/product/brand.api';
 import BrandTable from './BrandTable';
 import BrandForm from './BrandForm';
 
-import ModalCustom from '../../components/Modal';
+import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 
 const pageName = 'Thương hiệu';
@@ -35,11 +35,11 @@ const BrandPage = () => {
 
   // Loading
   useEffect(() => {
-    apiBrands.getAllBrands(dispatch);
+    if (!brandList) apiBrands.getAllBrands(dispatch);
   }, []);
 
   // Show delete modal
-  const handleShowDeleteModal = useCallback((brandId, brandName) => {
+  const handleShowDeleteModal = (brandId, brandName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
@@ -49,7 +49,7 @@ const BrandPage = () => {
       }
     );
     action.showModal(true);
-  }, []);
+  };
 
   if (isFetching) {
     return <Loading />;
@@ -58,7 +58,7 @@ const BrandPage = () => {
   return (
     <div>
       {showModal && (
-        <ModalCustom
+        <ModalConfirm
           show={showModal}
           setShow={action.showModal}
           props={modalValue}

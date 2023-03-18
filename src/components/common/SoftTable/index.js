@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import usePaging from './usePaging';
+import React from 'react';
+import usePaging from '../../../hooks/usePaging';
 
 /**
  * @param {string[]} headerList
@@ -8,8 +8,8 @@ import usePaging from './usePaging';
  * @param {() => JSX.Element} cb_handleRow
  * @since 2023-02-10
  */
-function useTable(headerList, dataList, totalRecordData, cb_handleRow) {
-  const [idx_start, idx_end, cb_handlePaging] = usePaging(
+function SoftTable({ headerList, dataList, totalRecordData, cb_handleRow }) {
+  const [idx_start, idx_end, Paging] = usePaging(
     dataList.length,
     totalRecordData
   );
@@ -28,9 +28,9 @@ function useTable(headerList, dataList, totalRecordData, cb_handleRow) {
           <tbody>{cb_handleRow(idx_start, idx_end)}</tbody>
         </table>
       </div>
-      {cb_handlePaging()}
+      <Paging />
     </>
   );
 }
 
-export default useTable;
+export default SoftTable;

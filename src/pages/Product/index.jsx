@@ -7,10 +7,11 @@ import apiProducts from '../../apis/product/product.api';
 import ProductTable from './ProductTable';
 import ProductForm from './ProductForm';
 
-import ModalCustom from '../../components/Modal';
+import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
+import DescriptionBox from './ProductEditBox/DescriptionBox';
 
-const pageName = 'Thương hiệu';
+const pageName = 'Sản phẩm';
 const objectName = 'products';
 const titleButtonAdd = 'Thêm thông tin';
 
@@ -35,11 +36,11 @@ const ProductPage = () => {
 
   // Loading
   useEffect(() => {
-    apiProducts.getAllProducts(dispatch);
+    if (!productList) apiProducts.getAllProducts(dispatch);
   }, []);
 
   // Show delete modal
-  const handleShowDeleteModal = useCallback((productId, productName) => {
+  const handleShowDeleteModal = (productId, productName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${productName} khỏi hệ thống không?`,
@@ -49,7 +50,7 @@ const ProductPage = () => {
       }
     );
     action.showModal(true);
-  }, []);
+  };
 
   if (isFetching) {
     return <Loading />;
@@ -58,7 +59,7 @@ const ProductPage = () => {
   return (
     <div>
       {showModal && (
-        <ModalCustom
+        <ModalConfirm
           show={showModal}
           setShow={action.showModal}
           props={modalValue}
@@ -82,11 +83,6 @@ const ProductPage = () => {
           {titleButtonAdd}
         </button>
       </div>
-      <ProductTable
-        productList={productList}
-        handleSetUpdateMode={product => action.setUpdateMode(product)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
     </div>
   );
 };

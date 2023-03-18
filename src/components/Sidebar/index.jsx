@@ -129,7 +129,7 @@ const sideBarTab = [
  */
 const Sidebar = () => {
   return (
-    <div className="col-auto col-md-3 col-xl-2 px-0 bg-primary position-fixed add-scroll">
+    <div className="col-auto col-md-3 col-lg-2 px-0 bg-primary position-fixed add-scroll">
       <div className="d-flex align-items-center align-items-sm-start">
         <ul className="nav flex-column flex-fill" id="menu">
           {sideBarTab.map((tab, idx) => {

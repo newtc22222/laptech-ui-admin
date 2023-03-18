@@ -7,7 +7,7 @@ import apiLabel from '../../apis/product/label.api';
 import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
 
-import ModalCustom from '../../components/Modal';
+import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 
 const pageName = 'Nhãn thuộc tính của sản phẩm';
@@ -37,7 +37,7 @@ const Label = () => {
   );
 
   useEffect(() => {
-    apiLabel.getAllLabels(dispatch);
+    if (!labelList) apiLabel.getAllLabels(dispatch);
   }, []);
 
   const handleShowDeleteModal = useCallback((labelId, labelName) => {
@@ -74,7 +74,7 @@ const Label = () => {
   return (
     <div>
       {showModal && (
-        <ModalCustom
+        <ModalConfirm
           show={showModal}
           setShow={action.showModal}
           props={modalValue}

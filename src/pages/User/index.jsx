@@ -7,7 +7,7 @@ import apiUsers from '../../apis/user.api';
 import UserTable from './UserTable';
 import UserForm from './UserForm';
 
-import ModalCustom from '../../components/Modal';
+import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 
 import { getStringBackTime } from '../../utils/HandleTimer';
@@ -37,7 +37,7 @@ const User = () => {
 
   // Loading
   useEffect(() => {
-    apiUsers.getAllUser(dispatch);
+    if (!userList) apiUsers.getAllUser(dispatch);
   }, []);
 
   // Show delete modal
@@ -60,7 +60,7 @@ const User = () => {
   return (
     <div>
       {showModal && (
-        <ModalCustom
+        <ModalConfirm
           show={showModal}
           setShow={action.showModal}
           props={modalValue}

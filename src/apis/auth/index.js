@@ -1,9 +1,13 @@
-import { setCredentials, setNewAccessToken } from '../../redux-feature/auth.slice';
+import {
+  setCredentials,
+  setNewAccessToken
+} from '../../redux-feature/auth.slice';
 import {
   handleShowToast,
   NotificationType
 } from '../../utils/HandleNotification';
 import FetchAPI from '../custom/fetch-api';
+import { createLocalStorage } from '../../helper/CreateStorage';
 
 const apiAuth = {
   login: async (dispatch, account) => {
@@ -12,14 +16,20 @@ const apiAuth = {
       `auth/login`,
       account,
       null,
-      () => { },
+      () => {},
       result => {
         if (result) {
-          const listRoleNotUser = result.roleList.filter(x => x.name !== 'USER');
+          const listRoleNotUser = result.roleList.filter(
+            x => x.name !== 'USER'
+          );
+
+          const maxAgeToken = new Date(Date.now() + 1000 * 60 * 60 * 24 * 2); // support refresh token in 2 days
           if (listRoleNotUser.length > 0) {
-            localStorage.setItem('laptechUser', JSON.stringify(result.user));
-            localStorage.setItem('accessToken', result.accessToken);
-            localStorage.setItem('refreshToken', result.refreshToken);
+            const storage = createLocalStorage('laptech');
+            storage.set('user', result.user);
+            storage.set('accessToken', result.accessToken);
+            storage.set('refreshToken', result.refreshToken);
+            storage.set('maxAgeToken', maxAgeToken.getTime());
 
             dispatch(setCredentials(result)); //auth
             auth = result;
@@ -50,9 +60,10 @@ const apiAuth = {
       `auth/refreshToken`,
       refreshToken,
       null,
-      () => { },
+      () => {},
       result => {
-        localStorage.setItem('accessToken', result.accessToken);
+        const storage = createLocalStorage('laptech');
+        storage.set('accessToken', result.accessToken);
         dispatch(setNewAccessToken(result.accessToken));
       },
       () => {
@@ -71,8 +82,8 @@ const apiAuth = {
       `users/${userId}`,
       newInfor,
       token,
-      () => { },
-      result => { },
+      () => {},
+      result => {},
       () => {
         handleShowToast(
           dispatch,
@@ -89,8 +100,8 @@ const apiAuth = {
       `users/${userId}`,
       passwordForm,
       token,
-      () => { },
-      result => { },
+      () => {},
+      result => {},
       () => {
         handleShowToast(
           dispatch,

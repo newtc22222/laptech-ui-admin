@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import classNames from 'classnames';
 import { ThemeContext } from '../../context/ThemeContext';
 import TabBar from './TabBar';
 
@@ -7,7 +8,7 @@ const TabBarDropDown = ({ tab }) => {
   const { name, title, icon, subTab } = tab;
 
   const getStyle = () => {
-    return activeTab === name
+    return activeTab.tab === name
       ? { cursor: 'pointer', backgroundColor: '#0e4893' }
       : { cursor: 'pointer' };
   };
@@ -18,14 +19,19 @@ const TabBarDropDown = ({ tab }) => {
         className="nav-link link-light align-middle ps-3 pe-3"
         data-bs-toggle="collapse"
         data-bs-target={`#${name}-collapse`}
-        aria-expanded="false"
+        aria-expanded={activeTab.tab === name}
         aria-controls={`${name}-collapse`}
         style={getStyle()}
       >
         {icon}
         <span className="ms-3 d-none d-sm-inline">{title}</span>
       </div>
-      <div className="bg-primary collapse" id={`${name}-collapse`}>
+      <div
+        className={classNames('bg-primary collapse', {
+          show: activeTab.tab === name
+        })}
+        id={`${name}-collapse`}
+      >
         <ul
           className="link-toggle-nav list-unstyled fw-normal small"
           id={'sub-' + name}

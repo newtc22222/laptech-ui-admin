@@ -7,7 +7,7 @@ import apiRole from '../../apis/role.api';
 import RoleTable from './RoleTable';
 import RoleForm from './RoleForm';
 
-import ModalCustom from '../../components/Modal';
+import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 
 const pageName = 'Quyền sử dụng người dùng';
@@ -37,7 +37,7 @@ const Role = () => {
   );
 
   useEffect(() => {
-    apiRole.getAllRoles(dispatch, accessToken);
+    if (!roleList) apiRole.getAllRoles(dispatch, accessToken);
   }, []);
 
   const handleShowDeleteModal = useCallback((roleId, roleName) => {
@@ -59,7 +59,7 @@ const Role = () => {
   return (
     <div>
       {showModal && (
-        <ModalCustom
+        <ModalConfirm
           show={showModal}
           setShow={action.showModal}
           props={modalValue}

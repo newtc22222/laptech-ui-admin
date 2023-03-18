@@ -1,6 +1,6 @@
 import React from 'react';
+import SoftTable from '../../components/common/SoftTable';
 import Loading from '../../components/common/Loading';
-import useTable from '../../hooks/useTable';
 
 const titleButtonUpdate = 'Cập nhật';
 const titleButtonDelete = 'Xóa';
@@ -17,29 +17,36 @@ const RoleTable = ({
 }) => {
   if (roleList === null || roleList === undefined) return <Loading />;
 
-  return useTable(headerList, roleList, roleTotalRecord, (idx_start, idx_end) =>
-    roleList.slice(idx_start, idx_end).map(role => (
-      <tr key={role.id} className="text-center">
-        <td>{role.id}</td>
-        <td className="fw-bolder">{role.name}</td>
-        <td className="fw-bold text-secondary">{role.description}</td>
-        <td style={{ width: '10%' }}>
-          <button
-            className="btn btn-secondary w-100 mb-2"
-            onClick={() => handleSetUpdateMode(role)}
-          >
-            {titleButtonUpdate}
-          </button>{' '}
-          <br />
-          <button
-            className="btn btn-danger w-100"
-            onClick={() => handleShowDeleteModal(role.id, role.name)}
-          >
-            {titleButtonDelete}
-          </button>
-        </td>
-      </tr>
-    ))
+  return (
+    <SoftTable
+      headerList={headerList}
+      dataList={roleList}
+      totalRecordData={roleTotalRecord}
+      cb_handleRow={(idx_start, idx_end) =>
+        roleList.slice(idx_start, idx_end).map(role => (
+          <tr key={role.id} className="text-center">
+            <td>{role.id}</td>
+            <td className="fw-bolder">{role.name}</td>
+            <td className="fw-bold text-secondary">{role.description}</td>
+            <td style={{ width: '10%' }}>
+              <button
+                className="btn btn-secondary w-100 mb-2"
+                onClick={() => handleSetUpdateMode(role)}
+              >
+                {titleButtonUpdate}
+              </button>{' '}
+              <br />
+              <button
+                className="btn btn-danger w-100"
+                onClick={() => handleShowDeleteModal(role.id, role.name)}
+              >
+                {titleButtonDelete}
+              </button>
+            </td>
+          </tr>
+        ))
+      }
+    />
   );
 };
 

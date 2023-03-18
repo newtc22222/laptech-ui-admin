@@ -4,7 +4,7 @@ import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
 import apiCategories from '../../apis/product/category.api';
 
-import ModalCustom from '../../components/Modal';
+import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 import CategoryTable from './CategoryTable';
 import CategoryForm from './CategoryForm';
@@ -33,20 +33,23 @@ const Category = () => {
   );
 
   useEffect(() => {
-    apiCategories.getAllCategories(dispatch);
+    if (!categoryList) apiCategories.getAllCategories(dispatch);
   }, []);
 
-  const handleShowDeleteModal = useCallback((categoryId, categoryName) => {
-    action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
-      () => {
-        apiCategories.deleteCategory(dispatch, categoryId, accessToken);
-        action.showModal(false);
-      }
-    );
-    action.showModal(true);
-  }, []);
+  const handleShowDeleteModal = useCallback(
+    (categoryId, categoryName) => {
+      action.addModalValue(
+        `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
+        () => {
+          apiCategories.deleteCategory(dispatch, categoryId, accessToken);
+          action.showModal(false);
+        }
+      );
+      action.showModal(true);
+    },
+    [accessToken]
+  );
 
   if (isFetching) {
     return <Loading />;
@@ -55,7 +58,7 @@ const Category = () => {
   return (
     <div>
       {showModal && (
-        <ModalCustom
+        <ModalConfirm
           show={showModal}
           setShow={action.showModal}
           props={modalValue}

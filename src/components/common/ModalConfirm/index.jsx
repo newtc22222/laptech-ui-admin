@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
-// import text from '../../lang/vietnamese';
+
+const titleConfirm = 'Xác nhận';
+const titleCancel = 'Huỷ bỏ';
 
 function ModalCustom({ show, setShow, props }) {
   const handleClose = () => setShow(false);
@@ -19,10 +21,10 @@ function ModalCustom({ show, setShow, props }) {
       <Modal.Body>{content || ''}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
-          Huỷ bỏ
+          {titleCancel}
         </Button>
         <Button variant="primary" onClick={handleDelete}>
-          Xác nhận
+          {titleConfirm}
         </Button>
       </Modal.Footer>
     </Modal>

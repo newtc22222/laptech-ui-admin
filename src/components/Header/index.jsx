@@ -1,19 +1,20 @@
-import React, { useState, memo } from 'react';
+import React, { memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout, setCredentials } from '../../redux-feature/auth.slice';
 import { createLocalStorage } from '../../helper/CreateStorage';
+import TabHeader from './TabHeader';
 
 /**
  * @since 2022-12-22
  */
 
-const linkCSS = {
-  normal: 'nav-link link-light',
-  active: 'nav-link link-light active'
-};
-
 const headerTabs = ['features', 'pricing', 'faqs', 'about'];
+const titleAccountTab = 'ACCOUNT';
+const titleSystemSetting = 'Thiết lập hệ thống';
+const titleProfile = 'Thông tin cá nhân';
+const titleLogin = 'Đăng nhập';
+const titleLogout = 'Đăng xuất';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Header = () => {
   const dispatch = useDispatch();
 
   // check current user (handle Reload page)
-  if (auth.user === null) {
+  if (auth.user === null && storage !== null) {
     if (storage) {
       const payload = {
         user: storage.get('user'),
@@ -34,23 +35,6 @@ const Header = () => {
       dispatch(setCredentials(payload));
     }
   }
-
-  if (Date.now() > Number(storage.get('maxAgeToken'))) {
-    navigate('/auth/login');
-  }
-
-  // Check link
-  const [linkActive, setLinkActive] = useState(
-    sessionStorage.getItem('active-tab') || ''
-  );
-  const compareLink = name => {
-    return linkActive === name ? linkCSS.active : linkCSS.normal;
-  };
-
-  const handleActiveTab = name => {
-    sessionStorage.setItem('active-tab', name);
-    setLinkActive(name);
-  };
 
   const handleLogout = () => {
     storage.remove('user');
@@ -62,55 +46,40 @@ const Header = () => {
 
   return (
     <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap shadow pt-2 pb-2">
-      <Link
-        to="/"
-        className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
-      >
-        <svg className="bi me-2" width="40" height="32">
-          <use xlinkHref="#bootstrap"></use>
-        </svg>
-        <span className="fs-3 fw-bold text-info">LAPTECH</span>
+      <Link to="/" className="text-decoration-none">
+        <span className="fs-3 fw-bold text-info ms-3">LAPTECH</span>
       </Link>
 
       <ul className="nav nav-pills">
-        {headerTabs.map((item, index) => (
-          <li className="nav-item" key={index}>
-            <Link
-              to={'/' + item}
-              className={compareLink(item)}
-              onClick={() => handleActiveTab(item)}
-            >
-              {item.toLocaleUpperCase()}
-            </Link>
-          </li>
+        {headerTabs.map((name, idx) => (
+          <TabHeader name={name} key={idx} />
         ))}
-        <li className="nav-item" key={'dropdown'}>
+        <li className="nav-item" key="dropdown">
           <div className="dropdown nav-link">
             <Link
               className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-              id="dropdown1"
+              id="dropdownAccount"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <span className="d-none d-sm-inline mx-1">TÀI KHOẢN</span>
+              {titleAccountTab}
             </Link>
             <ul
               className="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small shadow mt-2 me-1"
-              aria-labelledby="dropdown1"
+              aria-labelledby="dropdownAccount"
             >
               <li>
                 <Link className="dropdown-item" to="/setting">
-                  Thiết lập ứng dụng
+                  {titleSystemSetting}
                 </Link>
               </li>
-              <li>
-                <Link
-                  className="dropdown-item"
-                  to={auth.user ? '/profile' : '/login'}
-                >
-                  Thông tin cá nhân
-                </Link>
-              </li>
+              {auth.user && (
+                <li>
+                  <Link className="dropdown-item" to="/profile">
+                    {titleProfile}
+                  </Link>
+                </li>
+              )}
               <li>
                 <hr className="dropdown-divider" />
               </li>
@@ -121,11 +90,11 @@ const Header = () => {
                     onClick={() => handleLogout()}
                     to="#"
                   >
-                    Đăng xuất
+                    {titleLogout}
                   </Link>
                 ) : (
                   <Link className="dropdown-item" to="/auth/login">
-                    Đăng nhập
+                    {titleLogin}
                   </Link>
                 )}
               </li>

@@ -6,7 +6,7 @@ import {
   Route
 } from 'react-router-dom';
 import AppContext from './context/AppContext';
-import AppLayout from './container/AppLayout';
+import AppLayout from './layout/AppLayout';
 import ThemeProvider from './context/ThemeContext';
 import {
   About,
