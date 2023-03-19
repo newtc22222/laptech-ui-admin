@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useForm from '../../hooks/useForm';
+import ModalForm from '../../components/common/ModalForm';
 
 import apiDiscounts from '../../apis/product/discount.api';
 
@@ -86,122 +86,127 @@ const DiscountForm = ({ discount, handleBack }) => {
     }
   };
 
-  return useForm(
-    discount,
-    handleBack,
-    () => {
-      discount ? handleSaveData() : handleCreateData();
-    },
-    () => (
-      <>
-        <div className="mb-3">
-          <label htmlFor="discount-code" className="form-discount">
-            {titleCode}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="discount-code"
-            defaultValue={discount?.code}
-            ref={codeRef}
-            placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="discount-applied-type" className="form-discount">
-            {titleAppliedType}
-          </label>
-          <select
-            className="form-control"
-            id="discount-applied-type"
-            defaultValue={discount?.appliedType || appliedType}
-            onChange={e => setAppliedType(e.target.value)}
-            placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
-          >
-            {appliedTypeCombobox.map((type, idx) => (
-              <option key={idx} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-        <fieldset>
-          <legend className="fw-bold">{titleDiscount}</legend>
-          <div className="row">
-            <div className="col-4 mb-3">
-              <label htmlFor="discount-rate" className="form-discount">
-                {titleRate}
-              </label>
-              <input
-                id="discount-rate"
-                type="number"
-                min="0"
-                max="80"
-                className="form-control"
-                onChange={e => {
-                  if (e.target.value < 0) e.target.value = 0;
-                  if (e.target.value > 80) e.target.value = 80;
-                }}
-                defaultValue={discount?.rate * 100 || 5}
-                ref={rateRef}
-              />
-            </div>
-            <div className="col-8 mb-3">
-              <label htmlFor="discount-max-amount" className="form-discount">
-                {titleMaxAmount}
-              </label>
-              <input
-                id="discount-max-amount"
-                type="number"
-                min="0"
-                className="form-control"
-                onChange={e => {
-                  if (e.target.value < 0) e.target.value = 0;
-                }}
-                defaultValue={discount?.maxAmount || 50000}
-                ref={maxAmountRef}
-              />
-            </div>
+  return (
+    <ModalForm
+      object={discount}
+      handleBack={handleBack}
+      action={() => {
+        discount ? handleSaveData() : handleCreateData();
+      }}
+      FormContent={() => (
+        <>
+          <div className="mb-3">
+            <label htmlFor="discount-code" className="form-discount">
+              {titleCode}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="discount-code"
+              defaultValue={discount?.code}
+              ref={codeRef}
+              placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
+            />
           </div>
-        </fieldset>
-        <fieldset>
-          <legend className="fw-bold">{titleTime}</legend>
-          <div className="row">
-            <div className="col mb-3">
-              <label htmlFor="discount-applied-date" className="form-discount">
-                {titleAppliedDate}
-              </label>
-              <input
-                id="discount-applied-date"
-                type="datetime-local"
-                className="form-control"
-                defaultValue={
-                  discount?.appliedDate || new Date().toJSON().slice(0, 19)
-                }
-                ref={appliedDateRef}
-              />
-            </div>
-            <div className="col mb-3">
-              <label htmlFor="discount-ended-date" className="form-discount">
-                {titleEndedDate}
-              </label>
-              <input
-                id="discount-ended-date"
-                type="datetime-local"
-                className="form-control"
-                defaultValue={
-                  discount?.endedDate ||
-                  new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
-                    .toJSON()
-                    .slice(0, 19)
-                }
-                ref={endedDateRef}
-              />
-            </div>
+          <div className="mb-3">
+            <label htmlFor="discount-applied-type" className="form-discount">
+              {titleAppliedType}
+            </label>
+            <select
+              className="form-control"
+              id="discount-applied-type"
+              defaultValue={discount?.appliedType || appliedType}
+              onChange={e => setAppliedType(e.target.value)}
+              placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
+            >
+              {appliedTypeCombobox.map((type, idx) => (
+                <option key={idx} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           </div>
-        </fieldset>
-      </>
-    )
+          <fieldset>
+            <legend className="fw-bold">{titleDiscount}</legend>
+            <div className="row">
+              <div className="col-4 mb-3">
+                <label htmlFor="discount-rate" className="form-discount">
+                  {titleRate}
+                </label>
+                <input
+                  id="discount-rate"
+                  type="number"
+                  min="0"
+                  max="80"
+                  className="form-control"
+                  onChange={e => {
+                    if (e.target.value < 0) e.target.value = 0;
+                    if (e.target.value > 80) e.target.value = 80;
+                  }}
+                  defaultValue={discount?.rate * 100 || 5}
+                  ref={rateRef}
+                />
+              </div>
+              <div className="col-8 mb-3">
+                <label htmlFor="discount-max-amount" className="form-discount">
+                  {titleMaxAmount}
+                </label>
+                <input
+                  id="discount-max-amount"
+                  type="number"
+                  min="0"
+                  className="form-control"
+                  onChange={e => {
+                    if (e.target.value < 0) e.target.value = 0;
+                  }}
+                  defaultValue={discount?.maxAmount || 50000}
+                  ref={maxAmountRef}
+                />
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend className="fw-bold">{titleTime}</legend>
+            <div className="row">
+              <div className="col mb-3">
+                <label
+                  htmlFor="discount-applied-date"
+                  className="form-discount"
+                >
+                  {titleAppliedDate}
+                </label>
+                <input
+                  id="discount-applied-date"
+                  type="datetime-local"
+                  className="form-control"
+                  defaultValue={
+                    discount?.appliedDate || new Date().toJSON().slice(0, 19)
+                  }
+                  ref={appliedDateRef}
+                />
+              </div>
+              <div className="col mb-3">
+                <label htmlFor="discount-ended-date" className="form-discount">
+                  {titleEndedDate}
+                </label>
+                <input
+                  id="discount-ended-date"
+                  type="datetime-local"
+                  className="form-control"
+                  defaultValue={
+                    discount?.endedDate ||
+                    new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
+                      .toJSON()
+                      .slice(0, 19)
+                  }
+                  ref={endedDateRef}
+                />
+              </div>
+            </div>
+          </fieldset>
+        </>
+      )}
+    />
   );
 };
 

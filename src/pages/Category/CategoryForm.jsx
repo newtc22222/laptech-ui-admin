@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useForm from '../../hooks/useForm';
+import ModalForm from '../../components/common/ModalForm';
 
 import apiCategories from '../../apis/product/category.api';
 import apiUpload from '../../apis/upload.api';
@@ -116,62 +116,64 @@ const CategoryForm = ({ category, handleBack }) => {
     }
   };
 
-  return useForm(
-    category,
-    handleBack,
-    () => {
-      category ? handleSaveData() : handleCreateData();
-    },
-    () => (
-      <>
-        <div className="mb-3">
-          <label htmlFor="category-name" className="form-label">
-            {titleName}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="category-name"
-            defaultValue={category?.name}
-            ref={nameRef}
-            placeholder="Laptop, Screen, Speaker, Keyboard, ..."
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="category-description" className="form-label">
-            {titleDescription}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="category-description"
-            defaultValue={category?.description}
-            ref={descriptionRef}
-            placeholder="Properties, Status, Base model ?"
-          />
-        </div>
-        <div className="mb-3">
-          <p>
-            {titleImage + ' '}
-            <small className="text-primary">{hintToChooseImage}</small>
-          </p>
-          <label htmlFor="formFile" className="form-label">
-            <img
-              style={{ maxWidth: '200px', maxHeight: '150px' }}
-              src={image.image || 'https://via.placeholder.com/200x150'}
-              alt={category?.name || 'new image'}
-            />
+  return (
+    <ModalForm
+      object={category}
+      handleBack={handleBack}
+      action={() => {
+        category ? handleSaveData() : handleCreateData();
+      }}
+      FormContent={() => (
+        <>
+          <div className="mb-3">
+            <label htmlFor="category-name" className="form-label">
+              {titleName}
+            </label>
             <input
+              type="text"
               className="form-control"
-              style={{ display: 'none' }}
-              type="file"
-              id="formFile"
-              onChange={handleChangeImage}
+              id="category-name"
+              defaultValue={category?.name}
+              ref={nameRef}
+              placeholder="Laptop, Screen, Speaker, Keyboard, ..."
             />
-          </label>
-        </div>
-      </>
-    )
+          </div>
+          <div className="mb-3">
+            <label htmlFor="category-description" className="form-label">
+              {titleDescription}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="category-description"
+              defaultValue={category?.description}
+              ref={descriptionRef}
+              placeholder="Properties, Status, Base model ?"
+            />
+          </div>
+          <div className="mb-3">
+            <p>
+              {titleImage + ' '}
+              <small className="text-primary">{hintToChooseImage}</small>
+            </p>
+            <label htmlFor="formFile" className="form-label">
+              <img
+                style={{ maxWidth: '200px', maxHeight: '150px' }}
+                src={image.image || 'https://via.placeholder.com/200x150'}
+                alt={category?.name || 'new image'}
+              />
+              <input
+                className="form-control"
+                style={{ display: 'none' }}
+                type="file"
+                id="formFile"
+                onChange={handleChangeImage}
+              />
+            </label>
+          </div>
+        </>
+      )}
+    />
   );
 };
 

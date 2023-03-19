@@ -5,8 +5,9 @@ import { createLocalStorage } from './CreateStorage';
  */
 function getUpdateByUserInSystem() {
   const storage = createLocalStorage('laptech');
+  console.log(storage);
   return {
-    updateBy: JSON.parse(storage.get('user')).name || 'system'
+    updateBy: storage.get('user').name || 'system'
   };
 }
 

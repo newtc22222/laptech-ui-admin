@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useForm from '../../hooks/useForm';
+import ModalForm from '../../components/common/ModalForm';
 
 import apiLabels from '../../apis/product/label.api';
 
@@ -73,74 +73,76 @@ const LabelForm = ({ label, handleBack }) => {
     }
   };
 
-  return useForm(
-    label,
-    handleBack,
-    () => {
-      label ? handleSaveData() : handleCreateData();
-    },
-    () => (
-      <>
-        <div className="mb-3">
-          <label htmlFor="label-icon" className="form-label fw-bold">
-            {titleIcon}
-          </label>
-          <a
-            className="ms-3 text-primary text-decoration-none"
-            href={linkToChooseIcon}
-            target="_blank"
-          >
-            {hintToChooseIcon}
-          </a>
-          <input
-            type="text"
-            className="form-control"
-            id="label-icon"
-            defaultValue={label?.icon}
-            ref={iconRef}
-            placeholder="<i class='bi bi-house'></i>"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="label-name" className="form-label">
-            {titleName}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="label-name"
-            defaultValue={label?.name}
-            ref={nameRef}
-            placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="label-title" className="form-label">
-            {titleTitle}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="label-title"
-            defaultValue={label?.title}
-            ref={titleRef}
-            placeholder="Core i3 8560U ..."
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="label-description" className="form-label">
-            {titleDescription}
-          </label>
-          <textarea
-            className="form-control"
-            id="label-description"
-            defaultValue={label?.description}
-            ref={descriptionRef}
-            placeholder="New Core i3 8th generation with safe battery mode ..."
-          />
-        </div>
-      </>
-    )
+  return (
+    <ModalForm
+      object={label}
+      handleBack={handleBack}
+      action={() => {
+        label ? handleSaveData() : handleCreateData();
+      }}
+      FormContent={() => (
+        <>
+          <div className="mb-3">
+            <label htmlFor="label-icon" className="form-label fw-bold">
+              {titleIcon}
+            </label>
+            <a
+              className="ms-3 text-primary text-decoration-none"
+              href={linkToChooseIcon}
+              target="_blank"
+            >
+              {hintToChooseIcon}
+            </a>
+            <input
+              type="text"
+              className="form-control"
+              id="label-icon"
+              defaultValue={label?.icon}
+              ref={iconRef}
+              placeholder="<i class='bi bi-house'></i>"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="label-name" className="form-label">
+              {titleName}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="label-name"
+              defaultValue={label?.name}
+              ref={nameRef}
+              placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="label-title" className="form-label">
+              {titleTitle}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="label-title"
+              defaultValue={label?.title}
+              ref={titleRef}
+              placeholder="Core i3 8560U ..."
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="label-description" className="form-label">
+              {titleDescription}
+            </label>
+            <textarea
+              className="form-control"
+              id="label-description"
+              defaultValue={label?.description}
+              ref={descriptionRef}
+              placeholder="New Core i3 8th generation with safe battery mode ..."
+            />
+          </div>
+        </>
+      )}
+    />
   );
 };
 

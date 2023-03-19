@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useForm from '../../hooks/useForm';
+import ModalForm from '../../components/common/ModalForm';
 
 import apiUsers from '../../apis/user.api';
 import { addToast } from '../../redux-feature/toast_notify';
@@ -48,13 +48,15 @@ const UserForm = ({ user, handleBack }) => {
     }
   };
 
-  return useForm(
-    user,
-    handleBack,
-    () => {
-      user ? handleSaveData() : handleCreateData();
-    },
-    () => <></>
+  return (
+    <ModalForm
+      object={user}
+      handleBack={handleBack}
+      action={() => {
+        user ? handleSaveData() : handleCreateData();
+      }}
+      FormContent={() => <></>}
+    />
   );
 };
 

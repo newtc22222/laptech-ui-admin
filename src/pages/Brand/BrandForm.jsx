@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useForm from '../../hooks/useForm';
-// import { removeVietnameseTones } from '../../utils/HandleText';
+import ModalForm from '../../components/common/ModalForm';
 
 import apiBrands from '../../apis/product/brand.api';
 import apiUpload from '../../apis/upload.api';
@@ -23,7 +22,9 @@ const BrandForm = ({ brand, handleBack }) => {
   const countryRef = useRef();
   const dateRef = useRef();
   const [logo, setLogo] = useState({
-    image: brand?.logo || null,
+    image:
+      brand?.logo ||
+      'https://placeholder.pics/svg/200x150/DEDEDE/555555/Choose%20image',
     file: brand?.logo || '',
     filename: ''
   });
@@ -115,76 +116,78 @@ const BrandForm = ({ brand, handleBack }) => {
     }
   };
 
-  return useForm(
-    brand,
-    handleBack,
-    () => {
-      brand ? handleSaveData() : handleCreateData();
-    },
-    () => (
-      <>
-        <div className="mb-3">
-          <label htmlFor="brand-name" className="form-label">
-            {titleName}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="brand-name"
-            defaultValue={brand?.name}
-            ref={nameRef}
-            placeholder="ASUS, ACER, DELL, ..."
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="brand-country" className="form-label">
-            {titleCountry}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="brand-country"
-            defaultValue={brand?.country}
-            ref={countryRef}
-            placeholder="China, USA, ..."
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="brand-name" className="form-label">
-            {titleEstablishDate}
-          </label>
-          <input
-            type="date"
-            className="form-control"
-            id="brand-name"
-            defaultValue={new Date(brand?.establishDate || '2000-01-01')
-              .toISOString()
-              .slice(0, 10)}
-            ref={dateRef}
-          />
-        </div>
-        <div className="mb-3">
-          <p>
-            {titleLogo + ' '}
-            <small className="text-primary">{hintToChooseImage}</small>
-          </p>
-          <label htmlFor="formFile" className="form-label">
-            <img
-              style={{ maxWidth: '200px', maxHeight: '150px' }}
-              src={logo.image || 'https://via.placeholder.com/200x150'}
-              alt={brand?.name || 'new logo'}
-            />
+  return (
+    <ModalForm
+      object={brand}
+      handleBack={handleBack}
+      action={() => {
+        brand ? handleSaveData() : handleCreateData();
+      }}
+      FormContent={() => (
+        <>
+          <div className="mb-3">
+            <label htmlFor="brand-name" className="form-label">
+              {titleName}
+            </label>
             <input
+              type="text"
               className="form-control"
-              style={{ display: 'none' }}
-              type="file"
-              id="formFile"
-              onChange={handleChangeImage}
+              id="brand-name"
+              defaultValue={brand?.name}
+              ref={nameRef}
+              placeholder="ASUS, ACER, DELL, ..."
             />
-          </label>
-        </div>
-      </>
-    )
+          </div>
+          <div className="mb-3">
+            <label htmlFor="brand-country" className="form-label">
+              {titleCountry}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="brand-country"
+              defaultValue={brand?.country}
+              ref={countryRef}
+              placeholder="China, USA, ..."
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="brand-name" className="form-label">
+              {titleEstablishDate}
+            </label>
+            <input
+              type="date"
+              className="form-control"
+              id="brand-name"
+              defaultValue={new Date(brand?.establishDate || '2000-01-01')
+                .toISOString()
+                .slice(0, 10)}
+              ref={dateRef}
+            />
+          </div>
+          <div className="mb-3">
+            <p>
+              {titleLogo + ' '}
+              <small className="text-primary">{hintToChooseImage}</small>
+            </p>
+            <label htmlFor="formFile" className="form-label">
+              <img
+                style={{ maxWidth: '200px', maxHeight: '150px' }}
+                src={logo.image}
+                alt={brand?.name || 'new logo'}
+              />
+              <input
+                className="form-control"
+                style={{ display: 'none' }}
+                type="file"
+                id="formFile"
+                onChange={handleChangeImage}
+              />
+            </label>
+          </div>
+        </>
+      )}
+    />
   );
 };
 

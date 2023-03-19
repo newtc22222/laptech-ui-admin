@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useForm from '../../hooks/useForm';
+import ModalForm from '../../components/common/ModalForm';
 
 import apiRoles from '../../apis/role.api';
 
@@ -60,41 +60,43 @@ const RoleForm = ({ role, handleBack }) => {
     }
   };
 
-  return useForm(
-    role,
-    handleBack,
-    () => {
-      role ? handleSaveData() : handleCreateData();
-    },
-    () => (
-      <>
-        <div className="mb-3">
-          <label htmlFor="role-name" className="form-role">
-            {titleName}
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="role-name"
-            defaultValue={role?.name}
-            ref={nameRef}
-            placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="role-description" className="form-role">
-            {titleDescription}
-          </label>
-          <textarea
-            className="form-control"
-            id="role-description"
-            defaultValue={role?.description}
-            ref={descriptionRef}
-            placeholder="The person who can controll fire and water?"
-          />
-        </div>
-      </>
-    )
+  return (
+    <ModalForm
+      object={role}
+      handleBack={handleBack}
+      action={() => {
+        role ? handleSaveData() : handleCreateData();
+      }}
+      FormContent={() => (
+        <>
+          <div className="mb-3">
+            <label htmlFor="role-name" className="form-role">
+              {titleName}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="role-name"
+              defaultValue={role?.name}
+              ref={nameRef}
+              placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="role-description" className="form-role">
+              {titleDescription}
+            </label>
+            <textarea
+              className="form-control"
+              id="role-description"
+              defaultValue={role?.description}
+              ref={descriptionRef}
+              placeholder="The person who can controll fire and water?"
+            />
+          </div>
+        </>
+      )}
+    />
   );
 };
 

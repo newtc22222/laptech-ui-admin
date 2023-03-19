@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
-import { getStringBackTime } from '../utils/HandleTimer';
+import { getStringBackTime } from '../../../utils/HandleTimer';
 
 const titleEditMode = 'Sửa thông tin';
 const titleCreateMode = 'Thêm thông tin mới';
@@ -11,14 +11,12 @@ const titleModifiedDate = 'Thời gian chỉnh sửa gần nhất: ';
 
 /**
  * @since 2023-02-10
- * @param {*} object
- * @param {() => {}} cb_handleBack
- * @param {() => {}} cb_action create or update (save)
- * @param {() => JSX.Element} cb_handleForm
+ * @param {{ object: object, handleBack: function, action: () => {}, FormContent: () => JSX.Element}}
+ * @return {JSX.Element}
  */
-function useForm(object, cb_handleBack, cb_action, cb_handleForm) {
+function ModalForm({ object, handleBack, action, FormContent }) {
   return (
-    <Modal show onHide={cb_handleBack} backdrop="static" className="modal-xl">
+    <Modal show onHide={handleBack} backdrop="static" className="modal-xl">
       <Modal.Body>
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 className="h2">{object ? titleEditMode : titleCreateMode}</h1>
@@ -31,24 +29,18 @@ function useForm(object, cb_handleBack, cb_action, cb_handleForm) {
             </div>
           )}
           <div>
-            <button
-              className="btn btn-primary fw-bold me-3"
-              onClick={cb_action}
-            >
+            <button className="btn btn-primary fw-bold me-3" onClick={action}>
               {titleButtonSave}
             </button>
-            <button
-              className="btn btn-secondary fw-bold"
-              onClick={cb_handleBack}
-            >
+            <button className="btn btn-secondary fw-bold" onClick={handleBack}>
               {titleButtonBack}
             </button>
           </div>
         </div>
-        {cb_handleForm()}
+        <FormContent />
       </Modal.Body>
     </Modal>
   );
 }
 
-export default useForm;
+export default ModalForm;
