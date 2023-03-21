@@ -1,9 +1,12 @@
+import { createLocalStorage } from '../../helper/createStorage';
 import apiAuth from '../auth';
 
-export default function MakeRefreshToken(err, dispatch) {
+export default function makeRefreshToken(err, dispatch) {
+  const storage = createLocalStorage('laptech');
   if (err.toString().includes('Invalid token!')) {
+    console.log(storage.get('refreshToken'));
     const object = {
-      refreshToken: localStorage.getItem('refreshToken')
+      refreshToken: storage.get('refreshToken')
     };
     apiAuth.refreshToken(dispatch, object);
   }
