@@ -1,4 +1,10 @@
 .add-scroll {
-  height: calc(100vh - 57px);
+  height: calc(100vh - 58px);
   overflow-y: auto;
+}
+
+.sticky-menu {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 58px;
 }

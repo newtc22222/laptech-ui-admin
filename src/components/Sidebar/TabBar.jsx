@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { ThemeContext } from '../../context/ThemeContext';
 import classNames from 'classnames';
 
+import { AppContext } from '../../context/AppContext';
+
 const TabBar = ({ name, title, url, icon, parentName }) => {
-  const { activeTab, handleSetActiveTab } = useContext(ThemeContext);
+  const { activeTab, handleSetActiveTab } = useContext(AppContext);
 
   const getBackground = () => {
     if (parentName) {
@@ -29,7 +30,7 @@ const TabBar = ({ name, title, url, icon, parentName }) => {
       >
         {icon}
         <span
-          className="ms-2 d-none d-sm-inline"
+          className="ms-3 text-uppercase d-none d-lg-inline"
           // style={getTextSubTab()}
         >
           {title}

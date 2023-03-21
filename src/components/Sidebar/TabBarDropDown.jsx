@@ -1,10 +1,12 @@
 import React, { useContext } from 'react';
 import classNames from 'classnames';
-import { ThemeContext } from '../../context/ThemeContext';
+
+import { AppContext } from '../../context/AppContext';
+
 import TabBar from './TabBar';
 
 const TabBarDropDown = ({ tab }) => {
-  const { activeTab } = useContext(ThemeContext);
+  const { activeTab } = useContext(AppContext);
   const { name, title, icon, subTab } = tab;
 
   const getStyle = () => {
@@ -24,7 +26,7 @@ const TabBarDropDown = ({ tab }) => {
         style={getStyle()}
       >
         {icon}
-        <span className="ms-3 d-none d-sm-inline">{title}</span>
+        <span className="ms-3 text-uppercase d-none d-lg-inline">{title}</span>
       </div>
       <div
         className={classNames('bg-primary collapse', {
