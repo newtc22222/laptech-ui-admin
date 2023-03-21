@@ -7,7 +7,7 @@ import {
   NotificationType
 } from '../../utils/HandleNotification';
 import FetchAPI from '../custom/fetch-api';
-import { createLocalStorage } from '../../helper/CreateStorage';
+import { createLocalStorage } from '../../helper/createStorage';
 
 const apiAuth = {
   login: async (dispatch, account) => {
