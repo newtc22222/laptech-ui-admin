@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import apiAuth from '../../apis/auth';
 import HashString from '../../utils/HandleStoreLocal';
+import { AppContext } from '../../context/AppContext';
 // import Captcha from './Captcha';
 
 /**
@@ -27,6 +28,7 @@ const Login = () => {
     [rmb_phone, rmb_password, rmb_check] = storeData.split(';');
   }
 
+  const { handleSetActiveTab } = useContext(AppContext);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [phone, setPhone] = useState(rmb_phone);
@@ -59,6 +61,7 @@ const Login = () => {
 
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
+      handleSetActiveTab('home');
       navigate('/');
     }
   };
