@@ -5,9 +5,12 @@ import {
   createRoutesFromElements,
   Route
 } from 'react-router-dom';
-import AppContext from './context/AppContext';
+
+import { Provider } from 'react-redux';
+import { store } from './redux-feature/store';
+
+import AppProvider from './context/AppContext';
 import AppLayout from './layout/AppLayout';
-import ThemeProvider from './context/ThemeContext';
 import {
   About,
   Banner,
@@ -30,7 +33,7 @@ import {
   User
 } from './pages';
 
-import './common/css/laptech.css';
+import './styles/css/laptech.css';
 
 /**
  * @since 2022-12-23
@@ -67,11 +70,11 @@ const router = createBrowserRouter(
 
 const App = () => {
   return (
-    <AppContext>
-      <ThemeProvider>
+    <Provider store={store}>
+      <AppProvider>
         <RouterProvider router={router} />
-      </ThemeProvider>
-    </AppContext>
+      </AppProvider>
+    </Provider>
   );
 };
 
