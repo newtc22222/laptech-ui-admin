@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
-// import apiBrands from '../../apis/product/brand.api';
-import apiBrand from '../../apis/product/brandAPI';
+
+import apiBrand from '../../apis/product/brand.api';
+
 import BrandTable from './BrandTable';
 import BrandForm from './BrandForm';
-
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
+import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Thương hiệu';
 const objectName = 'brands';
@@ -55,6 +57,10 @@ const BrandPage = () => {
 
   if (isFetching) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (

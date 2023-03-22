@@ -1,14 +1,16 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
+
 import apiDiscount from '../../apis/product/discount.api';
 
 import DiscountTable from './DiscountTable';
 import DiscountForm from './DiscountForm';
-
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
+import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Mã chiết khấu sản phẩm';
 const objectName = 'discounts';
@@ -29,31 +31,37 @@ const Discount = () => {
     action
   ] = useWorkspace();
 
-  const { discountList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: discountList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
 
   useEffect(() => {
-    if (!discountList) apiDiscount.getAllDiscounts(dispatch);
+    if (!discountList) apiDiscount.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = useCallback((discountId, discountName) => {
+  const handleShowDeleteModal = (discountId, discountName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountName} khỏi hệ thống không?`,
       () => {
-        apiDiscount.deleteDiscount(dispatch, discountId, accessToken);
+        apiDiscount.delete(dispatch, discountId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
-  }, []);
+  };
 
   if (isFetching) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (

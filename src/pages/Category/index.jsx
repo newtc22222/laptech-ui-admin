@@ -1,13 +1,16 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
-import apiCategories from '../../apis/product/category.api';
 
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
+import apiCategory from '../../apis/product/category.api';
+
 import CategoryTable from './CategoryTable';
 import CategoryForm from './CategoryForm';
+import ModalConfirm from '../../components/common/ModalConfirm';
+import Loading from '../../components/common/Loading';
+import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Phân loại hàng hóa';
 const objectName = 'categories';
@@ -28,31 +31,34 @@ const Category = () => {
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
 
-  const { categoryList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: categoryList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!categoryList) apiCategories.getAllCategories(dispatch);
+    if (!categoryList) apiCategory.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = useCallback(
-    (categoryId, categoryName) => {
-      action.addModalValue(
-        `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-        `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
-        () => {
-          apiCategories.deleteCategory(dispatch, categoryId, accessToken);
-          action.showModal(false);
-        }
-      );
-      action.showModal(true);
-    },
-    [accessToken]
-  );
+  const handleShowDeleteModal = (categoryId, categoryName) => {
+    action.addModalValue(
+      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
+      () => {
+        apiCategory.delete(dispatch, categoryId, accessToken);
+        action.showModal(false);
+      }
+    );
+    action.showModal(true);
+  };
 
   if (isFetching) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (

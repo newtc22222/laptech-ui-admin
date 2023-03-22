@@ -9,6 +9,7 @@ import RoleForm from './RoleForm';
 
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
+import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Quyền sử dụng người dùng';
 const objectName = 'roles';
@@ -32,12 +33,14 @@ const Role = () => {
   if (accessToken === null || accessToken === undefined)
     navigate('/auth/login');
 
-  const { roleList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: roleList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!roleList) apiRole.getAllRoles(dispatch, accessToken);
+    if (!roleList) apiRole.getAll(dispatch, accessToken);
   }, []);
 
   const handleShowDeleteModal = useCallback((roleId, roleName) => {
@@ -45,7 +48,7 @@ const Role = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${roleName} khỏi hệ thống không?`,
       () => {
-        apiRole.deleteRole(dispatch, roleId, accessToken);
+        apiRole.delete(dispatch, roleId, accessToken);
         action.showModal(false);
       }
     );
@@ -54,6 +57,10 @@ const Role = () => {
 
   if (isFetching) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (

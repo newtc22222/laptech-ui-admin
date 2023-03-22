@@ -2,15 +2,14 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
-import apiUsers from '../../apis/user.api';
+import apiUser from '../../apis/user.api';
 
 import UserTable from './UserTable';
 import UserForm from './UserForm';
 
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
-
-import { getStringBackTime } from '../../utils/HandleTimer';
+import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Người dùng hệ thống';
 const objectName = 'users';
@@ -31,13 +30,15 @@ const User = () => {
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
 
-  const { userList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: userList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   // Loading
   useEffect(() => {
-    if (!userList) apiUsers.getAllUser(dispatch);
+    if (!userList) apiUser.getAll(dispatch, accessToken);
   }, []);
 
   // Show delete modal
@@ -46,7 +47,7 @@ const User = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${userName} khỏi hệ thống không?`,
       () => {
-        apiUsers.blockUser(dispatch, userId, accessToken);
+        apiUser.delete(dispatch, userId, accessToken);
         action.showModal(false);
       }
     );
@@ -55,6 +56,10 @@ const User = () => {
 
   if (isFetching) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (
