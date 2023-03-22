@@ -3,7 +3,13 @@ import makeRefreshToken from './MakeRefreshToken';
 import { makeToast, toastType } from '../../helper/makeToast';
 import subText from '../../helper/getVietnameseIntonation';
 
-export default function makeCallAPI(objectName, action) {
+/**
+ * @param {string} objectName
+ * @param {object} action
+ * @param {object} extraAction
+ * @returns
+ */
+export default function makeCallAPI(objectName, action, extraAction) {
   const objectNameVI = subText[objectName];
 
   function handleFetchStart(dispatch) {
@@ -23,11 +29,11 @@ export default function makeCallAPI(objectName, action) {
   }
 
   return {
-    getAll: async dispatch => {
+    getAll: async (dispatch, token = null) => {
       await FetchAPI.GET_ALL(
         objectName,
         null,
-        null,
+        token,
         () => handleFetchStart(dispatch),
         data => {
           dispatch(action.getSuccess(data));
@@ -36,7 +42,7 @@ export default function makeCallAPI(objectName, action) {
       );
     },
     create: async (dispatch, object, token) => {
-      console.table(object);
+      console.table('call api', object);
       await FetchAPI.POST(
         objectName,
         object,
@@ -47,7 +53,7 @@ export default function makeCallAPI(objectName, action) {
             `Một ${objectNameVI} vừa được thêm vào cơ sở dữ liệu!`,
             toastType.success
           );
-          dispatch(action.createSuccess(result.data)); // new object
+          dispatch(action.createSuccess(result)); // new object
         },
         err => handleFetchError(err, dispatch)
       );
@@ -81,6 +87,7 @@ export default function makeCallAPI(objectName, action) {
         },
         err => handleFetchError(err, dispatch)
       );
-    }
+    },
+    ...extraAction
   };
 }

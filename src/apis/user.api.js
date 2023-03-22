@@ -1,35 +1,8 @@
-import {
-  fetchUserStart,
-  fetchUserFailed,
-  getUserSuccess,
-  createUserSuccess,
-  updateUserSuccess,
-  deleteUserSuccess
-} from '../redux-feature/user.slice';
+import makeCallAPI from './helper/makeCallAPI';
+import { action } from '../store/slice/user.slice';
+import { makeToast, toastType } from '../helper/makeToast';
 
-const apiUsers = {
-  getAllUser: async (dispatch, token) => {
-    try {
-      dispatch(fetchUserStart());
-      const response = await fetch(`${BASE_URL}/users`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      const data = await handleResponse(response);
-      dispatch(getUserSuccess(data));
-    } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể kết nối với server!'
-        })
-      );
-      dispatch(fetchUserFailed());
-    }
-  },
+const extraAction = {
   activeUser: async (userId, token) => {
     try {
       const response = await fetch(`${BASE_URL}/users/${userId}/active`, {
@@ -40,22 +13,12 @@ const apiUsers = {
       });
       await handleResponse(response);
       dispatch(blockUserSuccess(userId));
-      dispatch(
-        addToast({
-          type: 'success',
-          title: 'Thay đổi trạng thái tài khoản thành công',
-          content:
-            'Trạng thái tài khoản của người dùng đã được cập nhật vào cơ sở dữ liệu!'
-        })
+      makeToast(
+        'Trạng thái tài khoản của người dùng đã được cập nhật vào cơ sở dữ liệu!',
+        toastType.success
       );
     } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể kết nối với server!'
-        })
-      );
+      makeToast('Không thể kết nối với server!', toastType.error);
     }
   },
   blockUser: async (userId, token) => {
@@ -68,24 +31,16 @@ const apiUsers = {
       });
       await handleResponse(response);
       dispatch(blockUserSuccess(userId));
-      dispatch(
-        addToast({
-          type: 'success',
-          title: 'Thay đổi trạng thái tài khoản thành công',
-          content:
-            'Trạng thái tài khoản của người dùng đã được cập nhật vào cơ sở dữ liệu!'
-        })
+      makeToast(
+        'Trạng thái tài khoản của người dùng đã được cập nhật vào cơ sở dữ liệu!',
+        toastType.success
       );
     } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể kết nối với server!'
-        })
-      );
+      makeToast('Không thể kết nối với server!', toastType.error);
     }
   }
 };
+
+const apiUsers = makeCallAPI('users', action, extraAction);
 
 export default apiUsers;
