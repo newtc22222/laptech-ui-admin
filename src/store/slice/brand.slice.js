@@ -1,4 +1,4 @@
-import makeSlice from '../common/makeSlice';
+import makeSlice from '../helpers/makeSlice';
 
 const brandSlice = makeSlice('brand');
 
