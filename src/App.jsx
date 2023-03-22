@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import { Provider } from 'react-redux';
-import { store } from './redux-feature/store';
+import { store } from './store';
 
 import AppProvider from './context/AppContext';
 import AppLayout from './layout/AppLayout';
