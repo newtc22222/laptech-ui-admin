@@ -11,10 +11,10 @@ const titleModifiedDate = 'Thời gian chỉnh sửa gần nhất: ';
 
 /**
  * @since 2023-02-10
- * @param {{ object: object, handleBack: function, action: () => {}, FormContent: () => JSX.Element}}
+ * @param {{ children: JSX.Element, object: object, handleBack: function, action: () => {}}}
  * @return {JSX.Element}
  */
-function ModalForm({ object, handleBack, action, FormContent }) {
+function ModalForm({ children, object, handleBack, action }) {
   return (
     <Modal show onHide={handleBack} backdrop="static" className="modal-xl">
       <Modal.Header>
@@ -28,9 +28,7 @@ function ModalForm({ object, handleBack, action, FormContent }) {
           </div>
         )}
       </Modal.Header>
-      <Modal.Body>
-        <FormContent />
-      </Modal.Body>
+      <Modal.Body>{children}</Modal.Body>
       <Modal.Footer>
         <div>
           <button className="btn btn-primary fw-bold me-3" onClick={action}>
