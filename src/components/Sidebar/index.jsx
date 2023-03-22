@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import classNames from 'classnames';
 
 import './style.css';
 import TabBar from './TabBar';
@@ -127,10 +128,15 @@ const sideBarTab = [
 /**
  * @since 2023-02-14
  */
-const Sidebar = () => {
+const Sidebar = ({ sidebarClass }) => {
   return (
-    <div className="col-auto col-md-3 col-lg-2 px-0 bg-primary position-fixed add-scroll">
-      <div className="d-flex align-items-center align-items-sm-start">
+    <div
+      className={classNames(
+        sidebarClass,
+        'bg-primary add-scroll flex-shrink-0 sticky-menu'
+      )}
+    >
+      <div className="d-flex">
         <ul className="nav flex-column flex-fill" id="menu">
           {sideBarTab.map((tab, idx) => {
             return tab.subTab ? (

@@ -1,8 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+
+import { AppContext } from '../../context/AppContext';
+
 import { logout, setCredentials } from '../../redux-feature/auth.slice';
-import { createLocalStorage } from '../../helper/CreateStorage';
+import { createLocalStorage } from '../../helper/createStorage';
 import TabHeader from './TabHeader';
 
 /**
@@ -19,19 +22,20 @@ const titleLogout = 'Đăng xuất';
 const Header = () => {
   const navigate = useNavigate();
   const storage = createLocalStorage('laptech');
+  const { handleSetActiveTab } = useContext(AppContext);
 
   // get User
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
-  // check current user (handle Reload page)
-  if (auth.user === null && storage !== null) {
-    if (storage) {
+  if (auth.user === null) {
+    if (storage.get('user')) {
       const payload = {
         user: storage.get('user'),
         accessToken: storage.get('accessToken'),
         refreshToken: storage.get('refreshToken')
       };
+      console.log(payload);
       dispatch(setCredentials(payload));
     }
   }
@@ -40,68 +44,94 @@ const Header = () => {
     storage.remove('user');
     storage.remove('accessToken');
     storage.remove('refreshToken');
+    storage.remove('maxAgeToken');
     dispatch(logout());
+    handleSetActiveTab('login');
     navigate('/auth/login');
   };
 
   return (
-    <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap shadow pt-2 pb-2">
-      <Link to="/" className="text-decoration-none">
-        <span className="fs-3 fw-bold text-info ms-3">LAPTECH</span>
-      </Link>
-
-      <ul className="nav nav-pills">
-        {headerTabs.map((name, idx) => (
-          <TabHeader name={name} key={idx} />
-        ))}
-        <li className="nav-item" key="dropdown">
-          <div className="dropdown nav-link">
-            <Link
-              className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-              id="dropdownAccount"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {titleAccountTab}
-            </Link>
-            <ul
-              className="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small shadow mt-2 me-1"
-              aria-labelledby="dropdownAccount"
-            >
-              <li>
-                <Link className="dropdown-item" to="/setting">
-                  {titleSystemSetting}
-                </Link>
-              </li>
-              {auth.user && (
-                <li>
-                  <Link className="dropdown-item" to="/profile">
-                    {titleProfile}
-                  </Link>
-                </li>
-              )}
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-              <li className="pb-1">
-                {auth.user ? (
-                  <Link
-                    className="dropdown-item"
-                    onClick={() => handleLogout()}
-                    to="#"
-                  >
-                    {titleLogout}
-                  </Link>
-                ) : (
-                  <Link className="dropdown-item" to="/auth/login">
-                    {titleLogin}
-                  </Link>
-                )}
+    <header className="navbar navbar-dark bg-dark navbar-expand-sm sticky-top">
+      <div className="container-fluid d-flex flex-wrap">
+        <Link to="/" className="nav me-auto text-decoration-none">
+          <span className="fs-3 fw-bold text-info">LAPTECH</span>
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="nav nav-pills">
+              {headerTabs.map((name, idx) => (
+                <TabHeader name={name} key={idx} />
+              ))}
+              <li className="nav-item dropdown" key="dropdown">
+                <a
+                  className="nav-link text-white dropdown-toggle"
+                  id="dropdownAccount"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  role="button"
+                >
+                  {titleAccountTab}
+                </a>
+                <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small m-0">
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      to="/setting"
+                      onClick={() => handleSetActiveTab('setting')}
+                    >
+                      {titleSystemSetting}
+                    </Link>
+                  </li>
+                  {auth.user && (
+                    <li>
+                      <Link
+                        className="dropdown-item"
+                        to="/profile"
+                        onClick={() => handleSetActiveTab('profile')}
+                      >
+                        {titleProfile}
+                      </Link>
+                    </li>
+                  )}
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li className="pb-1">
+                    {auth.user ? (
+                      <a
+                        className="dropdown-item"
+                        role="button"
+                        onClick={() => handleLogout()}
+                      >
+                        {titleLogout}
+                      </a>
+                    ) : (
+                      <Link
+                        className="dropdown-item"
+                        to="/auth/login"
+                        onClick={() => handleSetActiveTab('login')}
+                      >
+                        {titleLogin}
+                      </Link>
+                    )}
+                  </li>
+                </ul>
               </li>
             </ul>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </header>
   );
 };

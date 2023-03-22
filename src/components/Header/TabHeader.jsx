@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { ThemeContext } from '../../context/ThemeContext';
+
+import { AppContext } from '../../context/AppContext';
 
 const TabHeader = ({ name }) => {
-  const { activeTab, handleSetActiveTab } = useContext(ThemeContext);
+  const { activeTab, handleSetActiveTab } = useContext(AppContext);
 
   return (
     <li className="nav-item">

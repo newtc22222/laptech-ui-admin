@@ -14,7 +14,7 @@ function createLocalStorage(key) {
       save();
     },
     remove(key) {
-      delete store[key]; // remove
+      delete store[key];
       save();
     }
   };
@@ -38,7 +38,7 @@ function createSessionStorage(key) {
       save();
     },
     remove(key) {
-      delete store[key]; // remove
+      delete store[key];
       save();
     }
   };

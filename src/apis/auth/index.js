@@ -1,13 +1,10 @@
 import {
   setCredentials,
   setNewAccessToken
-} from '../../redux-feature/auth.slice';
-import {
-  handleShowToast,
-  NotificationType
-} from '../../utils/HandleNotification';
+} from '../../store/slice/auth.slice';
 import FetchAPI from '../custom/fetch-api';
-import { createLocalStorage } from '../../helper/CreateStorage';
+import { makeToast, toastType } from '../../helper/makeToast';
+import { createLocalStorage } from '../../helper/createStorage';
 
 const apiAuth = {
   login: async (dispatch, account) => {
@@ -34,21 +31,17 @@ const apiAuth = {
             dispatch(setCredentials(result)); //auth
             auth = result;
           } else {
-            handleShowToast(
-              dispatch,
-              NotificationType.INFO,
-              'Tài khoản không hợp lệ',
-              'Vui lòng kiểm tra lại thông tin tài khoản!'
+            makeToast(
+              'Vui lòng kiểm tra lại quyền truy cập của tài khoản!',
+              toastType.info
             );
           }
         }
       },
       () => {
-        handleShowToast(
-          dispatch,
-          NotificationType.ERROR,
-          'Thông tin không chính xác',
-          'Vui lòng kiểm tra lại tài khoản của bạn!'
+        makeToast(
+          'Vui lòng kiểm tra lại thông tin tài khoản!',
+          toastType.error
         );
       }
     );
@@ -67,12 +60,7 @@ const apiAuth = {
         dispatch(setNewAccessToken(result.accessToken));
       },
       () => {
-        handleShowToast(
-          dispatch,
-          NotificationType.INFO,
-          'Hết thời hạn đăng nhập',
-          'Vui lòng đăng nhập lại vào hệ thống!'
-        );
+        makeToast('Hết hạn đăng nhập, vui lòng đăng nhập lại!', toastType.info);
       }
     );
     return auth;
@@ -85,11 +73,9 @@ const apiAuth = {
       () => {},
       result => {},
       () => {
-        handleShowToast(
-          dispatch,
-          NotificationType.ERROR,
-          'Thông tin không chính xác',
-          'Vui lòng kiểm tra lại dữ liệu cá nhân của bạn!'
+        makeToast(
+          'Vui lòng kiểm tra lại dữ liệu cá nhân của bạn!',
+          toastType.error
         );
       }
     );
@@ -103,12 +89,7 @@ const apiAuth = {
       () => {},
       result => {},
       () => {
-        handleShowToast(
-          dispatch,
-          NotificationType.ERROR,
-          'Thông tin không chính xác',
-          'Vui lòng kiểm tra lại mật khẩu của bạn!'
-        );
+        makeToast('Vui lòng kiểm tra lại mật khẩu của bạn!', toastType.error);
       }
     );
   }

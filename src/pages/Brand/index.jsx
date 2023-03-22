@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
-import apiBrands from '../../apis/product/brand.api';
+
+import apiBrand from '../../apis/product/brand.api';
 
 import BrandTable from './BrandTable';
 import BrandForm from './BrandForm';
-
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
+import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Thương hiệu';
 const objectName = 'brands';
@@ -29,13 +31,15 @@ const BrandPage = () => {
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
 
-  const { brandList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: brandList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   // Loading
   useEffect(() => {
-    if (!brandList) apiBrands.getAllBrands(dispatch);
+    if (!brandList) apiBrand.getAll(dispatch);
   }, []);
 
   // Show delete modal
@@ -44,7 +48,7 @@ const BrandPage = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
       () => {
-        apiBrands.deleteBrand(dispatch, brandId, accessToken);
+        apiBrand.delete(dispatch, brandId, accessToken);
         action.showModal(false);
       }
     );
@@ -53,6 +57,10 @@ const BrandPage = () => {
 
   if (isFetching) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (

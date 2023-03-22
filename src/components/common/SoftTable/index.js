@@ -16,7 +16,7 @@ function SoftTable({ headerList, dataList, totalRecordData, cb_handleRow }) {
 
   return (
     <>
-      <div className="table-responsive">
+      <div style={{ overflowX: 'auto', maxWidth: 'calc(100vw - 10%)' }}>
         <table className="table table-bordered border-dark table-hover table-sm">
           <thead className="bg-primary text-white">
             <tr className="text-center">

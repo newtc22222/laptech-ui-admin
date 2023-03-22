@@ -1,14 +1,16 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+
 import useWorkspace from '../../hooks/useWorkspace';
 import WorkMode from '../../common/WorkMode';
+
 import apiLabel from '../../apis/product/label.api';
 
 import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
-
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
+import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Nhãn thuộc tính của sản phẩm';
 const objectName = 'labels';
@@ -32,25 +34,27 @@ const Label = () => {
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
 
-  const { labelList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: labelList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!labelList) apiLabel.getAllLabels(dispatch);
+    if (!labelList) apiLabel.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = useCallback((labelId, labelName) => {
+  const handleShowDeleteModal = (labelId, labelName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${labelName} khỏi hệ thống không?`,
       () => {
-        apiLabel.deleteLabel(dispatch, labelId, accessToken);
+        apiLabel.delete(dispatch, labelId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
-  }, []);
+  };
 
   // Change work mode
   if (workMode === WorkMode.create) {
@@ -69,6 +73,10 @@ const Label = () => {
 
   if (isFetching) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (

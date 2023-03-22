@@ -7,13 +7,15 @@ import { Link } from 'react-router-dom';
 
 function PageNotFound() {
   return (
-    <Link to="/">
-      <img
-        className="position-absolute top-50 start-50 translate-middle"
-        alt="Page not found"
-        src={require('./page-not-found.png')}
-      />
-    </Link>
+    <div className="container-fluid text-center">
+      <Link to="/">
+        <img
+          className="img-fluid mt-5"
+          alt="Page not found"
+          src={require('./page-not-found.png')}
+        />
+      </Link>
+    </div>
   );
 }
 
