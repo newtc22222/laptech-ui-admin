@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalForm from '../../components/common/ModalForm';
 
-import apiCategories from '../../apis/product/category.api';
+import apiCategory from '../../apis/product/category.api';
 import apiUpload from '../../apis/upload.api';
 
-import { addToast } from '../../redux-feature/toast_notify';
+import { makeToast, toastType } from '../../helper/makeToast';
 import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const titleName = 'Tên phân loại';
@@ -57,18 +57,12 @@ const CategoryForm = ({ category, handleBack }) => {
           ...getUpdateByUserInSystem()
         };
 
-        apiCategories.createNewCategory(dispatch, newCategory, accessToken);
+        apiCategory.create(dispatch, newCategory, accessToken);
         handleBack();
       });
     } catch (err) {
       console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Bạn chưa cập nhật hình ảnh cho ứng dụng!'
-        })
-      );
+      makeToast('Không thể cập nhật hình ảnh!', toastType.error);
     }
   };
 
@@ -97,24 +91,64 @@ const CategoryForm = ({ category, handleBack }) => {
         updateCategory.image = result;
       });
 
-      apiCategories.updateCategory(
-        dispatch,
-        updateCategory,
-        category.id,
-        accessToken
-      );
+      apiCategory.update(dispatch, updateCategory, category.id, accessToken);
       handleBack();
     } catch (err) {
       console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Bạn chưa cập nhật hình ảnh cho ứng dụng!'
-        })
-      );
+      makeToast('Không thể cập nhật hình ảnh!', toastType.error);
     }
   };
+
+  const renderForm = (
+    <>
+      <div className="mb-3">
+        <label htmlFor="category-name" className="form-label">
+          {titleName}
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          id="category-name"
+          defaultValue={category?.name}
+          ref={nameRef}
+          placeholder="Laptop, Screen, Speaker, Keyboard, ..."
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="category-description" className="form-label">
+          {titleDescription}
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          id="category-description"
+          defaultValue={category?.description}
+          ref={descriptionRef}
+          placeholder="Properties, Status, Base model ?"
+        />
+      </div>
+      <div className="mb-3">
+        <p>
+          {titleImage + ' '}
+          <small className="text-primary">{hintToChooseImage}</small>
+        </p>
+        <label htmlFor="formFile" className="form-label">
+          <img
+            style={{ maxWidth: '200px', maxHeight: '150px' }}
+            src={image.image || 'https://via.placeholder.com/200x150'}
+            alt={category?.name || 'new image'}
+          />
+          <input
+            className="form-control"
+            style={{ display: 'none' }}
+            type="file"
+            id="formFile"
+            onChange={handleChangeImage}
+          />
+        </label>
+      </div>
+    </>
+  );
 
   return (
     <ModalForm
@@ -123,57 +157,9 @@ const CategoryForm = ({ category, handleBack }) => {
       action={() => {
         category ? handleSaveData() : handleCreateData();
       }}
-      FormContent={() => (
-        <>
-          <div className="mb-3">
-            <label htmlFor="category-name" className="form-label">
-              {titleName}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="category-name"
-              defaultValue={category?.name}
-              ref={nameRef}
-              placeholder="Laptop, Screen, Speaker, Keyboard, ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="category-description" className="form-label">
-              {titleDescription}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="category-description"
-              defaultValue={category?.description}
-              ref={descriptionRef}
-              placeholder="Properties, Status, Base model ?"
-            />
-          </div>
-          <div className="mb-3">
-            <p>
-              {titleImage + ' '}
-              <small className="text-primary">{hintToChooseImage}</small>
-            </p>
-            <label htmlFor="formFile" className="form-label">
-              <img
-                style={{ maxWidth: '200px', maxHeight: '150px' }}
-                src={image.image || 'https://via.placeholder.com/200x150'}
-                alt={category?.name || 'new image'}
-              />
-              <input
-                className="form-control"
-                style={{ display: 'none' }}
-                type="file"
-                id="formFile"
-                onChange={handleChangeImage}
-              />
-            </label>
-          </div>
-        </>
-      )}
-    />
+    >
+      {renderForm}
+    </ModalForm>
   );
 };
 

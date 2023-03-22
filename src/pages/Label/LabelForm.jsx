@@ -2,9 +2,8 @@ import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalForm from '../../components/common/ModalForm';
 
-import apiLabels from '../../apis/product/label.api';
+import apiLabel from '../../apis/product/label.api';
 
-import { addToast } from '../../redux-feature/toast_notify';
 import { getUpdateByUserInSystem } from '../../helper/getUser';
 
 const titleName = 'Tiêu đề (hiển thị trực tiếp)';
@@ -27,51 +26,93 @@ const LabelForm = ({ label, handleBack }) => {
   const descriptionRef = useRef();
 
   const handleCreateData = async () => {
-    try {
-      const newLabel = {
-        name: nameRef.current.value,
-        icon: iconRef.current.value,
-        title: titleRef.current.value,
-        description: descriptionRef.current.value,
-        ...getUpdateByUserInSystem()
-      };
+    const newLabel = {
+      name: nameRef.current.value,
+      icon: iconRef.current.value,
+      title: titleRef.current.value,
+      description: descriptionRef.current.value,
+      ...getUpdateByUserInSystem()
+    };
 
-      await apiLabels.createNewLabel(dispatch, newLabel, accessToken);
-      handleBack();
-    } catch (err) {
-      console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể tạo thông tin nhãn sản phẩm mới!'
-        })
-      );
-    }
+    await apiLabel.create(dispatch, newLabel, accessToken);
+    handleBack();
   };
 
   const handleSaveData = async () => {
-    try {
-      const newLabel = {
-        name: nameRef.current.value,
-        icon: iconRef.current.value,
-        title: titleRef.current.value,
-        description: descriptionRef.current.value,
-        modifiedDate: new Date().toISOString(),
-        ...getUpdateByUserInSystem()
-      };
-      await apiLabels.updateLabel(dispatch, newLabel, label.id, accessToken);
-      handleBack();
-    } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể cập nhật thông tin nhãn sản phẩm!'
-        })
-      );
-    }
+    const newLabel = {
+      name: nameRef.current.value,
+      icon: iconRef.current.value,
+      title: titleRef.current.value,
+      description: descriptionRef.current.value,
+      modifiedDate: new Date().toISOString(),
+      ...getUpdateByUserInSystem()
+    };
+    await apiLabel.update(dispatch, newLabel, label.id, accessToken);
+    handleBack();
   };
+
+  const renderForm = (
+    <>
+      <div className="mb-3">
+        <label htmlFor="label-icon" className="form-label fw-bold">
+          {titleIcon}
+        </label>
+        <a
+          className="ms-3 text-primary text-decoration-none"
+          href={linkToChooseIcon}
+          target="_blank"
+        >
+          {hintToChooseIcon}
+        </a>
+        <input
+          type="text"
+          className="form-control"
+          id="label-icon"
+          defaultValue={label?.icon}
+          ref={iconRef}
+          placeholder="<i class='bi bi-house'></i>"
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="label-name" className="form-label">
+          {titleName}
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          id="label-name"
+          defaultValue={label?.name}
+          ref={nameRef}
+          placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="label-title" className="form-label">
+          {titleTitle}
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          id="label-title"
+          defaultValue={label?.title}
+          ref={titleRef}
+          placeholder="Core i3 8560U ..."
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="label-description" className="form-label">
+          {titleDescription}
+        </label>
+        <textarea
+          className="form-control"
+          id="label-description"
+          defaultValue={label?.description}
+          ref={descriptionRef}
+          placeholder="New Core i3 8th generation with safe battery mode ..."
+        />
+      </div>
+    </>
+  );
 
   return (
     <ModalForm
@@ -80,69 +121,9 @@ const LabelForm = ({ label, handleBack }) => {
       action={() => {
         label ? handleSaveData() : handleCreateData();
       }}
-      FormContent={() => (
-        <>
-          <div className="mb-3">
-            <label htmlFor="label-icon" className="form-label fw-bold">
-              {titleIcon}
-            </label>
-            <a
-              className="ms-3 text-primary text-decoration-none"
-              href={linkToChooseIcon}
-              target="_blank"
-            >
-              {hintToChooseIcon}
-            </a>
-            <input
-              type="text"
-              className="form-control"
-              id="label-icon"
-              defaultValue={label?.icon}
-              ref={iconRef}
-              placeholder="<i class='bi bi-house'></i>"
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="label-name" className="form-label">
-              {titleName}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="label-name"
-              defaultValue={label?.name}
-              ref={nameRef}
-              placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="label-title" className="form-label">
-              {titleTitle}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="label-title"
-              defaultValue={label?.title}
-              ref={titleRef}
-              placeholder="Core i3 8560U ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="label-description" className="form-label">
-              {titleDescription}
-            </label>
-            <textarea
-              className="form-control"
-              id="label-description"
-              defaultValue={label?.description}
-              ref={descriptionRef}
-              placeholder="New Core i3 8th generation with safe battery mode ..."
-            />
-          </div>
-        </>
-      )}
-    />
+    >
+      {renderForm}
+    </ModalForm>
   );
 };
 

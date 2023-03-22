@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ModalForm from '../../components/common/ModalForm';
 
-import apiBrand from '../../apis/product/brandAPI';
+import apiBrand from '../../apis/product/brand.api';
 import apiUpload from '../../apis/upload.api';
+
+import ModalForm from '../../components/common/ModalForm';
 
 import { makeToast, toastType } from '../../helper/makeToast';
 import { getUpdateByUserInSystem } from '../../helper/getUser';
@@ -60,9 +61,11 @@ const BrandForm = ({ brand, handleBack }) => {
         logo: null,
         ...getUpdateByUserInSystem()
       };
+      console.log('create outside', newBrand);
 
       promise.then(result => {
         newBrand.logo = result;
+        console.log('create', newBrand);
         apiBrand.create(dispatch, newBrand, accessToken);
         handleBack();
       });
@@ -106,7 +109,7 @@ const BrandForm = ({ brand, handleBack }) => {
     }
   };
 
-  const renderForm = () => (
+  const renderForm = (
     <>
       <div className="mb-3">
         <label htmlFor="brand-name" className="form-label">
@@ -178,8 +181,9 @@ const BrandForm = ({ brand, handleBack }) => {
       action={() => {
         brand ? handleSaveData() : handleCreateData();
       }}
-      FormContent={renderForm}
-    />
+    >
+      {renderForm}
+    </ModalForm>
   );
 };
 
