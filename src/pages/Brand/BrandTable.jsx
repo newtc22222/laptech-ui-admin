@@ -1,9 +1,8 @@
 import React from 'react';
 import Loading from '../../components/common/Loading';
 import SoftTable from '../../components/common/SoftTable';
+import { ico_edit, ico_del } from '../../common/svg/crud';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
 const headerList = [
   'ID',
   'Tên thương hiệu',
@@ -50,14 +49,14 @@ const BrandTable = ({
                 className="btn btn-secondary w-100 mb-2"
                 onClick={() => handleSetUpdateMode(brand)}
               >
-                {titleButtonUpdate}
+                {ico_edit}
               </button>{' '}
               <br />
               <button
                 className="btn btn-danger w-100"
                 onClick={() => handleShowDeleteModal(brand.id, brand.name)}
               >
-                {titleButtonDelete}
+                {ico_del}
               </button>
             </td>
           </tr>

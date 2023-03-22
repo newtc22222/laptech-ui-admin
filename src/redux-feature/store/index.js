@@ -1,17 +1,18 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../auth.slice";
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from '../auth.slice';
 import {
-  brandReducer,
+  // brandReducer,
   categoryReducer,
   commentReducer,
   discountReducer,
   feedbackReducer,
   labelReducer,
   productReducer
-} from "../product_slice";
-import roleReducer from "../role.slice";
-import userReducer from "../user.slice";
-import toastReducer from "../toast_notify";
+} from '../product_slice';
+import roleReducer from '../role.slice';
+import userReducer from '../user.slice';
+import toastReducer from '../toast_notify';
+import brandReducer from '../../store/slice/brand.slice';
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +33,6 @@ export const store = configureStore({
     // rooms: roomReducer,
     // messages: messageReducer,
     /* NOTIFICATION */
-    toastList: toastReducer,
+    toastList: toastReducer
   }
 });
