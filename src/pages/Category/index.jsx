@@ -9,6 +9,7 @@ import apiCategory from '../../apis/product/category.api';
 import CategoryTable from './CategoryTable';
 import CategoryForm from './CategoryForm';
 import ModalConfirm from '../../components/common/ModalConfirm';
+import PageHeader from '../../components/common/PageHeader';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
 
@@ -79,15 +80,14 @@ const Category = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
+      </PageHeader>
       <CategoryTable
         categoryList={categoryList}
         categoryTotalRecord={categoryList?.length}

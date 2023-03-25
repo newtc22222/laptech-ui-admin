@@ -9,8 +9,10 @@ import apiLabel from '../../apis/product/label.api';
 import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
 import ModalConfirm from '../../components/common/ModalConfirm';
+import PageHeader from '../../components/common/PageHeader';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
+import checkLoginTimeout from '../../helper/checkLoginTimeout';
 
 const pageName = 'Nhãn thuộc tính của sản phẩm';
 const objectName = 'labels';
@@ -80,39 +82,40 @@ const Label = () => {
   }
 
   return (
-    <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
+    checkLoginTimeout() || (
+      <div>
+        {showModal && (
+          <ModalConfirm
+            show={showModal}
+            setShow={action.showModal}
+            props={modalValue}
+          />
+        )}
+        {workMode === WorkMode.create && (
+          <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        )}
+        {workMode === WorkMode.edit && (
+          <LabelForm
+            label={labelEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        <PageHeader pageName={pageName}>
+          <button
+            className="btn btn-primary fw-bold"
+            onClick={action.setCreateMode}
+          >
+            {titleButtonAdd}
+          </button>
+        </PageHeader>
+        <LabelTable
+          labelList={labelList}
+          labelTotalRecord={labelList?.length || 0}
+          handleSetUpdateMode={label => action.setUpdateMode(label)}
+          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
-      )}
-      {workMode === WorkMode.create && (
-        <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <LabelForm
-          label={labelEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
       </div>
-      <LabelTable
-        labelList={labelList}
-        labelTotalRecord={labelList?.length}
-        handleSetUpdateMode={label => action.setUpdateMode(label)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
-    </div>
+    )
   );
 };
 

@@ -30,7 +30,9 @@ import {
   Statistic,
   Setting,
   Role,
-  User
+  User,
+  ImportPage,
+  OrderPage
 } from './pages';
 
 import './styles/css/laptech.css';
@@ -54,7 +56,11 @@ const router = createBrowserRouter(
       <Route path="category" element={<Category />} />
       <Route path="discount" element={<Discount />} />
       <Route path="label" element={<Label />} />
-      <Route path="invoice" element={<Invoice />} />
+      <Route path="invoice">
+        <Route path="import" element={<ImportPage />} />
+        <Route path="order" element={<OrderPage />} />
+        <Route path="" element={<Invoice />} />
+      </Route>
       <Route path="statistic" element={<Statistic />} />
       {/* Extra */}
       <Route path="about" element={<About />} />

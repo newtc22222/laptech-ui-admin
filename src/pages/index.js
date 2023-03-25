@@ -8,6 +8,8 @@ import DashBoard from './Home';
 import FAQ from './FAQs';
 import Feature from './Feature';
 import Invoice from './Invoice';
+import ImportPage from './Invoice/components/ImportPage';
+import OrderPage from './Invoice/components/OrderPage';
 import Label from './Label';
 import Login from './Login';
 import PageNotFound from './Error/PageNotFound';
@@ -31,6 +33,8 @@ export {
   FAQ,
   Feature,
   Invoice,
+  ImportPage,
+  OrderPage,
   Label,
   Login,
   Notification,

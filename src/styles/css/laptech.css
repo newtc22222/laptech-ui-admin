@@ -1,3 +1,8 @@
+img:hover {
+  opacity: 0.8;
+  cursor: url('https://img.icons8.com/fluency/256/delete-trash.png'), auto;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }

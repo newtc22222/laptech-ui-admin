@@ -9,8 +9,10 @@ import apiBrand from '../../apis/product/brand.api';
 import BrandTable from './BrandTable';
 import BrandForm from './BrandForm';
 import ModalConfirm from '../../components/common/ModalConfirm';
+import PageHeader from '../../components/common/PageHeader';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
+import checkLoginTimeout from '../../helper/checkLoginTimeout';
 
 const pageName = 'Thương hiệu';
 const objectName = 'brands';
@@ -27,9 +29,6 @@ const BrandPage = () => {
     modalValue,
     action
   ] = useWorkspace();
-
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
 
   const {
     data: brandList,
@@ -69,7 +68,7 @@ const BrandPage = () => {
         <ModalConfirm
           show={showModal}
           setShow={action.showModal}
-          props={modalValue}
+          {...modalValue}
         />
       )}
       {workMode === WorkMode.create && (
@@ -81,15 +80,14 @@ const BrandPage = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
+      </PageHeader>
       <BrandTable
         brandList={brandList}
         brandTotalRecord={brandList?.length}
