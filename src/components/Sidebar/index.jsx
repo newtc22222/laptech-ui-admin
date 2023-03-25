@@ -113,7 +113,7 @@ const sideBarTab = [
         name: 'all-user',
         title: 'Tất cả người dùng',
         url: '/user',
-        icon: <i className="fs-4 bi bi-wrench-adjustable"></i>
+        icon: <i className="fs-4 bi bi-people"></i>
       }
     ]
   },

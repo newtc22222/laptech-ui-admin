@@ -1,5 +1,7 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
+import classNames from 'classnames';
+
 import { getStringBackTime } from '../../../utils/HandleTimer';
 
 const titleEditMode = 'Sửa thông tin';
@@ -11,12 +13,17 @@ const titleModifiedDate = 'Thời gian chỉnh sửa gần nhất: ';
 
 /**
  * @since 2023-02-10
- * @param {{ children: JSX.Element, object: object, handleBack: function, action: () => {}}}
+ * @param {{ children: JSX.Element, object: object, action: () => {}, handleBack: function, props: object}}
  * @return {JSX.Element}
  */
-function ModalForm({ children, object, handleBack, action }) {
+function ModalForm({ children, object, action, handleBack, ...props }) {
   return (
-    <Modal show onHide={handleBack} backdrop="static" className="modal-xl">
+    <Modal
+      show
+      onHide={handleBack}
+      backdrop={props.backdrop || 'static'}
+      className={classNames('modal-xl', props.className)}
+    >
       <Modal.Header>
         <h2>{object ? titleEditMode : titleCreateMode}</h2>
         {object && (
