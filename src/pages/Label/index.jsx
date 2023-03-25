@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiLabel from '../../apis/product/label.api';
 
@@ -23,15 +22,8 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Label = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
-    dispatch,
-    Navigate,
-    workMode,
-    showModal,
-    labelEdit,
-    modalValue,
-    action
-  ] = useWorkspace();
+  const { dispatch, workMode, showModal, labelEdit, modalValue, action } =
+    useWorkspace();
 
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;

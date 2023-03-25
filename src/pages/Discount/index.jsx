@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiDiscount from '../../apis/product/discount.api';
 
@@ -12,6 +11,7 @@ import ModalConfirm from '../../components/common/ModalConfirm';
 import PageHeader from '../../components/common/PageHeader';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
+import checkLoginTimeout from '../../helper/checkLoginTimeout';
 
 const pageName = 'Mã chiết khấu sản phẩm';
 const objectName = 'discounts';
@@ -22,15 +22,8 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Discount = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
-    dispatch,
-    Navigate,
-    workMode,
-    showModal,
-    discountEdit,
-    modalValue,
-    action
-  ] = useWorkspace();
+  const { dispatch, workMode, showModal, discountEdit, modalValue, action } =
+    useWorkspace();
 
   const {
     data: discountList,
@@ -66,38 +59,42 @@ const Discount = () => {
   }
 
   return (
-    <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
+    checkLoginTimeout() || (
+      <div>
+        {showModal && (
+          <ModalConfirm
+            show={showModal}
+            setShow={action.showModal}
+            props={modalValue}
+          />
+        )}
+        {workMode === WorkMode.create && (
+          <DiscountForm
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        {workMode === WorkMode.edit && (
+          <DiscountForm
+            discount={discountEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        <PageHeader pageName={pageName}>
+          <button
+            className="btn btn-primary fw-bold"
+            onClick={action.setCreateMode}
+          >
+            {titleButtonAdd}
+          </button>
+        </PageHeader>
+        <DiscountTable
+          discountList={discountList}
+          discountTotalRecord={discountList?.length}
+          handleSetUpdateMode={discount => action.setUpdateMode(discount)}
+          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
-      )}
-      {workMode === WorkMode.create && (
-        <DiscountForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <DiscountForm
-          discount={discountEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
-      </PageHeader>
-      <DiscountTable
-        discountList={discountList}
-        discountTotalRecord={discountList?.length}
-        handleSetUpdateMode={discount => action.setUpdateMode(discount)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
-    </div>
+      </div>
+    )
   );
 };
 

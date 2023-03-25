@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiBrand from '../../apis/product/brand.api';
 import apiCategory from '../../apis/product/category.api';
@@ -23,15 +22,8 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const ProductPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
-    dispatch,
-    Navigate,
-    workMode,
-    showModal,
-    productEdit,
-    modalValue,
-    action
-  ] = useWorkspace();
+  const { dispatch, workMode, showModal, productEdit, modalValue, action } =
+    useWorkspace();
 
   const {
     data: productList,

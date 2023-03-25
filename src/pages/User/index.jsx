@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+
 import apiUser from '../../apis/user.api';
 
 import UserTable from './UserTable';
@@ -10,6 +11,7 @@ import PageHeader from '../../components/common/PageHeader';
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
+import checkLoginTimeout from '../../helper/checkLoginTimeout';
 
 const pageName = 'Người dùng hệ thống';
 const objectName = 'users';
@@ -17,15 +19,8 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const User = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
-    dispatch,
-    Navigate,
-    workMode,
-    showModal,
-    userEdit,
-    modalValue,
-    action
-  ] = useWorkspace();
+  const { dispatch, workMode, showModal, userEdit, modalValue, action } =
+    useWorkspace();
 
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
@@ -63,38 +58,40 @@ const User = () => {
   }
 
   return (
-    <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
+    checkLoginTimeout() || (
+      <div>
+        {showModal && (
+          <ModalConfirm
+            show={showModal}
+            setShow={action.showModal}
+            props={modalValue}
+          />
+        )}
+        {workMode === WorkMode.create && (
+          <UserForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        )}
+        {workMode === WorkMode.edit && (
+          <UserForm
+            user={userEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        <PageHeader pageName={pageName}>
+          <button
+            className="btn btn-primary fw-bold"
+            onClick={action.setCreateMode}
+          >
+            {titleButtonAdd}
+          </button>
+        </PageHeader>
+        <UserTable
+          userList={userList}
+          userTotalRecord={userList?.length}
+          handleSetUpdateMode={user => action.setUpdateMode(user)}
+          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
-      )}
-      {workMode === WorkMode.create && (
-        <UserForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <UserForm
-          user={userEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
-      </PageHeader>
-      <UserTable
-        userList={userList}
-        userTotalRecord={userList?.length}
-        handleSetUpdateMode={user => action.setUpdateMode(user)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
-    </div>
+      </div>
+    )
   );
 };
 

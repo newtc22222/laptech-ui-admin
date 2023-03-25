@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiBrand from '../../apis/product/brand.api';
 
@@ -20,15 +19,8 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const BrandPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
-    dispatch,
-    Navigate,
-    workMode,
-    showModal,
-    brandEdit,
-    modalValue,
-    action
-  ] = useWorkspace();
+  const { dispatch, workMode, showModal, brandEdit, modalValue, action } =
+    useWorkspace();
 
   const {
     data: brandList,
@@ -63,38 +55,40 @@ const BrandPage = () => {
   }
 
   return (
-    <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          {...modalValue}
+    checkLoginTimeout() || (
+      <div>
+        {showModal && (
+          <ModalConfirm
+            show={showModal}
+            setShow={action.showModal}
+            {...modalValue}
+          />
+        )}
+        {workMode === WorkMode.create && (
+          <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        )}
+        {workMode === WorkMode.edit && (
+          <BrandForm
+            brand={brandEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        <PageHeader pageName={pageName}>
+          <button
+            className="btn btn-primary fw-bold"
+            onClick={action.setCreateMode}
+          >
+            {titleButtonAdd}
+          </button>
+        </PageHeader>
+        <BrandTable
+          brandList={brandList}
+          brandTotalRecord={brandList?.length}
+          handleSetUpdateMode={brand => action.setUpdateMode(brand)}
+          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
-      )}
-      {workMode === WorkMode.create && (
-        <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <BrandForm
-          brand={brandEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
-      </PageHeader>
-      <BrandTable
-        brandList={brandList}
-        brandTotalRecord={brandList?.length}
-        handleSetUpdateMode={brand => action.setUpdateMode(brand)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
-    </div>
+      </div>
+    )
   );
 };
 

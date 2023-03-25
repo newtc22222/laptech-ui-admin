@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+
 import apiRole from '../../apis/role.api';
 
 import RoleTable from './RoleTable';
@@ -10,6 +11,7 @@ import PageHeader from '../../components/common/PageHeader';
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
+import checkLoginTimeout from '../../helper/checkLoginTimeout';
 
 const pageName = 'Quyền sử dụng người dùng';
 const objectName = 'roles';
@@ -20,15 +22,8 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Role = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
-    dispatch,
-    navigate,
-    workMode,
-    showModal,
-    roleEdit,
-    modalValue,
-    action
-  ] = useWorkspace();
+  const { dispatch, workMode, showModal, roleEdit, modalValue, action } =
+    useWorkspace();
 
   if (accessToken === null || accessToken === undefined)
     navigate('/auth/login');
@@ -64,37 +59,39 @@ const Role = () => {
   }
 
   return (
-    <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
+    checkLoginTimeout() || (
+      <div>
+        {showModal && (
+          <ModalConfirm
+            show={showModal}
+            setShow={action.showModal}
+            props={modalValue}
+          />
+        )}
+        {workMode === WorkMode.create && (
+          <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        )}
+        {workMode === WorkMode.edit && (
+          <RoleForm
+            role={roleEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        <PageHeader pageName={pageName}>
+          <button
+            className="btn btn-primary fw-bold"
+            onClick={action.setCreateMode}
+          >
+            {titleButtonAdd}
+          </button>
+        </PageHeader>
+        <RoleTable
+          roleList={roleList}
+          handleSetUpdateMode={role => action.setUpdateMode(role)}
+          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
-      )}
-      {workMode === WorkMode.create && (
-        <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <RoleForm
-          role={roleEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
-      </PageHeader>
-      <RoleTable
-        roleList={roleList}
-        handleSetUpdateMode={role => action.setUpdateMode(role)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
-    </div>
+      </div>
+    )
   );
 };
 

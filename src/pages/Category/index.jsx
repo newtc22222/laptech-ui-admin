@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiCategory from '../../apis/product/category.api';
 
@@ -12,6 +11,7 @@ import ModalConfirm from '../../components/common/ModalConfirm';
 import PageHeader from '../../components/common/PageHeader';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
+import checkLoginTimeout from '../../helper/checkLoginTimeout';
 
 const pageName = 'Phân loại hàng hóa';
 const objectName = 'categories';
@@ -19,18 +19,8 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const Category = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
-    dispatch,
-    Navigate,
-    workMode,
-    showModal,
-    categoryEdit,
-    modalValue,
-    action
-  ] = useWorkspace();
-
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
+  const { dispatch, workMode, showModal, categoryEdit, modalValue, action } =
+    useWorkspace();
 
   const {
     data: categoryList,
@@ -63,38 +53,42 @@ const Category = () => {
   }
 
   return (
-    <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
+    checkLoginTimeout() || (
+      <div>
+        {showModal && (
+          <ModalConfirm
+            show={showModal}
+            setShow={action.showModal}
+            props={modalValue}
+          />
+        )}
+        {workMode === WorkMode.create && (
+          <CategoryForm
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        {workMode === WorkMode.edit && (
+          <CategoryForm
+            category={categoryEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        )}
+        <PageHeader pageName={pageName}>
+          <button
+            className="btn btn-primary fw-bold"
+            onClick={action.setCreateMode}
+          >
+            {titleButtonAdd}
+          </button>
+        </PageHeader>
+        <CategoryTable
+          categoryList={categoryList}
+          categoryTotalRecord={categoryList?.length}
+          handleSetUpdateMode={category => action.setUpdateMode(category)}
+          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
-      )}
-      {workMode === WorkMode.create && (
-        <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <CategoryForm
-          category={categoryEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
-      </PageHeader>
-      <CategoryTable
-        categoryList={categoryList}
-        categoryTotalRecord={categoryList?.length}
-        handleSetUpdateMode={category => action.setUpdateMode(category)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
-    </div>
+      </div>
+    )
   );
 };
 
