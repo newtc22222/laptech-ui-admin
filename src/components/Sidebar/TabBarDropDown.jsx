@@ -1,12 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
-import { AppContext } from '../../context/AppContext';
-
 import TabBar from './TabBar';
+import useAppContext from '../../hooks/useAppContext';
 
 const TabBarDropDown = ({ tab }) => {
-  const { activeTab } = useContext(AppContext);
+  const { activeTab } = useAppContext();
   const { name, title, icon, subTab } = tab;
 
   const getStyle = () => {

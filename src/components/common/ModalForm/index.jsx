@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import classNames from 'classnames';
 
-import { getStringBackTime } from '../../../utils/HandleTimer';
+import { getStringBackTime } from '../../../utils/formatTime';
 
 const titleEditMode = 'Sửa thông tin';
 const titleCreateMode = 'Thêm thông tin mới';

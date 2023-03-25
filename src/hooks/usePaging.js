@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
-import getRecordShowIndex from '../utils/HandleRecordShow';
+import getRecordShowIndex from '../utils/getRecordShowIndex';
 
 const list_amount_record_on_page = [5, 10, 25, 50, 100];
 const max_paging_show = 7;

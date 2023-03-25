@@ -1,9 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalForm from '../../components/common/ModalForm';
 
-import apiUsers from '../../apis/user.api';
-import { addToast } from '../../redux-feature/toast_notify';
+import apiUser from '../../apis/user.api';
 
 /**
  * @since 2023-02-14
@@ -20,13 +19,6 @@ const UserForm = ({ user, handleBack }) => {
       handleBack();
     } catch (err) {
       console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Bạn chưa cập nhật hình ảnh cho ứng dụng!'
-        })
-      );
     }
   };
 
@@ -38,13 +30,6 @@ const UserForm = ({ user, handleBack }) => {
       handleBack();
     } catch (err) {
       console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Bạn chưa cập nhật hình ảnh cho ứng dụng!'
-        })
-      );
     }
   };
 

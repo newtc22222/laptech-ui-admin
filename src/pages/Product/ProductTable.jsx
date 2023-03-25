@@ -1,6 +1,6 @@
 import React from 'react';
 import SoftTable from '../../components/common/SoftTable';
-import { getCurrencyString } from '../../utils/HandleCurency';
+import { getCurrencyString } from '../../utils/formatCurency';
 
 import Loading from '../../components/common/Loading';
 

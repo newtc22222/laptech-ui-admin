@@ -1,8 +1,9 @@
 import React from 'react';
 import { Outlet } from 'react-router';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
 import { ToastContainer } from 'react-toastify';
+
+import Header from '../Header';
+import Sidebar from '../Sidebar';
 
 /**
  * @since 2022-12-22

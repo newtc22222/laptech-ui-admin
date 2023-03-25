@@ -1,7 +1,7 @@
 import React from 'react';
 import SoftTable from '../../components/common/SoftTable';
 
-import { formatDateTime } from '../../utils/HandleTimer';
+import { formatDateTime } from '../../utils/formatTime';
 import Loading from '../../components/common/Loading';
 
 const titleButtonUpdate = 'Cập nhật';

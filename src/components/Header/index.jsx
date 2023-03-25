@@ -1,12 +1,12 @@
-import React, { memo, useContext, useEffect } from 'react';
+import React, { memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { AppContext } from '../../context/AppContext';
-
-import { logout, setCredentials } from '../../redux-feature/auth.slice';
+import { logout, setCredentials } from '../../store/slice/auth.slice';
 import { createLocalStorage } from '../../helper/createStorage';
+
 import TabHeader from './TabHeader';
+import useAppContext from '../../hooks/useAppContext';
 
 /**
  * @since 2022-12-22
@@ -22,7 +22,7 @@ const titleLogout = 'Đăng xuất';
 const Header = () => {
   const navigate = useNavigate();
   const storage = createLocalStorage('laptech');
-  const { handleSetActiveTab } = useContext(AppContext);
+  const { handleSetActiveTab } = useAppContext();
 
   // get User
   const auth = useSelector(state => state.auth);

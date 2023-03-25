@@ -5,12 +5,12 @@ import {
   createRoutesFromElements,
   Route
 } from 'react-router-dom';
-
 import { Provider } from 'react-redux';
+
 import { store } from './store';
 
-import AppProvider from './context/AppContext';
-import AppLayout from './layout/AppLayout';
+import AppProvider from './components/context/AppContext';
+import AppLayout from './components/layout/AppLayout';
 import {
   About,
   Banner,

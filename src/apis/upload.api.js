@@ -1,6 +1,6 @@
 import FetchAPI from './custom/fetch-api';
 import MakeRefreshToken from './helper/MakeRefreshToken';
-import { handleShowToast, NotificationType } from '../utils/HandleNotification';
+import { makeToast, toastType } from '../helper/makeToast';
 
 /**
  * **use for upload data**
@@ -21,12 +21,7 @@ const apiUpload = {
         result = response;
       },
       err => {
-        handleShowToast(
-          dispatch,
-          NotificationType.ERROR,
-          'Lỗi hệ thống',
-          'Không thể gửi file đến Server!'
-        );
+        makeToast('Không thể gửi file đến Server!', toastType.error);
         MakeRefreshToken(err, dispatch);
       }
     );

@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { AppContext } from '../../context/AppContext';
+import useAppContext from '../../hooks/useAppContext';
 
 const TabBar = ({ name, title, url, icon, parentName }) => {
-  const { activeTab, handleSetActiveTab } = useContext(AppContext);
+  const { activeTab, handleSetActiveTab } = useAppContext();
 
   const getBackground = () => {
     if (parentName) {

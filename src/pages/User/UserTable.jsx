@@ -2,7 +2,7 @@ import React from 'react';
 import SoftTable from '../../components/common/SoftTable';
 import Loading from '../../components/common/Loading';
 
-import { getStringBackTime } from '../../utils/HandleTimer';
+import { getStringBackTime } from '../../utils/formatTime';
 
 const titleButtonUpdate = 'Cập nhật';
 const titleButtonDelete = 'Xóa';
