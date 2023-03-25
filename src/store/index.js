@@ -27,5 +27,10 @@ export const store = configureStore({
     /* USER */
     invoices: invoiceReducer,
     users: userReducer
-  }
+  },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      immutableCheck: { warnAfter: 128 },
+      serializableCheck: { warnAfter: 128 }
+    })
 });
