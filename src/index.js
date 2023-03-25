@@ -7,6 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import App from './App';
+import './styles/css/laptech.css';
 
 /**
  * @summary react-router-dom in App.jsx has createBrowserRouter
