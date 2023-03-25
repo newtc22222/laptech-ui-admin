@@ -11,7 +11,15 @@ import WorkMode from '../common/WorkMode';
  * - addModalValue(properties:object)
  * - setCreateMode()
  * - setUpdateMode(object)
- * @returns {[]} [dispatch, navigate, workMode, showModal, objectEdit, modalValue, action]
+ * @returns {[
+ *  dispatch: useDispatch,
+ *  Navigate: Navigate,
+ *  workMode: string,
+ *  showModal: boolean,
+ *  objectEdit: object | null,
+ *  modalValue: object | null,
+ *  action: {}
+ * ]}
  */
 const useWorkspace = () => {
   const dispatch = useDispatch();
