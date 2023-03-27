@@ -4,7 +4,7 @@ import ModalForm from '../../components/common/ModalForm';
 
 import apiDiscount from '../../apis/product/discount.api';
 
-import { getUpdateByUserInSystem } from '../../helper/getUser';
+import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
 
 const titleCode = 'Mã được sử dụng';
 const titleAppliedType = 'Kiểu giảm giá';

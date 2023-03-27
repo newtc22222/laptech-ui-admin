@@ -1,13 +1,19 @@
 import FetchAPI from '../custom/fetch-api';
-import makeRefreshToken from './MakeRefreshToken';
-import { makeToast, toastType } from '../../helper/makeToast';
-import subText from '../../helper/getVietnameseIntonation';
+import makeRefreshToken from './makeRefreshToken';
+import { makeToast, toastType } from '../../utils/makeToast';
+import subText from '../../utils/getVietnameseIntonation';
 
 /**
  * @param {string} objectName
  * @param {object} action
  * @param {object} extraAction
- * @returns
+ * @returns {{
+ *  getAll: (dispatch, token?: string) => {},
+ *  create: (dispatch, object: object, token: string) => {},
+ *  update: (dispatch, object: object, token: string) => {},
+ *  delete: (dispatch, objectId: string | number, token: string) => {},
+ *  extraAction: object
+ * }}
  */
 export default function makeCallAPI(objectName, action, extraAction) {
   const objectNameVI = subText[objectName];
@@ -42,7 +48,7 @@ export default function makeCallAPI(objectName, action, extraAction) {
       );
     },
     create: async (dispatch, object, token) => {
-      console.table('call api', object);
+      // console.table('call api', object);
       await FetchAPI.POST(
         objectName,
         object,

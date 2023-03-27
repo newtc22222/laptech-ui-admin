@@ -1,4 +1,7 @@
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
+
+import usePaging from '../../../hooks/usePaging';
+import classNames from 'classnames';
 
 /**
  * @param {{data: object[], config: object[], keyFn: () => {}}} param0
@@ -6,8 +9,8 @@ import { Fragment } from 'react';
  */
 function Table({ data, config, keyFn, ...props }) {
   const [idx_start, idx_end, Paging] = usePaging(
-    dataList.length,
-    totalRecordData
+    data.length,
+    props.totalRecordData
   );
 
   const renderedHeaders = config.map(column => {
@@ -21,7 +24,11 @@ function Table({ data, config, keyFn, ...props }) {
   const renderedRows = data.slice(idx_start, idx_end).map(rowData => {
     const renderedCells = config.map(column => {
       return (
-        <td className="p-2" key={column.label}>
+        <td
+          className={classNames(column.className)}
+          style={column.style}
+          key={column.label}
+        >
           {column.render(rowData)}
         </td>
       );
@@ -35,7 +42,7 @@ function Table({ data, config, keyFn, ...props }) {
       <div>
         <table className="table table-bordered border-dark table-hover table-sm">
           <thead className="bg-primary text-white">
-            <tr className="text-center">{renderedHeaders}</tr>
+            <tr className="text-center text-uppercase">{renderedHeaders}</tr>
           </thead>
           <tbody>{renderedRows}</tbody>
         </table>

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Navigate } from 'react-router';
 
 const WorkMode = {
   view: 'VIEW',
@@ -18,7 +17,6 @@ const WorkMode = {
  * - setUpdateMode(object)
  * @returns {{
  *  dispatch: useDispatch,
- *  Navigate: Navigate,
  *  workMode: string,
  *  showModal: boolean,
  *  objectEdit: object | null,
@@ -69,7 +67,6 @@ const useWorkspace = () => {
 
   return {
     dispatch,
-    Navigate,
     workMode,
     showModal,
     objectEdit,

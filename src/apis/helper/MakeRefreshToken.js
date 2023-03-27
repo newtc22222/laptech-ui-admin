@@ -1,4 +1,4 @@
-import { createLocalStorage } from '../../helper/createStorage';
+import { createLocalStorage } from '../../utils/createStorage';
 import apiAuth from '../auth';
 
 export default function makeRefreshToken(err, dispatch) {

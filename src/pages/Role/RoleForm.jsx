@@ -5,7 +5,7 @@ import ModalForm from '../../components/common/ModalForm';
 
 import apiRole from '../../apis/role.api';
 
-import { getUpdateByUserInSystem } from '../../helper/getUser';
+import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
 
 const titleName = 'Tiêu đề (hiển thị trực tiếp)';
 const titleDescription = 'Thông tin chi tiết về phân quyền';

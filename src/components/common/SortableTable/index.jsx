@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Table from '../Table';
 import useSort from '../../../hooks/useSort';
 
@@ -5,35 +7,24 @@ function getIcons(label, sortBy, sortOrder) {
   if (label !== sortBy) {
     return (
       <div>
-        <i class="bi bi-arrow-down-up"></i>
+        <i className="bi bi-arrow-down-up"></i>
       </div>
     );
   }
 
   switch (sortOrder) {
     case 'asc':
-      return (
-        <div>
-          <i class="bi bi-arrow-up"></i>
-        </div>
-      );
+      return <i className="bi bi-arrow-up"></i>;
+
     case 'desc':
-      return (
-        <div>
-          <i class="bi bi-arrow-down"></i>
-        </div>
-      );
+      return <i className="bi bi-arrow-down"></i>;
+
     default:
-      return (
-        <div>
-          <i class="bi bi-arrow-down-up"></i>
-        </div>
-      );
+      return <i className="bi bi-arrow-down-up"></i>;
   }
 }
 
 function SortableTable({ data, config, keyFn, ...props }) {
-  const { config, data } = props;
   const { sortOrder, sortBy, sortedData, setSortColumn } = useSort(
     data,
     config
@@ -48,12 +39,15 @@ function SortableTable({ data, config, keyFn, ...props }) {
       ...column,
       header: () => (
         <th
-          style={{ cursor: 'pointer' }}
+          style={{
+            cursor: 'pointer',
+            backgroundColor: column.label === sortBy && '#0E4893'
+          }}
           onClick={() => setSortColumn(column.label)}
         >
-          <div className="flex items-center">
-            {getIcons(column.label, sortBy, sortOrder)}
+          <div className="d-flex justify-content-between ps-2 pe-1">
             {column.label}
+            {getIcons(column.label, sortBy, sortOrder)}
           </div>
         </th>
       )

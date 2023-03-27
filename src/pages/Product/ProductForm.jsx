@@ -6,7 +6,7 @@ import apiProduct from '../../apis/product/product.api';
 import apiLabel from '../../apis/product/label.api';
 import apiDiscount from '../../apis/product/discount.api';
 
-import { getUpdateByUserInSystem } from '../../helper/getUser';
+import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
 
 // 1: brand, category
 // n: image, label, discount

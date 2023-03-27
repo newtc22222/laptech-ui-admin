@@ -1,17 +1,10 @@
 import React from 'react';
-import Loading from '../../components/common/Loading';
-import SoftTable from '../../components/common/SoftTable';
-import { ico_edit, ico_del } from '../../common/svg/crud';
 
-const headerList = [
-  'ID',
-  'Tên thương hiệu',
-  'Quốc gia',
-  'Ngày thành lập',
-  'Logo',
-  'Số sản phẩm trong kho',
-  'Thiết lập'
-];
+import Loading from '../../components/common/Loading';
+import SortableTable from '../../components/common/SortableTable';
+
+import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
+import content from './content';
 
 const BrandTable = ({
   brandList,
@@ -21,47 +14,78 @@ const BrandTable = ({
 }) => {
   if (brandList === null || brandList === undefined) return <Loading />;
 
-  return (
-    <SoftTable
-      headerList={headerList}
-      dataList={brandList}
-      totalRecordData={brandTotalRecord}
-      cb_handleRow={(idx_start, idx_end) =>
-        brandList.slice(idx_start, idx_end).map(brand => (
-          <tr key={brand.id} className="text-center">
-            <td>{brand.id}</td>
-            <td className="fw-bolder">{brand.name}</td>
-            <td className="fw-bold text-secondary">{brand.country}</td>
-            <td>{brand.establishDate}</td>
-            <td>
-              <img
-                src={brand.logo}
-                alt={brand.name + ' logo'}
-                className="rounded img-fluid img-thumbnail"
-                style={{ maxWidth: '8vw' }}
-              />
-            </td>
-            <td>
-              <p className="fw-bold">0</p>
-            </td>
-            <td style={{ width: '10%' }}>
-              <button
-                className="btn btn-secondary w-100 mb-2"
-                onClick={() => handleSetUpdateMode(brand)}
-              >
-                {ico_edit}
-              </button>{' '}
-              <br />
-              <button
-                className="btn btn-danger w-100"
-                onClick={() => handleShowDeleteModal(brand.id, brand.name)}
-              >
-                {ico_del}
-              </button>
-            </td>
-          </tr>
-        ))
+  const fields = [
+    'id',
+    'name',
+    'country',
+    'establishDate',
+    'logo',
+    'createdDate',
+    'modifiedDate'
+  ];
+  const data = chooseFieldsOfObject(brandList, fields);
+
+  const config = [
+    {
+      label: content.id,
+      render: brand => brand.id,
+      sortValue: brand => brand.id
+    },
+    {
+      label: content.name,
+      render: brand => brand.name,
+      sortValue: brand => brand.name
+    },
+    {
+      label: content.country,
+      render: brand => brand.country,
+      sortValue: brand => brand.country
+    },
+    {
+      label: content.establishDate,
+      render: brand => brand.establishDate,
+      sortValue: brand => brand.establishDate
+    },
+    {
+      label: content.logo,
+      style: { maxWidth: '8vw' },
+      className: 'text-center',
+      render: brand => (
+        <img alt={brand.name} src={brand.logo} className="img-thumbnail" />
+      )
+    },
+    {
+      label: content.setting,
+      style: { maxWidth: '5vw' },
+      render: brand => {
+        return (
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-secondary flex-fill"
+              onClick={() => handleSetUpdateMode(brand)}
+            >
+              {content.btnEdit}
+            </button>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() => handleShowDeleteModal(brand.id, brand.name)}
+            >
+              {content.btnDel}
+            </button>
+          </div>
+        );
       }
+    }
+  ];
+
+  const keyFn = brand => brand.id;
+
+  return (
+    <SortableTable
+      data={data}
+      config={config}
+      keyFn={keyFn}
+      totalRecordData={brandTotalRecord}
     />
   );
 };

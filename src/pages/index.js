@@ -21,8 +21,6 @@ import Setting from './Setting';
 import Role from './Role';
 import User from './User';
 
-// const About = lazy(() => import('./About'));
-
 export {
   About,
   Banner,

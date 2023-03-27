@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 
 import Header from '../Header';
 import Sidebar from '../Sidebar';
+import CheckLoginTimeout from '../validation/CheckLoginTimeout';
 
 /**
  * @since 2022-12-22

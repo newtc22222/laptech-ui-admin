@@ -1,6 +1,6 @@
-import React from "react";
-import { Controller } from "react-hook-form";
-import classNames from "classnames";
+import React from 'react';
+import { Controller } from 'react-hook-form';
+import classNames from 'classnames';
 
 const InputImage = ({
   control,
@@ -15,7 +15,7 @@ const InputImage = ({
   const defaultHeight = height || 150;
   const defaultImg = `https://placeholder.pics/svg/${defaultWidth}x${defaultHeight}/1B82FF-95EDFF/000000-FFFFFF/choose%20image`;
 
-  const getImage = (value) => {
+  const getImage = value => {
     return value instanceof File ? URL.createObjectURL(value) : value;
   };
 
@@ -28,16 +28,22 @@ const InputImage = ({
       render={({ field: { value, onChange } }) => {
         return (
           <div className={classNames(props.className)}>
-            <div
-              className={classNames({
-                "border border-danger": errors[name]
-              })}
-            >
+            <div>
+              {props.label && (
+                <label className="form-label text-uppercase">
+                  {props.label}
+                  {props.required && (
+                    <span className="text-danger ms-1">*</span>
+                  )}
+                </label>
+              )}
               <input
-                className="form-control"
+                className={classNames('form-control', {
+                  'is-invalid': errors[name]
+                })}
                 type="file"
                 disabled={props.disabled || false}
-                onChange={(e) => {
+                onChange={e => {
                   if (e.target.files.length > 0) {
                     onChange({
                       target: { value: e.target.files[0] }
@@ -46,12 +52,12 @@ const InputImage = ({
                 }}
               />
             </div>
-            <div className="d-flex">
+            <div className="d-flex mt-2">
               <img
                 alt="uploadImg"
                 style={{ maxWidth: defaultWidth, maxHeight: defaultHeight }}
-                className={classNames("img-fuild img-thumbnail", {
-                  "border border-danger": errors[name]
+                className={classNames('img-fuild img-thumbnail', {
+                  'border border-danger': errors[name]
                 })}
                 src={getImage(value) || defaultImg}
                 onClick={() => {

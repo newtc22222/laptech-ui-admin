@@ -1,5 +1,5 @@
 import React, { useCallback, useState, createContext } from 'react';
-import { createSessionStorage } from '../../helper/createStorage';
+import { createSessionStorage } from '../../utils/createStorage';
 
 export const AppContext = createContext();
 

@@ -5,8 +5,8 @@ import ModalForm from '../../components/common/ModalForm';
 import apiCategory from '../../apis/product/category.api';
 import apiUpload from '../../apis/upload.api';
 
-import { makeToast, toastType } from '../../helper/makeToast';
-import { getUpdateByUserInSystem } from '../../helper/getUser';
+import { makeToast, toastType } from '../../utils/makeToast';
+import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
 
 const titleName = 'Tên phân loại';
 const titleDescription = 'Mô tả chung';

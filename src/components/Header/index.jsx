@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { logout, setCredentials } from '../../store/slice/auth.slice';
-import { createLocalStorage } from '../../helper/createStorage';
+import { createLocalStorage } from '../../utils/createStorage';
 
 import TabHeader from './TabHeader';
 import useAppContext from '../../hooks/useAppContext';

@@ -5,13 +5,13 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiUser from '../../apis/user.api';
 
-import UserTable from './UserTable';
-import UserForm from './UserForm';
+import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
 import PageHeader from '../../components/common/PageHeader';
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
-import checkLoginTimeout from '../../helper/checkLoginTimeout';
+import UserTable from './UserTable';
+import UserForm from './UserForm';
 
 const pageName = 'Người dùng hệ thống';
 const objectName = 'users';
@@ -19,8 +19,14 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const User = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const { dispatch, workMode, showModal, userEdit, modalValue, action } =
-    useWorkspace();
+  const {
+    dispatch,
+    workMode,
+    showModal,
+    objectEdit: userEdit,
+    modalValue,
+    action
+  } = useWorkspace();
 
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
@@ -33,7 +39,7 @@ const User = () => {
 
   // Loading
   useEffect(() => {
-    if (!userList) apiUser.getAll(dispatch, accessToken);
+    if (!userList || error) apiUser.getAll(dispatch, accessToken);
   }, []);
 
   // Show delete modal
@@ -58,13 +64,13 @@ const User = () => {
   }
 
   return (
-    checkLoginTimeout() || (
+    <CheckLoginTimeout>
       <div>
         {showModal && (
           <ModalConfirm
             show={showModal}
             setShow={action.showModal}
-            props={modalValue}
+            {...modalValue}
           />
         )}
         {workMode === WorkMode.create && (
@@ -91,7 +97,7 @@ const User = () => {
           handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
       </div>
-    )
+    </CheckLoginTimeout>
   );
 };
 

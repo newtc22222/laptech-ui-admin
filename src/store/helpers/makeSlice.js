@@ -27,13 +27,13 @@ function makeSlice(objectName) {
         state.data = action.payload;
       },
       createSuccess: (state, action) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         state.isFetching = false;
         state.error = false;
         state.data = [...state.data, action.payload];
       },
       updateSuccess: (state, action) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         state.isFetching = false;
         state.error = false;
         state.data = state.data.map(object => {

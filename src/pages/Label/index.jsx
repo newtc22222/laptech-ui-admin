@@ -5,13 +5,13 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiLabel from '../../apis/product/label.api';
 
-import LabelTable from './LabelTable';
-import LabelForm from './LabelForm';
+import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
 import ModalConfirm from '../../components/common/ModalConfirm';
 import PageHeader from '../../components/common/PageHeader';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
-import checkLoginTimeout from '../../helper/checkLoginTimeout';
+import LabelTable from './LabelTable';
+import LabelForm from './LabelForm';
 
 const pageName = 'Nhãn thuộc tính của sản phẩm';
 const objectName = 'labels';
@@ -22,8 +22,14 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Label = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const { dispatch, workMode, showModal, labelEdit, modalValue, action } =
-    useWorkspace();
+  const {
+    dispatch,
+    workMode,
+    showModal,
+    objectEdit: labelEdit,
+    modalValue,
+    action
+  } = useWorkspace();
 
   if (accessToken === null || accessToken === undefined)
     return <Navigate to="/auth/login" />;
@@ -74,13 +80,13 @@ const Label = () => {
   }
 
   return (
-    checkLoginTimeout() || (
+    <CheckLoginTimeout>
       <div>
         {showModal && (
           <ModalConfirm
             show={showModal}
             setShow={action.showModal}
-            props={modalValue}
+            {...modalValue}
           />
         )}
         {workMode === WorkMode.create && (
@@ -107,7 +113,7 @@ const Label = () => {
           handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
       </div>
-    )
+    </CheckLoginTimeout>
   );
 };
 

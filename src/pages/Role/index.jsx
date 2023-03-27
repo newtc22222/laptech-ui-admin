@@ -5,13 +5,13 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiRole from '../../apis/role.api';
 
-import RoleTable from './RoleTable';
-import RoleForm from './RoleForm';
+import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
 import PageHeader from '../../components/common/PageHeader';
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
-import checkLoginTimeout from '../../helper/checkLoginTimeout';
+import RoleTable from './RoleTable';
+import RoleForm from './RoleForm';
 
 const pageName = 'Quyền sử dụng người dùng';
 const objectName = 'roles';
@@ -22,8 +22,14 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Role = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const { dispatch, workMode, showModal, roleEdit, modalValue, action } =
-    useWorkspace();
+  const {
+    dispatch,
+    workMode,
+    showModal,
+    objectEdit: roleEdit,
+    modalValue,
+    action
+  } = useWorkspace();
 
   if (accessToken === null || accessToken === undefined)
     navigate('/auth/login');
@@ -35,7 +41,7 @@ const Role = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!roleList) apiRole.getAll(dispatch, accessToken);
+    if (!roleList || error) apiRole.getAll(dispatch, accessToken);
   }, []);
 
   const handleShowDeleteModal = useCallback((roleId, roleName) => {
@@ -59,13 +65,13 @@ const Role = () => {
   }
 
   return (
-    checkLoginTimeout() || (
+    <CheckLoginTimeout>
       <div>
         {showModal && (
           <ModalConfirm
             show={showModal}
             setShow={action.showModal}
-            props={modalValue}
+            {...modalValue}
           />
         )}
         {workMode === WorkMode.create && (
@@ -91,7 +97,7 @@ const Role = () => {
           handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
       </div>
-    )
+    </CheckLoginTimeout>
   );
 };
 

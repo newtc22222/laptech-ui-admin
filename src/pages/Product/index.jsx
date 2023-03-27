@@ -7,14 +7,13 @@ import apiBrand from '../../apis/product/brand.api';
 import apiCategory from '../../apis/product/category.api';
 import apiProduct from '../../apis/product/product.api';
 
-import checkLoginTimeout from '../../helper/checkLoginTimeout';
-
-import ProductTable from './ProductTable';
-import ProductForm from './ProductForm';
+import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
 import PageHeader from '../../components/common/PageHeader';
 import ModalConfirm from '../../components/common/ModalConfirm';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
+import ProductTable from './ProductTable';
+import ProductForm from './ProductForm';
 
 const pageName = 'Sản phẩm';
 const objectName = 'products';
@@ -22,8 +21,14 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const ProductPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const { dispatch, workMode, showModal, productEdit, modalValue, action } =
-    useWorkspace();
+  const {
+    dispatch,
+    workMode,
+    showModal,
+    objectEdit: productEdit,
+    modalValue,
+    action
+  } = useWorkspace();
 
   const {
     data: productList,
@@ -44,9 +49,9 @@ const ProductPage = () => {
   } = useSelector(state => state['categories']);
 
   useEffect(() => {
-    if (!productList) apiProduct.getAll(dispatch);
-    if (!brandList) apiBrand.getAll(dispatch);
-    if (!categoryList) apiCategory.getAll(dispatch);
+    if (!productList || error) apiProduct.getAll(dispatch);
+    if (!brandList || errorBrand) apiBrand.getAll(dispatch);
+    if (!categoryList || errorCategory) apiCategory.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (productId, productName) => {
@@ -70,13 +75,13 @@ const ProductPage = () => {
   }
 
   return (
-    checkLoginTimeout() || (
+    <CheckLoginTimeout>
       <div>
         {showModal && (
           <ModalConfirm
             show={showModal}
             setShow={action.showModal}
-            props={modalValue}
+            {...modalValue}
           />
         )}
         {workMode === WorkMode.create && (
@@ -105,7 +110,7 @@ const ProductPage = () => {
           handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
       </div>
-    )
+    </CheckLoginTimeout>
   );
 };
 

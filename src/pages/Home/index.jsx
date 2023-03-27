@@ -1,12 +1,14 @@
 import React from 'react';
-import checkLoginTimeout from '../../helper/checkLoginTimeout';
-import { makeToast, toastType } from '../../helper/makeToast';
+
+import { makeToast, toastType } from '../../utils/makeToast';
+
+import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
 import PageHeader from '../../components/common/PageHeader';
 import CardInformationGroup from './CardInformationGroup';
 
 function DashBoard() {
   return (
-    checkLoginTimeout() || (
+    <CheckLoginTimeout>
       <div>
         <PageHeader pageName="Home">
           <div className="btn-group me-2">
@@ -26,7 +28,7 @@ function DashBoard() {
         </PageHeader>
         <CardInformationGroup />
       </div>
-    )
+    </CheckLoginTimeout>
   );
 }
 

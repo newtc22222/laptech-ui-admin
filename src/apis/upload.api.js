@@ -1,6 +1,6 @@
 import FetchAPI from './custom/fetch-api';
-import MakeRefreshToken from './helper/MakeRefreshToken';
-import { makeToast, toastType } from '../helper/makeToast';
+import MakeRefreshToken from './helper/makeRefreshToken';
+import { makeToast, toastType } from '../utils/makeToast';
 
 /**
  * **use for upload data**

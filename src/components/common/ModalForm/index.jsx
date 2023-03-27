@@ -17,6 +17,19 @@ const titleModifiedDate = 'Thời gian chỉnh sửa gần nhất: ';
  * @return {JSX.Element}
  */
 function ModalForm({ children, object, action, handleBack, ...props }) {
+  const renderFooter = props.disabledFotter ? null : (
+    <Modal.Footer>
+      <div>
+        <button className="btn btn-primary fw-bold me-3" onClick={action}>
+          {titleButtonSave}
+        </button>
+        <button className="btn btn-secondary fw-bold" onClick={handleBack}>
+          {titleButtonBack}
+        </button>
+      </div>
+    </Modal.Footer>
+  );
+
   return (
     <Modal
       show
@@ -36,16 +49,7 @@ function ModalForm({ children, object, action, handleBack, ...props }) {
         )}
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
-      <Modal.Footer>
-        <div>
-          <button className="btn btn-primary fw-bold me-3" onClick={action}>
-            {titleButtonSave}
-          </button>
-          <button className="btn btn-secondary fw-bold" onClick={handleBack}>
-            {titleButtonBack}
-          </button>
-        </div>
-      </Modal.Footer>
+      {renderFooter}
     </Modal>
   );
 }

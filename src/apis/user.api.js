@@ -1,6 +1,6 @@
 import makeCallAPI from './helper/makeCallAPI';
 import { action } from '../store/slice/user.slice';
-import { makeToast, toastType } from '../helper/makeToast';
+import { makeToast, toastType } from '../utils/makeToast';
 
 const extraAction = {
   activeUser: async (userId, token) => {

@@ -4,7 +4,7 @@ import ModalForm from '../../components/common/ModalForm';
 
 import apiLabel from '../../apis/product/label.api';
 
-import { getUpdateByUserInSystem } from '../../helper/getUser';
+import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
 
 const titleName = 'Tiêu đề (hiển thị trực tiếp)';
 const titleIcon = 'Biểu tượng đại diện';

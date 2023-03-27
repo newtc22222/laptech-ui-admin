@@ -12,8 +12,8 @@ const currencyUnit = ' đồng';
 
 const headerList = [
   'Tên sản phẩm',
-  'Thương hiệu',
-  'Danh mục',
+  // 'Thương hiệu',
+  // 'Danh mục',
   'Ảnh đại diện',
   'Ngày ra mắt',
   'Số lượng trong kho',
@@ -38,12 +38,12 @@ function ProductTable({
         productList?.map(product => (
           <tr key={product.id} className="text-center">
             <td className="fw-bolder">{product.name}</td>
-            <td className="text-secondary">
+            {/* <td className="text-secondary">
               {brandList[product.brandId].name}
             </td>
             <td className="text-secondary">
               {categoryList[product.categoryId].name}
-            </td>
+            </td> */}
             <td>
               <img src={''} />
             </td>

@@ -5,13 +5,13 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import apiBrand from '../../apis/product/brand.api';
 
-import BrandTable from './BrandTable';
-import BrandForm from './BrandForm';
+import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
 import ModalConfirm from '../../components/common/ModalConfirm';
 import PageHeader from '../../components/common/PageHeader';
 import Loading from '../../components/common/Loading';
 import ServerNotResponse from '../Error/ServerNotResponse';
-import checkLoginTimeout from '../../helper/checkLoginTimeout';
+import BrandForm from './BrandForm';
+import BrandTable from './BrandTable';
 
 const pageName = 'Thương hiệu';
 const objectName = 'brands';
@@ -19,8 +19,14 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const BrandPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const { dispatch, workMode, showModal, brandEdit, modalValue, action } =
-    useWorkspace();
+  const {
+    dispatch,
+    workMode,
+    showModal,
+    objectEdit: brandEdit,
+    modalValue,
+    action
+  } = useWorkspace();
 
   const {
     data: brandList,
@@ -30,7 +36,7 @@ const BrandPage = () => {
 
   // Loading
   useEffect(() => {
-    if (!brandList) apiBrand.getAll(dispatch);
+    if (!brandList || error) apiBrand.getAll(dispatch);
   }, []);
 
   // Show delete modal
@@ -55,7 +61,7 @@ const BrandPage = () => {
   }
 
   return (
-    checkLoginTimeout() || (
+    <CheckLoginTimeout>
       <div>
         {showModal && (
           <ModalConfirm
@@ -88,7 +94,7 @@ const BrandPage = () => {
           handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         />
       </div>
-    )
+    </CheckLoginTimeout>
   );
 };
 
