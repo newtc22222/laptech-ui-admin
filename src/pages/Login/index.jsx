@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import apiAuth from '../../apis/auth';
+import authService from '../../services/auth/auth.service';
 import HashString from '../../utils/hashData';
 import useAppContext from '../../hooks/useAppContext';
-import text from './text';
+import content from './content';
 // import Captcha from './Captcha';
 
 /**
@@ -26,6 +26,8 @@ const Login = () => {
   const { handleSetActiveTab } = useAppContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Login data
   const [phone, setPhone] = useState(rmb_phone);
   const passwordRef = useRef();
   // const captchaRef = useRef(); // features
@@ -46,7 +48,7 @@ const Login = () => {
       password: passwordRef.current.value
       // captcha: captchaRef.current.value // will update later
     };
-    const data = await apiAuth.login(dispatch, account);
+    const data = await authService.login(dispatch, account);
 
     if (data) {
       if (remember) {
@@ -64,12 +66,12 @@ const Login = () => {
   const renderForm = (
     <div className="p-5">
       <div className="text-center">
-        <h1 className="h4 text-primary mb-4">{text.welcome}</h1>
+        <h1 className="h4 text-primary mb-4">{content.welcome}</h1>
       </div>
       <div>
         <div className="mb-3">
           <label htmlFor="inputPhone" className="form-label">
-            {text.phone}
+            {content.phone}
           </label>
           <input
             type="text"
@@ -82,7 +84,7 @@ const Login = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="inputPassword" className="form-label">
-            {text.password}
+            {content.password}
           </label>
           <input
             type="password"
@@ -102,7 +104,7 @@ const Login = () => {
             onChange={() => setRemember(!remember)}
           />
           <label className="form-check-label" htmlFor="exampleCheck1">
-            {text.remember}
+            {content.remember}
           </label>
         </div>
         <button
@@ -113,13 +115,13 @@ const Login = () => {
             handleLogin();
           }}
         >
-          {text.btnSubmit}
+          {content.btnSubmit}
         </button>
       </div>
       <hr />
       <div className="text-center">
         <a className="small" href="forgot-password.html" target="_blank">
-          {text.forgotPassword}
+          {content.forgotPassword}
         </a>
       </div>
     </div>

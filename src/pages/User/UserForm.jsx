@@ -1,8 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ModalForm from '../../components/common/ModalForm';
 
-import apiUser from '../../apis/user.api';
+import { userService } from '../../services';
+
+import ModalForm from '../../components/common/ModalForm';
+// TODO: Build validate form
+import { Form, InputImage, TextInput } from '../../components/validation';
+import content from './content';
 
 /**
  * @since 2023-02-14

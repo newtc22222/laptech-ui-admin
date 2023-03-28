@@ -2,17 +2,14 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import content from './content';
-import apiBrand from '../../apis/product/brand.api';
-import apiUpload from '../../apis/upload.api';
+import { brandService, uploadService } from '../../services';
 
 import ModalForm from '../../components/common/ModalForm';
-import Form from '../../components/validation/Form';
-import InputImage from '../../components/validation/InputImage';
-import TextInput from '../../components/validation/TextInput';
+import { Form, InputImage, TextInput } from '../../components/validation';
 
 import { makeToast, toastType } from '../../utils/makeToast';
 import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+import content from './content';
 
 const BrandForm = ({ brand, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
@@ -36,7 +33,7 @@ const BrandForm = ({ brand, handleBack }) => {
     const formData = new FormData();
     formData.append('file', data.logo, data.logo.name);
     const promise = new Promise((resolve, reject) => {
-      const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+      const result = uploadService.uploadImage(dispatch, formData, accessToken);
       if (result) resolve(result);
       reject(new Error('Cannot upload images!'));
     });
@@ -49,7 +46,7 @@ const BrandForm = ({ brand, handleBack }) => {
     promise
       .then(result => {
         newBrand.logo = result;
-        apiBrand.create(dispatch, newBrand, accessToken);
+        brandService.create(dispatch, newBrand, accessToken);
         reset();
         handleBack();
       })
@@ -63,7 +60,11 @@ const BrandForm = ({ brand, handleBack }) => {
       formData.append('file', data.logo, data.logo.name);
       // upload new image
       promise = new Promise((resolve, reject) => {
-        const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+        const result = uploadService.uploadImage(
+          dispatch,
+          formData,
+          accessToken
+        );
         if (result) resolve(result);
         reject(new Error('Cannot upload images!'));
       });
@@ -78,12 +79,12 @@ const BrandForm = ({ brand, handleBack }) => {
       promise
         .then(result => {
           updateBrand.logo = result;
-          apiBrand.update(dispatch, updateBrand, brand.id, accessToken);
+          brandService.update(dispatch, updateBrand, brand.id, accessToken);
           handleBack();
         })
         .catch(err => makeToast(content.error.upload, toastType.error));
     } else {
-      apiBrand.update(dispatch, updateBrand, brand.id, accessToken);
+      brandService.update(dispatch, updateBrand, brand.id, accessToken);
       handleBack();
     }
   };

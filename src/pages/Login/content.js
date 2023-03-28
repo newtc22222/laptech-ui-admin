@@ -1,4 +1,4 @@
-const text = {
+const content = {
   welcome: 'Welcome back!',
   phone: 'Số điện thoại',
   password: 'Mật khẩu',
@@ -7,4 +7,4 @@ const text = {
   forgotPassword: 'Quên mật khẩu?'
 };
 
-export default text;
+export default content;

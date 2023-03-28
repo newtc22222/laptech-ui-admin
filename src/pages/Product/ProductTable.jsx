@@ -1,8 +1,11 @@
 import React from 'react';
+
 import SoftTable from '../../components/common/SoftTable';
 import { getCurrencyString } from '../../utils/formatCurency';
 
-import Loading from '../../components/common/Loading';
+// TODO: build sortable table
+import { Loading, SortableTable } from '../../components/common';
+import content from './content';
 
 const titleButtonUpdate = 'Cập nhật';
 const titleButtonDelete = 'Xóa';
@@ -34,8 +37,8 @@ function ProductTable({
       headerList={headerList}
       dataList={productList}
       totalRecordData={productTotalRecord}
-      cb_handleRow={() =>
-        productList?.map(product => (
+      cb_handleRow={(idx_start, idx_end) =>
+        productList?.slice(idx_start, idx_end).map(product => (
           <tr key={product.id} className="text-center">
             <td className="fw-bolder">{product.name}</td>
             {/* <td className="text-secondary">

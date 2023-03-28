@@ -1,6 +1,9 @@
 import React from 'react';
+
 import SoftTable from '../../components/common/SoftTable';
-import Loading from '../../components/common/Loading';
+// TODO: build sortable table
+import { Loading, SortableTable } from '../../components/common';
+import content from './content';
 
 const titleButtonUpdate = 'Cập nhật';
 const titleButtonDelete = 'Xóa';

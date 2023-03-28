@@ -3,12 +3,10 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiLabel from '../../apis/product/label.api';
+import { labelService } from '../../services';
 
 import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import PageHeader from '../../components/common/PageHeader';
-import Loading from '../../components/common/Loading';
+import { ModalConfirm, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
@@ -31,9 +29,6 @@ const Label = () => {
     action
   } = useWorkspace();
 
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
-
   const {
     data: labelList,
     isFetching,
@@ -41,7 +36,7 @@ const Label = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!labelList) apiLabel.getAll(dispatch);
+    if (!labelList) labelService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (labelId, labelName) => {
@@ -49,7 +44,7 @@ const Label = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${labelName} khỏi hệ thống không?`,
       () => {
-        apiLabel.delete(dispatch, labelId, accessToken);
+        labelService.delete(dispatch, labelId, accessToken);
         action.showModal(false);
       }
     );

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 
-import PageHeader from '../../components/common/PageHeader';
-import Loading from '../../components/common/Loading';
-import ServerNotResponse from '../Error/ServerNotResponse';
 import useFetch from '../../hooks/useFetch';
 
-const pageName = 'Hình ảnh quảng cáo';
-const titleBtnAdd = 'Thêm hình ảnh';
+import { PageHeader, Loading } from '../../components/common';
+import ServerNotResponse from '../Error/ServerNotResponse';
+import content from './content';
 
 const Banner = () => {
   const [filterDate, setFilterDate] = useState(
@@ -24,12 +22,14 @@ const Banner = () => {
 
   return (
     <div>
-      <PageHeader pageName={pageName}>
-        <button className="btn btn-primary fw-bold">{titleBtnAdd}</button>
+      <PageHeader pageName={content.pageName}>
+        <button className="btn btn-primary fw-bold">
+          {content.titleBtnAdd}
+        </button>
       </PageHeader>
       <div className="input-group mb-2 mt-2">
         <label className="input-group-text" htmlFor="filterBanner">
-          Lọc theo ngày
+          {content.filterByDate}
         </label>
         <input
           id="filterBanner"

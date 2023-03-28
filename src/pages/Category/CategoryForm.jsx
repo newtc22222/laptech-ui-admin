@@ -1,12 +1,15 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ModalForm from '../../components/common/ModalForm';
 
-import apiCategory from '../../apis/product/category.api';
-import apiUpload from '../../apis/upload.api';
+import { categoryService, uploadService } from '../../services';
 
 import { makeToast, toastType } from '../../utils/makeToast';
 import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+
+import ModalForm from '../../components/common/ModalForm';
+// TODO: Build validate form
+import { Form, InputImage, TextInput } from '../../components/validation';
+import content from './content';
 
 const titleName = 'Tên phân loại';
 const titleDescription = 'Mô tả chung';
@@ -44,7 +47,11 @@ const CategoryForm = ({ category, handleBack }) => {
       const formData = new FormData();
       formData.append('file', image.file, image.filename);
       const promise = new Promise((resolve, reject) => {
-        const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+        const result = uploadService.uploadImage(
+          dispatch,
+          formData,
+          accessToken
+        );
         if (result) resolve(result);
         reject(new Error('Cannot upload images!'));
       });
@@ -57,7 +64,7 @@ const CategoryForm = ({ category, handleBack }) => {
           ...getUpdateByUserInSystem()
         };
 
-        apiCategory.create(dispatch, newCategory, accessToken);
+        categoryService.create(dispatch, newCategory, accessToken);
         handleBack();
       });
     } catch (err) {
@@ -74,7 +81,11 @@ const CategoryForm = ({ category, handleBack }) => {
         formData.append('file', image.file, image.filename);
 
         promise = new Promise((resolve, reject) => {
-          const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+          const result = uploadService.uploadImage(
+            dispatch,
+            formData,
+            accessToken
+          );
           if (result) resolve(result);
           reject(new Error('Cannot upload images!'));
         });
@@ -91,7 +102,12 @@ const CategoryForm = ({ category, handleBack }) => {
         updateCategory.image = result;
       });
 
-      apiCategory.update(dispatch, updateCategory, category.id, accessToken);
+      categoryService.update(
+        dispatch,
+        updateCategory,
+        category.id,
+        accessToken
+      );
       handleBack();
     } catch (err) {
       console.log(err);

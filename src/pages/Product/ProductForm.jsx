@@ -1,12 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ModalForm from '../../components/common/ModalForm';
 
-import apiProduct from '../../apis/product/product.api';
-import apiLabel from '../../apis/product/label.api';
-import apiDiscount from '../../apis/product/discount.api';
+import { labelService, productService } from '../../services';
 
 import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+
+import ModalForm from '../../components/common/ModalForm';
+// TODO: Build validate form
+import { Form, InputImage, TextInput } from '../../components/validation';
+import content from './content';
 
 // 1: brand, category
 // n: image, label, discount
@@ -29,14 +31,14 @@ const ProductForm = ({ product, handleBack, ...props }) => {
 
   const handleSaveData = async () => {};
 
-  const renderForm = <></>;
+  const renderForm = <div>Hello</div>;
 
   return (
     <ModalForm
-      object={label}
+      object={product}
       handleBack={handleBack}
       action={() => {
-        label ? handleSaveData() : handleCreateData();
+        product ? handleSaveData() : handleCreateData();
       }}
     >
       {renderForm}

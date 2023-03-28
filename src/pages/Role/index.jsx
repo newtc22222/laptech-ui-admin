@@ -3,12 +3,10 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiRole from '../../apis/role.api';
+import { roleService } from '../../services';
 
 import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import PageHeader from '../../components/common/PageHeader';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
+import { ModalConfirm, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 import RoleTable from './RoleTable';
 import RoleForm from './RoleForm';
@@ -31,9 +29,6 @@ const Role = () => {
     action
   } = useWorkspace();
 
-  if (accessToken === null || accessToken === undefined)
-    navigate('/auth/login');
-
   const {
     data: roleList,
     isFetching,
@@ -41,7 +36,7 @@ const Role = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!roleList || error) apiRole.getAll(dispatch, accessToken);
+    if (!roleList || error) roleService.getAll(dispatch, accessToken);
   }, []);
 
   const handleShowDeleteModal = useCallback((roleId, roleName) => {
@@ -49,7 +44,7 @@ const Role = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${roleName} khỏi hệ thống không?`,
       () => {
-        apiRole.delete(dispatch, roleId, accessToken);
+        roleService.delete(dispatch, roleId, accessToken);
         action.showModal(false);
       }
     );

@@ -3,12 +3,10 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiDiscount from '../../apis/product/discount.api';
+import { discountService } from '../../services';
 
 import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import PageHeader from '../../components/common/PageHeader';
-import Loading from '../../components/common/Loading';
+import { ModalConfirm, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 import DiscountTable from './DiscountTable';
 import DiscountForm from './DiscountForm';
@@ -37,11 +35,8 @@ const Discount = () => {
     error
   } = useSelector(state => state[objectName]);
 
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
-
   useEffect(() => {
-    if (!discountList || error) apiDiscount.getAll(dispatch);
+    if (!discountList || error) discountService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (discountId, discountName) => {
@@ -49,7 +44,7 @@ const Discount = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountName} khỏi hệ thống không?`,
       () => {
-        apiDiscount.delete(dispatch, discountId, accessToken);
+        discountService.delete(dispatch, discountId, accessToken);
         action.showModal(false);
       }
     );

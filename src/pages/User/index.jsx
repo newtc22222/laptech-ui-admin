@@ -3,12 +3,10 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiUser from '../../apis/user.api';
+import { userService } from '../../services';
 
 import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import PageHeader from '../../components/common/PageHeader';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
+import { ModalConfirm, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 import UserTable from './UserTable';
 import UserForm from './UserForm';
@@ -28,9 +26,6 @@ const User = () => {
     action
   } = useWorkspace();
 
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
-
   const {
     data: userList,
     isFetching,
@@ -39,7 +34,7 @@ const User = () => {
 
   // Loading
   useEffect(() => {
-    if (!userList || error) apiUser.getAll(dispatch, accessToken);
+    if (!userList || error) userService.getAll(dispatch, accessToken);
   }, []);
 
   // Show delete modal
@@ -48,7 +43,7 @@ const User = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${userName} khỏi hệ thống không?`,
       () => {
-        apiUser.delete(dispatch, userId, accessToken);
+        userService.delete(dispatch, userId, accessToken);
         action.showModal(false);
       }
     );

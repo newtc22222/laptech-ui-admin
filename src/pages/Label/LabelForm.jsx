@@ -1,10 +1,14 @@
 import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ModalForm from '../../components/common/ModalForm';
 
-import apiLabel from '../../apis/product/label.api';
+import { labelService } from '../../services';
 
 import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+
+import ModalForm from '../../components/common/ModalForm';
+// TODO: Build validate form
+import { Form, TextInput } from '../../components/validation';
+import content from './content';
 
 const titleName = 'Tiêu đề (hiển thị trực tiếp)';
 const titleIcon = 'Biểu tượng đại diện';
@@ -34,7 +38,7 @@ const LabelForm = ({ label, handleBack }) => {
       ...getUpdateByUserInSystem()
     };
 
-    await apiLabel.create(dispatch, newLabel, accessToken);
+    await labelService.create(dispatch, newLabel, accessToken);
     handleBack();
   };
 
@@ -47,7 +51,7 @@ const LabelForm = ({ label, handleBack }) => {
       modifiedDate: new Date().toISOString(),
       ...getUpdateByUserInSystem()
     };
-    await apiLabel.update(dispatch, newLabel, label.id, accessToken);
+    await labelService.update(dispatch, newLabel, label.id, accessToken);
     handleBack();
   };
 

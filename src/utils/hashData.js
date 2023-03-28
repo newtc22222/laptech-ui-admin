@@ -1,10 +1,10 @@
 const HashString = {
-  encrypt: (text) => {
+  encrypt: text => {
     return window.btoa(text);
   },
-  decrypt: (text) => {
+  decrypt: text => {
     return window.atob(text);
   }
-}
+};
 
 export default HashString;

@@ -1,11 +1,14 @@
 import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import ModalForm from '../../components/common/ModalForm';
-
-import apiRole from '../../apis/role.api';
+import { roleService } from '../../services';
 
 import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+
+import ModalForm from '../../components/common/ModalForm';
+// TODO: Build validate form
+import { Form, InputImage, TextInput } from '../../components/validation';
+import content from './content';
 
 const titleName = 'Tiêu đề (hiển thị trực tiếp)';
 const titleDescription = 'Thông tin chi tiết về phân quyền';
@@ -24,7 +27,7 @@ const RoleForm = ({ role, handleBack }) => {
       ...getUpdateByUserInSystem()
     };
 
-    await apiRole.create(dispatch, newRole, accessToken);
+    await roleService.create(dispatch, newRole, accessToken);
     handleBack();
   };
 
@@ -35,7 +38,7 @@ const RoleForm = ({ role, handleBack }) => {
       modifiedDate: new Date().toISOString(),
       ...getUpdateByUserInSystem()
     };
-    await apiRole.update(dispatch, newRole, role.id, accessToken);
+    await roleService.update(dispatch, newRole, role.id, accessToken);
     handleBack();
   };
 

@@ -2,9 +2,8 @@ import React from 'react';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 
-import Header from '../Header';
-import Sidebar from '../Sidebar';
-import CheckLoginTimeout from '../validation/CheckLoginTimeout';
+import Header from './Header';
+import Sidebar from './Sidebar';
 
 /**
  * @since 2022-12-22

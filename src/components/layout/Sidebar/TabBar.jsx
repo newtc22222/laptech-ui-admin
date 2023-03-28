@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
-import useAppContext from '../../hooks/useAppContext';
+import useAppContext from '../../../hooks/useAppContext';
 
 const TabBar = ({ name, title, url, icon, parentName }) => {
   const { activeTab, handleSetActiveTab } = useAppContext();
@@ -29,12 +29,7 @@ const TabBar = ({ name, title, url, icon, parentName }) => {
         }
       >
         {icon}
-        <span
-          className="ms-3 text-uppercase d-none d-lg-inline"
-          // style={getTextSubTab()}
-        >
-          {title}
-        </span>
+        <span className="ms-3 text-uppercase d-none d-lg-inline">{title}</span>
       </Link>
     </li>
   );

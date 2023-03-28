@@ -1,4 +1,4 @@
-import FetchAPI from '../custom/fetch-api';
+import apiCall from '../../apis';
 import makeRefreshToken from './makeRefreshToken';
 import { makeToast, toastType } from '../../utils/makeToast';
 import subText from '../../utils/getVietnameseIntonation';
@@ -15,9 +15,13 @@ import subText from '../../utils/getVietnameseIntonation';
  *  extraAction: object
  * }}
  */
-export default function makeCallAPI(objectName, action, extraAction) {
+function makeService(objectName, action, extraAction) {
   const objectNameVI = subText[objectName];
 
+  /**
+   *
+   * @param {useDispatch} dispatch
+   */
   function handleFetchStart(dispatch) {
     dispatch(action.fetchStart());
   }
@@ -36,7 +40,7 @@ export default function makeCallAPI(objectName, action, extraAction) {
 
   return {
     getAll: async (dispatch, token = null) => {
-      await FetchAPI.GET_ALL(
+      await apiCall.GET_ALL(
         objectName,
         null,
         token,
@@ -49,7 +53,7 @@ export default function makeCallAPI(objectName, action, extraAction) {
     },
     create: async (dispatch, object, token) => {
       // console.table('call api', object);
-      await FetchAPI.POST(
+      await apiCall.POST(
         objectName,
         object,
         token,
@@ -65,7 +69,7 @@ export default function makeCallAPI(objectName, action, extraAction) {
       );
     },
     update: async (dispatch, updateObject, objectId, token) => {
-      await FetchAPI.PUT(
+      await apiCall.PUT(
         `${objectName}/${objectId}`,
         updateObject,
         token,
@@ -82,7 +86,7 @@ export default function makeCallAPI(objectName, action, extraAction) {
       );
     },
     delete: async (dispatch, objectId, token) => {
-      await FetchAPI.DELETE(
+      await apiCall.DELETE(
         `${objectName}/${objectId}`,
         null,
         token,
@@ -97,3 +101,5 @@ export default function makeCallAPI(objectName, action, extraAction) {
     ...extraAction
   };
 }
+
+export default makeService;

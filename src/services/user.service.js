@@ -1,4 +1,4 @@
-import makeCallAPI from './helper/makeCallAPI';
+import makeService from './common/makeService';
 import { action } from '../store/slice/user.slice';
 import { makeToast, toastType } from '../utils/makeToast';
 
@@ -11,8 +11,8 @@ const extraAction = {
           Authorization: `Bearer ${token}`
         }
       });
-      await handleResponse(response);
-      dispatch(blockUserSuccess(userId));
+      // await handleResponse(response);
+      // dispatch(blockUserSuccess(userId));
       makeToast(
         'Trạng thái tài khoản của người dùng đã được cập nhật vào cơ sở dữ liệu!',
         toastType.success
@@ -29,8 +29,8 @@ const extraAction = {
           Authorization: `Bearer ${token}`
         }
       });
-      await handleResponse(response);
-      dispatch(blockUserSuccess(userId));
+      // await handleResponse(response);
+      // dispatch(blockUserSuccess(userId));
       makeToast(
         'Trạng thái tài khoản của người dùng đã được cập nhật vào cơ sở dữ liệu!',
         toastType.success
@@ -41,6 +41,6 @@ const extraAction = {
   }
 };
 
-const apiUsers = makeCallAPI('users', action, extraAction);
+const userService = makeService('users', action, extraAction);
 
-export default apiUsers;
+export default userService;

@@ -1,5 +1,5 @@
 import { createLocalStorage } from '../../utils/createStorage';
-import apiAuth from '../auth';
+import authService from '../auth/auth.service';
 
 export default function makeRefreshToken(err, dispatch) {
   const storage = createLocalStorage('laptech');
@@ -10,6 +10,6 @@ export default function makeRefreshToken(err, dispatch) {
     const object = {
       refreshToken: storage.get('refreshToken')
     };
-    apiAuth.refreshToken(dispatch, object);
+    authService.refreshToken(dispatch, object);
   }
 }

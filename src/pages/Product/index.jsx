@@ -3,14 +3,10 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiBrand from '../../apis/product/brand.api';
-import apiCategory from '../../apis/product/category.api';
-import apiProduct from '../../apis/product/product.api';
+import { brandService, categoryService, productService } from '../../services';
 
 import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import PageHeader from '../../components/common/PageHeader';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
+import { ModalConfirm, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 import ProductTable from './ProductTable';
 import ProductForm from './ProductForm';
@@ -49,9 +45,9 @@ const ProductPage = () => {
   } = useSelector(state => state['categories']);
 
   useEffect(() => {
-    if (!productList || error) apiProduct.getAll(dispatch);
-    if (!brandList || errorBrand) apiBrand.getAll(dispatch);
-    if (!categoryList || errorCategory) apiCategory.getAll(dispatch);
+    if (!productList || error) productService.getAll(dispatch);
+    if (!brandList || errorBrand) brandService.getAll(dispatch);
+    if (!categoryList || errorCategory) categoryService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (productId, productName) => {
@@ -59,7 +55,7 @@ const ProductPage = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${productName} khỏi hệ thống không?`,
       () => {
-        apiProduct.delete(dispatch, productId, accessToken);
+        productService.delete(dispatch, productId, accessToken);
         action.showModal(false);
       }
     );

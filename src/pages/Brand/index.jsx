@@ -3,12 +3,10 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiBrand from '../../apis/product/brand.api';
+import { brandService } from '../../services';
 
 import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import PageHeader from '../../components/common/PageHeader';
-import Loading from '../../components/common/Loading';
+import { ModalConfirm, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 import BrandForm from './BrandForm';
 import BrandTable from './BrandTable';
@@ -36,7 +34,7 @@ const BrandPage = () => {
 
   // Loading
   useEffect(() => {
-    if (!brandList || error) apiBrand.getAll(dispatch);
+    if (!brandList || error) brandService.getAll(dispatch);
   }, []);
 
   // Show delete modal
@@ -45,7 +43,7 @@ const BrandPage = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
       () => {
-        apiBrand.delete(dispatch, brandId, accessToken);
+        brandService.delete(dispatch, brandId, accessToken);
         action.showModal(false);
       }
     );

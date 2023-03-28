@@ -1,10 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ModalForm from '../../components/common/ModalForm';
 
-import apiDiscount from '../../apis/product/discount.api';
+import { discountService } from '../../services';
 
 import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+
+import ModalForm from '../../components/common/ModalForm';
+// TODO: Build validate form
+import { Form, TextInput, SelectedBox } from '../../components/validation';
+import content from './content';
 
 const titleCode = 'Mã được sử dụng';
 const titleAppliedType = 'Kiểu giảm giá';
@@ -40,7 +44,7 @@ const DiscountForm = ({ discount, handleBack }) => {
       endedDate: endedDateRef.current.value,
       ...getUpdateByUserInSystem()
     };
-    await apiDiscount.create(dispatch, newDiscount, accessToken);
+    await discountService.create(dispatch, newDiscount, accessToken);
     handleBack();
   };
 
@@ -55,7 +59,12 @@ const DiscountForm = ({ discount, handleBack }) => {
       modifiedDate: new Date().toISOString(),
       ...getUpdateByUserInSystem()
     };
-    await apiDiscount.update(dispatch, newDiscount, discount.id, accessToken);
+    await discountService.update(
+      dispatch,
+      newDiscount,
+      discount.id,
+      accessToken
+    );
     handleBack();
   };
 

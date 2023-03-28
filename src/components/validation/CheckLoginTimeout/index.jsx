@@ -1,9 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-import apiRole from '../../../apis/role.api';
 import { createLocalStorage } from '../../../utils/createStorage';
-import { useDispatch } from 'react-redux';
 
 /**
  * @param {{children: JSX.Element}}

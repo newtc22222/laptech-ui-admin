@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import TabBar from './TabBar';
-import useAppContext from '../../hooks/useAppContext';
+import useAppContext from '../../../hooks/useAppContext';
 
 const TabBarDropDown = ({ tab }) => {
   const { activeTab } = useAppContext();

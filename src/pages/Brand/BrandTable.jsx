@@ -1,10 +1,19 @@
 import React from 'react';
 
-import Loading from '../../components/common/Loading';
-import SortableTable from '../../components/common/SortableTable';
+import { Loading, SortableTable } from '../../components/common';
 
 import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
 import content from './content';
+
+const fields = [
+  'id',
+  'name',
+  'country',
+  'establishDate',
+  'logo',
+  'createdDate',
+  'modifiedDate'
+];
 
 const BrandTable = ({
   brandList,
@@ -14,15 +23,6 @@ const BrandTable = ({
 }) => {
   if (brandList === null || brandList === undefined) return <Loading />;
 
-  const fields = [
-    'id',
-    'name',
-    'country',
-    'establishDate',
-    'logo',
-    'createdDate',
-    'modifiedDate'
-  ];
   const data = chooseFieldsOfObject(brandList, fields);
 
   const config = [

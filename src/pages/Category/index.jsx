@@ -3,12 +3,10 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiCategory from '../../apis/product/category.api';
+import { categoryService } from '../../services';
 
 import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import PageHeader from '../../components/common/PageHeader';
-import Loading from '../../components/common/Loading';
+import { ModalConfirm, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 
 import CategoryTable from './CategoryTable';
@@ -36,7 +34,7 @@ const Category = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!categoryList || error) apiCategory.getAll(dispatch);
+    if (!categoryList || error) categoryService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (categoryId, categoryName) => {
@@ -44,7 +42,7 @@ const Category = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
       () => {
-        apiCategory.delete(dispatch, categoryId, accessToken);
+        categoryService.delete(dispatch, categoryId, accessToken);
         action.showModal(false);
       }
     );
