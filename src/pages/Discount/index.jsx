@@ -5,9 +5,12 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import { discountService } from '../../services';
 
-import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import { ModalConfirm, PageHeader, Loading } from '../../components/common';
-import ServerNotResponse from '../Error/ServerNotResponse';
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import DiscountTable from './DiscountTable';
 import DiscountForm from './DiscountForm';
 
@@ -60,42 +63,38 @@ const Discount = () => {
   }
 
   return (
-    <CheckLoginTimeout>
-      <div>
-        {showModal && (
-          <ModalConfirm
-            show={showModal}
-            setShow={action.showModal}
-            {...modalValue}
-          />
-        )}
-        {workMode === WorkMode.create && (
-          <DiscountForm
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        )}
-        {workMode === WorkMode.edit && (
-          <DiscountForm
-            discount={discountEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        )}
-        <PageHeader pageName={pageName}>
-          <button
-            className="btn btn-primary fw-bold"
-            onClick={action.setCreateMode}
-          >
-            {titleButtonAdd}
-          </button>
-        </PageHeader>
-        <DiscountTable
-          discountList={discountList}
-          discountTotalRecord={discountList?.length}
-          handleSetUpdateMode={discount => action.setUpdateMode(discount)}
-          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+    <div>
+      {showModal && (
+        <ModalConfirm
+          show={showModal}
+          setShow={action.showModal}
+          {...modalValue}
         />
-      </div>
-    </CheckLoginTimeout>
+      )}
+      {workMode === WorkMode.create && (
+        <DiscountForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <DiscountForm
+          discount={discountEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
+      )}
+      <PageHeader pageName={pageName}>
+        <button
+          className="btn btn-primary fw-bold"
+          onClick={action.setCreateMode}
+        >
+          {titleButtonAdd}
+        </button>
+      </PageHeader>
+      <DiscountTable
+        discountList={discountList}
+        discountTotalRecord={discountList?.length}
+        handleSetUpdateMode={discount => action.setUpdateMode(discount)}
+        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+      />
+    </div>
   );
 };
 

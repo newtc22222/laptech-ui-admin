@@ -23,7 +23,7 @@ const Login = () => {
     [rmb_phone, rmb_password, rmb_check] = storeData.split(';');
   }
 
-  const { handleSetActiveTab } = useAppContext();
+  const { activeTab } = useAppContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -58,8 +58,7 @@ const Login = () => {
 
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
-      handleSetActiveTab('home');
-      navigate('/');
+      navigate('/' + (activeTab.subTab || activeTab.tab));
     }
   };
 

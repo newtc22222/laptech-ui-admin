@@ -1,113 +1,89 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
 import { discountService } from '../../services';
 
-import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
-
 import ModalForm from '../../components/common/ModalForm';
 // TODO: Build validate form
-import { Form, TextInput, SelectedBox } from '../../components/validation';
+import { Form, TextInput, RadioBox } from '../../components/validation';
+
+import { makeToast, toastType } from '../../utils/makeToast';
+import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
 import content from './content';
 
-const titleCode = 'Mã được sử dụng';
-const titleAppliedType = 'Kiểu giảm giá';
-const titleDiscount = 'Mức giảm giá';
-const titleRate = 'Tỉ lệ (0 - 80)%';
-const titleMaxAmount = 'Mức giá tối đa';
-const titleTime = 'Thời gian áp dụng';
-const titleAppliedDate = 'Bắt đầu';
-const titleEndedDate = 'Kết thúc';
-
-const appliedTypeCombobox = ['PRODUCT', 'PURCHASE'];
+const appliedTypes = ['PRODUCT', 'PURCHASE'];
 
 const DiscountForm = ({ discount, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const codeRef = useRef();
-  const rateRef = useRef();
-  const [appliedType, setAppliedType] = useState(
-    discount?.appliedType || appliedTypeCombobox[0]
-  );
-  const maxAmountRef = useRef();
-  const appliedDateRef = useRef();
-  const endedDateRef = useRef();
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm();
 
-  const handleCreateData = async () => {
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      makeToast('Vui lòng cập nhật đầy đủ thông tin!', toastType.error);
+    }
+  }, [errors]);
+
+  const handleCreateData = data => {
     const newDiscount = {
-      code: codeRef.current.value,
-      rate: rateRef.current.value / 100,
-      appliedType: appliedType,
-      maxAmount: maxAmountRef.current.value,
-      appliedDate: appliedDateRef.current.value,
-      endedDate: endedDateRef.current.value,
+      ...data,
+      rate: data.rate / 100,
       ...getUpdateByUserInSystem()
     };
-    await discountService.create(dispatch, newDiscount, accessToken);
+    discountService.create(dispatch, newDiscount, accessToken);
+    reset();
     handleBack();
   };
 
-  const handleSaveData = async () => {
+  const handleSaveData = data => {
     const newDiscount = {
-      code: codeRef.current.value,
-      rate: rateRef.current.value / 100,
-      appliedType: appliedType,
-      maxAmount: maxAmountRef.current.value,
-      appliedDate: appliedDateRef.current.value,
-      endedDate: endedDateRef.current.value,
-      modifiedDate: new Date().toISOString(),
+      ...data,
+      rate: data.rate / 100,
       ...getUpdateByUserInSystem()
     };
-    await discountService.update(
-      dispatch,
-      newDiscount,
-      discount.id,
-      accessToken
-    );
+    discountService.update(dispatch, newDiscount, discount.id, accessToken);
+    reset();
     handleBack();
   };
 
   const renderForm = (
-    <>
-      <div className="mb-3">
-        <label htmlFor="discount-code" className="form-discount">
-          {titleCode}
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="discount-code"
-          defaultValue={discount?.code}
-          ref={codeRef}
-          placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
-          required
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="discount-applied-type" className="form-discount">
-          {titleAppliedType}
-        </label>
-        <select
-          className="form-control"
-          id="discount-applied-type"
-          defaultValue={discount?.appliedType || appliedType}
-          onChange={e => setAppliedType(e.target.value)}
-          placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
-        >
-          {appliedTypeCombobox.map((type, idx) => (
-            <option key={idx} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-      </div>
+    <Form
+      handleSubmit={handleSubmit}
+      submitAction={discount ? handleSaveData : handleCreateData}
+      cancelAction={handleBack}
+    >
+      <TextInput
+        label={content.form.code}
+        register={register}
+        errors={errors}
+        attribute="code"
+        defaultValue={discount?.code}
+        placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
+        required
+        errorMessage={content.error.code}
+      />
+      <RadioBox
+        className="border rounded-2 mb-2"
+        title={content.form.appliedTypeTitle}
+        control={control}
+        name="appliedType"
+        defaultValue={discount?.appliedType}
+        options={appliedTypes}
+      />
       <fieldset>
-        <legend className="fw-bold">{titleDiscount}</legend>
+        <legend className="text-uppercase">{content.form.discountRange}</legend>
         <div className="row">
           <div className="col-4 mb-3">
             <label htmlFor="discount-rate" className="form-discount">
-              {titleRate}
+              {content.form.rate}
             </label>
             <input
               id="discount-rate"
@@ -120,12 +96,11 @@ const DiscountForm = ({ discount, handleBack }) => {
                 if (e.target.value > 80) e.target.value = 80;
               }}
               defaultValue={discount?.rate * 100 || 5}
-              ref={rateRef}
             />
           </div>
           <div className="col-8 mb-3">
             <label htmlFor="discount-max-amount" className="form-discount">
-              {titleMaxAmount}
+              {content.form.maxAmount}
             </label>
             <input
               id="discount-max-amount"
@@ -136,17 +111,16 @@ const DiscountForm = ({ discount, handleBack }) => {
                 if (e.target.value < 0) e.target.value = 0;
               }}
               defaultValue={discount?.maxAmount || 50000}
-              ref={maxAmountRef}
             />
           </div>
         </div>
       </fieldset>
       <fieldset>
-        <legend className="fw-bold">{titleTime}</legend>
+        <legend className="text-uppercase">{content.form.time}</legend>
         <div className="row">
           <div className="col mb-3">
             <label htmlFor="discount-applied-date" className="form-discount">
-              {titleAppliedDate}
+              {content.form.appliedDate}
             </label>
             <input
               id="discount-applied-date"
@@ -155,12 +129,11 @@ const DiscountForm = ({ discount, handleBack }) => {
               defaultValue={
                 discount?.appliedDate || new Date().toJSON().slice(0, 19)
               }
-              ref={appliedDateRef}
             />
           </div>
           <div className="col mb-3">
             <label htmlFor="discount-ended-date" className="form-discount">
-              {titleEndedDate}
+              {content.form.endedDate}
             </label>
             <input
               id="discount-ended-date"
@@ -172,22 +145,15 @@ const DiscountForm = ({ discount, handleBack }) => {
                   .toJSON()
                   .slice(0, 19)
               }
-              ref={endedDateRef}
             />
           </div>
         </div>
       </fieldset>
-    </>
+    </Form>
   );
 
   return (
-    <ModalForm
-      object={discount}
-      handleBack={handleBack}
-      action={() => {
-        discount ? handleSaveData() : handleCreateData();
-      }}
-    >
+    <ModalForm object={discount} disabledFooter>
       {renderForm}
     </ModalForm>
   );

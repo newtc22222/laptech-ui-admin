@@ -17,7 +17,7 @@ const titleModifiedDate = 'Thời gian chỉnh sửa gần nhất: ';
  * @return {JSX.Element}
  */
 function ModalForm({ children, object, action, handleBack, ...props }) {
-  const renderFooter = props.disabledFotter ? null : (
+  const renderFooter = props.disabledFooter ? null : (
     <Modal.Footer>
       <div>
         <button className="btn btn-primary fw-bold me-3" onClick={action}>

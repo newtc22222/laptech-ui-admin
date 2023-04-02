@@ -5,9 +5,12 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import { labelService } from '../../services';
 
-import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import { ModalConfirm, PageHeader, Loading } from '../../components/common';
-import ServerNotResponse from '../Error/ServerNotResponse';
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
 
@@ -36,7 +39,7 @@ const Label = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!labelList) labelService.getAll(dispatch);
+    if (!labelList || error) labelService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (labelId, labelName) => {
@@ -51,21 +54,6 @@ const Label = () => {
     action.showModal(true);
   };
 
-  // Change work mode
-  if (workMode === WorkMode.create) {
-    return (
-      <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-    );
-  }
-  if (workMode === WorkMode.edit) {
-    return (
-      <LabelForm
-        label={labelEdit}
-        handleBack={() => action.changeWorkMode(WorkMode.view)}
-      />
-    );
-  }
-
   if (isFetching) {
     return <Loading />;
   }
@@ -75,40 +63,38 @@ const Label = () => {
   }
 
   return (
-    <CheckLoginTimeout>
-      <div>
-        {showModal && (
-          <ModalConfirm
-            show={showModal}
-            setShow={action.showModal}
-            {...modalValue}
-          />
-        )}
-        {workMode === WorkMode.create && (
-          <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-        )}
-        {workMode === WorkMode.edit && (
-          <LabelForm
-            label={labelEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        )}
-        <PageHeader pageName={pageName}>
-          <button
-            className="btn btn-primary fw-bold"
-            onClick={action.setCreateMode}
-          >
-            {titleButtonAdd}
-          </button>
-        </PageHeader>
-        <LabelTable
-          labelList={labelList}
-          labelTotalRecord={labelList?.length || 0}
-          handleSetUpdateMode={label => action.setUpdateMode(label)}
-          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+    <div>
+      {showModal && (
+        <ModalConfirm
+          show={showModal}
+          setShow={action.showModal}
+          {...modalValue}
         />
-      </div>
-    </CheckLoginTimeout>
+      )}
+      {workMode === WorkMode.create && (
+        <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <LabelForm
+          label={labelEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
+      )}
+      <PageHeader pageName={pageName}>
+        <button
+          className="btn btn-primary fw-bold"
+          onClick={action.setCreateMode}
+        >
+          {titleButtonAdd}
+        </button>
+      </PageHeader>
+      <LabelTable
+        labelList={labelList}
+        labelTotalRecord={labelList?.length}
+        handleSetUpdateMode={label => action.setUpdateMode(label)}
+        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+      />
+    </div>
   );
 };
 

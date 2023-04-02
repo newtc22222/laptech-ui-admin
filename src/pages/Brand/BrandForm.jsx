@@ -137,7 +137,7 @@ const BrandForm = ({ brand, handleBack }) => {
   );
 
   return (
-    <ModalForm object={brand} disabledFotter>
+    <ModalForm object={brand} disabledFooter>
       {renderForm}
     </ModalForm>
   );

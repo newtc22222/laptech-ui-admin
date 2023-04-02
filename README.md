@@ -18,6 +18,30 @@
 
 **OPTION**: You can build with `npm run build` and use file in folder **build**
 
+### Folder Structure
+
+- public
+- resources
+- src
+  - `__test__`
+  - `apis`
+  - `commons`
+  - `components`
+  - `hooks`
+  - `pages`
+  - `routes`
+  - `services`
+  - `store`
+  - `styles`
+  - `utils`
+  - `App.jsx`
+  - `index.js`
+- `.editorconfig`
+- `.gitignore`
+- `.package.json`
+
+## Project package
+
 ### Dependencies
 
 | package                                                                               | type                    | description                                                  |
@@ -74,3 +98,5 @@
 - [Laptech API (JPA - MySQL)](https://github.com/newtc22222/laptech-rest-api-jpa)
 - [**Laptech UI Customer**](https://github.com/newtc22222/laptech-ui-customer)
 - [**Laptech UI Mobile**](https://github.com/newtc22222/laptech-ui-mobile)
+
+## IMAGES

@@ -5,9 +5,12 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import { roleService } from '../../services';
 
-import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import { ModalConfirm, PageHeader, Loading } from '../../components/common';
-import ServerNotResponse from '../Error/ServerNotResponse';
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import RoleTable from './RoleTable';
 import RoleForm from './RoleForm';
 
@@ -60,39 +63,37 @@ const Role = () => {
   }
 
   return (
-    <CheckLoginTimeout>
-      <div>
-        {showModal && (
-          <ModalConfirm
-            show={showModal}
-            setShow={action.showModal}
-            {...modalValue}
-          />
-        )}
-        {workMode === WorkMode.create && (
-          <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-        )}
-        {workMode === WorkMode.edit && (
-          <RoleForm
-            role={roleEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        )}
-        <PageHeader pageName={pageName}>
-          <button
-            className="btn btn-primary fw-bold"
-            onClick={action.setCreateMode}
-          >
-            {titleButtonAdd}
-          </button>
-        </PageHeader>
-        <RoleTable
-          roleList={roleList}
-          handleSetUpdateMode={role => action.setUpdateMode(role)}
-          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+    <div>
+      {showModal && (
+        <ModalConfirm
+          show={showModal}
+          setShow={action.showModal}
+          {...modalValue}
         />
-      </div>
-    </CheckLoginTimeout>
+      )}
+      {workMode === WorkMode.create && (
+        <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <RoleForm
+          role={roleEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
+      )}
+      <PageHeader pageName={pageName}>
+        <button
+          className="btn btn-primary fw-bold"
+          onClick={action.setCreateMode}
+        >
+          {titleButtonAdd}
+        </button>
+      </PageHeader>
+      <RoleTable
+        roleList={roleList}
+        handleSetUpdateMode={role => action.setUpdateMode(role)}
+        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+      />
+    </div>
   );
 };
 

@@ -7,6 +7,9 @@ import SortableTable from './SortableTable';
 import Table from './Table';
 import TextEditor from './TextEditor';
 
+// Error
+import { PageNotFound, ServerNotResponse, Unauthorization } from './Error';
+
 export {
   Loading,
   ModalConfirm,
@@ -15,5 +18,8 @@ export {
   SearchBar,
   SortableTable,
   Table,
-  TextEditor
+  TextEditor,
+  PageNotFound,
+  ServerNotResponse,
+  Unauthorization
 };

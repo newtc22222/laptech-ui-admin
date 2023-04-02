@@ -5,9 +5,12 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import { categoryService } from '../../services';
 
-import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import { ModalConfirm, PageHeader, Loading } from '../../components/common';
-import ServerNotResponse from '../Error/ServerNotResponse';
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 
 import CategoryTable from './CategoryTable';
 import CategoryForm from './CategoryForm';
@@ -58,42 +61,38 @@ const Category = () => {
   }
 
   return (
-    <CheckLoginTimeout>
-      <div>
-        {showModal && (
-          <ModalConfirm
-            show={showModal}
-            setShow={action.showModal}
-            {...modalValue}
-          />
-        )}
-        {workMode === WorkMode.create && (
-          <CategoryForm
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        )}
-        {workMode === WorkMode.edit && (
-          <CategoryForm
-            category={categoryEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        )}
-        <PageHeader pageName={pageName}>
-          <button
-            className="btn btn-primary fw-bold"
-            onClick={action.setCreateMode}
-          >
-            {titleButtonAdd}
-          </button>
-        </PageHeader>
-        <CategoryTable
-          categoryList={categoryList}
-          categoryTotalRecord={categoryList?.length}
-          handleSetUpdateMode={category => action.setUpdateMode(category)}
-          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+    <div>
+      {showModal && (
+        <ModalConfirm
+          show={showModal}
+          setShow={action.showModal}
+          {...modalValue}
         />
-      </div>
-    </CheckLoginTimeout>
+      )}
+      {workMode === WorkMode.create && (
+        <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <CategoryForm
+          category={categoryEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
+      )}
+      <PageHeader pageName={pageName}>
+        <button
+          className="btn btn-primary fw-bold"
+          onClick={action.setCreateMode}
+        >
+          {titleButtonAdd}
+        </button>
+      </PageHeader>
+      <CategoryTable
+        categoryList={categoryList}
+        categoryTotalRecord={categoryList?.length}
+        handleSetUpdateMode={category => action.setUpdateMode(category)}
+        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+      />
+    </div>
   );
 };
 

@@ -5,9 +5,12 @@ import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
 import { brandService } from '../../services';
 
-import CheckLoginTimeout from '../../components/validation/CheckLoginTimeout';
-import { ModalConfirm, PageHeader, Loading } from '../../components/common';
-import ServerNotResponse from '../Error/ServerNotResponse';
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import BrandForm from './BrandForm';
 import BrandTable from './BrandTable';
 
@@ -59,40 +62,38 @@ const BrandPage = () => {
   }
 
   return (
-    <CheckLoginTimeout>
-      <div>
-        {showModal && (
-          <ModalConfirm
-            show={showModal}
-            setShow={action.showModal}
-            {...modalValue}
-          />
-        )}
-        {workMode === WorkMode.create && (
-          <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-        )}
-        {workMode === WorkMode.edit && (
-          <BrandForm
-            brand={brandEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        )}
-        <PageHeader pageName={pageName}>
-          <button
-            className="btn btn-primary fw-bold"
-            onClick={action.setCreateMode}
-          >
-            {titleButtonAdd}
-          </button>
-        </PageHeader>
-        <BrandTable
-          brandList={brandList}
-          brandTotalRecord={brandList?.length}
-          handleSetUpdateMode={brand => action.setUpdateMode(brand)}
-          handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+    <div>
+      {showModal && (
+        <ModalConfirm
+          show={showModal}
+          setShow={action.showModal}
+          {...modalValue}
         />
-      </div>
-    </CheckLoginTimeout>
+      )}
+      {workMode === WorkMode.create && (
+        <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+      )}
+      {workMode === WorkMode.edit && (
+        <BrandForm
+          brand={brandEdit}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
+      )}
+      <PageHeader pageName={pageName}>
+        <button
+          className="btn btn-primary fw-bold"
+          onClick={action.setCreateMode}
+        >
+          {titleButtonAdd}
+        </button>
+      </PageHeader>
+      <BrandTable
+        brandList={brandList}
+        brandTotalRecord={brandList?.length}
+        handleSetUpdateMode={brand => action.setUpdateMode(brand)}
+        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+      />
+    </div>
   );
 };
 

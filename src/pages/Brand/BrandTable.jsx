@@ -24,7 +24,6 @@ const BrandTable = ({
   if (brandList === null || brandList === undefined) return <Loading />;
 
   const data = chooseFieldsOfObject(brandList, fields);
-
   const config = [
     {
       label: content.id,

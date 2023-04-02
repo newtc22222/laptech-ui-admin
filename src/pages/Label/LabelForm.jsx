@@ -1,21 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
 import { labelService } from '../../services';
 
-import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
-
 import ModalForm from '../../components/common/ModalForm';
-// TODO: Build validate form
 import { Form, TextInput } from '../../components/validation';
-import content from './content';
 
-const titleName = 'Tiêu đề (hiển thị trực tiếp)';
-const titleIcon = 'Biểu tượng đại diện';
-const titleTitle = 'Thông tin mô tả khi người dùng trỏ chuột vào';
-const titleDescription = 'Thông tin chi tiết về nhãn sản phẩm';
-const linkToChooseIcon = 'https://icons.getbootstrap.com/';
-const hintToChooseIcon = `Truy cập vào link ${linkToChooseIcon} sau đó chọn 1 icon và copy thẻ icon được để sẵn.`;
+import { makeToast, toastType } from '../../utils/makeToast';
+import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+import content from './content';
 
 /**
  * @since 2023-02-13
@@ -24,108 +18,99 @@ const LabelForm = ({ label, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const nameRef = useRef();
-  const iconRef = useRef();
-  const titleRef = useRef();
-  const descriptionRef = useRef();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm();
 
-  const handleCreateData = async () => {
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      makeToast('Vui lòng cập nhật đầy đủ thông tin!', toastType.error);
+    }
+  }, [errors]);
+
+  const handleCreateData = data => {
     const newLabel = {
-      name: nameRef.current.value,
-      icon: iconRef.current.value,
-      title: titleRef.current.value,
-      description: descriptionRef.current.value,
+      ...data,
       ...getUpdateByUserInSystem()
     };
 
-    await labelService.create(dispatch, newLabel, accessToken);
+    labelService.create(dispatch, newLabel, accessToken);
+    reset();
     handleBack();
   };
 
-  const handleSaveData = async () => {
+  const handleSaveData = data => {
     const newLabel = {
-      name: nameRef.current.value,
-      icon: iconRef.current.value,
-      title: titleRef.current.value,
-      description: descriptionRef.current.value,
-      modifiedDate: new Date().toISOString(),
+      ...data,
       ...getUpdateByUserInSystem()
     };
-    await labelService.update(dispatch, newLabel, label.id, accessToken);
+    labelService.update(dispatch, newLabel, label.id, accessToken);
+    reset();
     handleBack();
   };
 
   const renderForm = (
-    <>
-      <div className="mb-3">
-        <label htmlFor="label-icon" className="form-label fw-bold">
-          {titleIcon}
-        </label>
+    <Form
+      handleSubmit={handleSubmit}
+      submitAction={label ? handleSaveData : handleCreateData}
+      cancelAction={handleBack}
+    >
+      <div>
         <a
           className="ms-3 text-primary text-decoration-none"
-          href={linkToChooseIcon}
+          href={content.form.linkChooseIcon}
           target="_blank"
         >
-          {hintToChooseIcon}
+          {content.form.hintChooseIcon}
         </a>
-        <input
-          type="text"
-          className="form-control"
-          id="label-icon"
+        <TextInput
+          label={content.form.icon}
+          register={register}
+          errors={errors}
+          attribute="icon"
           defaultValue={label?.icon}
-          ref={iconRef}
           placeholder="<i class='bi bi-house'></i>"
+          required
+          errorMessage={content.error.icon}
         />
       </div>
-      <div className="mb-3">
-        <label htmlFor="label-name" className="form-label">
-          {titleName}
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="label-name"
-          defaultValue={label?.name}
-          ref={nameRef}
-          placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="label-title" className="form-label">
-          {titleTitle}
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="label-title"
-          defaultValue={label?.title}
-          ref={titleRef}
-          placeholder="Core i3 8560U ..."
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="label-description" className="form-label">
-          {titleDescription}
-        </label>
-        <textarea
-          className="form-control"
-          id="label-description"
-          defaultValue={label?.description}
-          ref={descriptionRef}
-          placeholder="New Core i3 8th generation with safe battery mode ..."
-        />
-      </div>
-    </>
+      <TextInput
+        label={content.form.name}
+        register={register}
+        errors={errors}
+        attribute="name"
+        defaultValue={label?.name}
+        placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
+        required
+        errorMessage={content.error.name}
+      />
+      <TextInput
+        label={content.form.title}
+        register={register}
+        errors={errors}
+        attribute="title"
+        defaultValue={label?.title}
+        placeholder="Core i3 8560U ..."
+        required
+        errorMessage={content.error.title}
+      />
+      <TextInput
+        label={content.form.description}
+        register={register}
+        errors={errors}
+        attribute="description"
+        defaultValue={label?.description}
+        placeholder="New Core i3 8th generation with safe battery mode ..."
+        errorMessage={content.error.title}
+      />
+    </Form>
   );
 
   return (
-    <ModalForm
-      object={label}
-      handleBack={handleBack}
-      action={() => {
-        label ? handleSaveData() : handleCreateData();
-      }}
-    >
+    <ModalForm object={label} disabledFooter>
       {renderForm}
     </ModalForm>
   );

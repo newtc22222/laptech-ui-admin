@@ -1,19 +1,18 @@
 import React from 'react';
 
-import SoftTable from '../../components/common/SoftTable';
 // TODO: build sortable table
 import { Loading, SortableTable } from '../../components/common';
 import content from './content';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const headerList = [
-  'ID',
-  'Tên',
-  'Mô tả',
-  'Ảnh minh họa',
-  'Số sản phẩm trong kho',
-  'Thiết lập'
+import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
+
+const fields = [
+  'id',
+  'name',
+  'description',
+  'image',
+  'createdDate',
+  'modifiedDate'
 ];
 
 function CategoryTable({
@@ -24,50 +23,67 @@ function CategoryTable({
 }) {
   if (categoryList === null || categoryList === undefined) return <Loading />;
 
-  return (
-    <SoftTable
-      headerList={headerList}
-      dataList={categoryList}
-      totalRecordData={categoryTotalRecord}
-      cb_handleRow={(idx_start, idx_end) =>
-        categoryList.slice(idx_start, idx_end).map((category, index) => {
-          return (
-            <tr className="text-center" key={index}>
-              <td>{category.id}</td>
-              <td className="fw-bolder">{category.name}</td>
-              <td style={{ maxWidth: '30vw' }}>{category.description}</td>
-              <td>
-                <img
-                  src={category.image}
-                  alt={category.name + ' images'}
-                  className="rounded img-fluid img-thumbnail"
-                  style={{ maxWidth: '8vw' }}
-                />
-              </td>
-              <td>
-                <p className="fw-bold">0</p>
-              </td>
-              <td style={{ width: '10%' }}>
-                <button
-                  className="btn btn-secondary w-100 mb-2"
-                  onClick={() => handleSetUpdateMode(category)}
-                >
-                  {titleButtonUpdate}
-                </button>{' '}
-                <br />
-                <button
-                  className="btn btn-danger  w-100"
-                  onClick={() =>
-                    handleShowDeleteModal(category.id, category.name)
-                  }
-                >
-                  {titleButtonDelete}
-                </button>
-              </td>
-            </tr>
-          );
-        })
+  const data = chooseFieldsOfObject(categoryList, fields);
+  const config = [
+    {
+      label: content.id,
+      render: category => category.id,
+      sortValue: category => category.id
+    },
+    {
+      label: content.name,
+      render: category => category.name,
+      sortValue: category => category.name
+    },
+    {
+      label: content.description,
+      render: category => category.description,
+      sortValue: category => category.description
+    },
+    {
+      label: content.image,
+      style: { maxWidth: '8vw' },
+      className: 'text-center',
+      render: category => (
+        <img
+          alt={category.name}
+          src={category.image}
+          className="img-thumbnail"
+        />
+      )
+    },
+    {
+      label: content.setting,
+      style: { maxWidth: '5vw' },
+      render: category => {
+        return (
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-secondary flex-fill"
+              onClick={() => handleSetUpdateMode(category)}
+            >
+              {content.btnEdit}
+            </button>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() => handleShowDeleteModal(category.id, category.name)}
+            >
+              {content.btnDel}
+            </button>
+          </div>
+        );
       }
+    }
+  ];
+
+  const keyFn = category => category.id;
+
+  return (
+    <SortableTable
+      data={data}
+      config={config}
+      keyFn={keyFn}
+      totalRecordData={categoryTotalRecord}
     />
   );
 }

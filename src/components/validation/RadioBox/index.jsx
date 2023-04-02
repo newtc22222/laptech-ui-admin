@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form';
 import classNames from 'classnames';
 
 /**
- * @param {{ control: object, name: string, defaultValue: string, options: string[] }}
+ * @param {{ control: object, name: string, defaultValue: string, options: string[], props: object }}
  */
 const RadioBox = ({ control, name, defaultValue, options, ...props }) => {
   return (
@@ -13,12 +13,8 @@ const RadioBox = ({ control, name, defaultValue, options, ...props }) => {
       defaultValue={defaultValue || options[0]}
       render={({ field: { value, onChange } }) => {
         return (
-          <div
-            className={classNames(
-              'container pt-1 pb-1 border border-dark',
-              props.className
-            )}
-          >
+          <div className={classNames('container pt-1 pb-1', props.className)}>
+            {props.title && <p className="text-uppercase">{props.title}</p>}
             {options?.map(option => {
               return (
                 <div className="form-check" key={option}>

@@ -51,7 +51,10 @@ const usePaging = (recordsShow, totalRecords) => {
         break;
     }
     // handle the last
-    if (currentPage > last_page - max_paging_show + 3) {
+    if (
+      currentPage > last_page - max_paging_show + 3 &&
+      last_page > max_paging_show
+    ) {
       page_start = last_page - max_paging_show;
     }
     const page_end = page_start + max_paging_show;
