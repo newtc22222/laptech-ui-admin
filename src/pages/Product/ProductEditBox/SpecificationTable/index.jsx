@@ -1,11 +1,12 @@
-import { useState, useCallback } from "react";
-import TableRow from "./TableRow";
-import "./TableRow.css";
+import React, { useState, useCallback } from 'react';
+import TableRow from './TableRow';
+import './TableRow.css';
 
 const SpecificationTable = ({ specification }) => {
-  const [data, setData] = useState(JSON.parse(specification) || []);
+  const initData = specification ? JSON.parse(specification) : [];
+  const [data, setData] = useState(initData);
 
-  const handleSaveData = (e) => {
+  const handleSaveData = e => {
     e.preventDefault();
     console.log(JSON.stringify(data));
   };
@@ -18,14 +19,14 @@ const SpecificationTable = ({ specification }) => {
     setData([]);
   };
 
-  const handleAddMoreLine = (e) => {
+  const handleAddMoreLine = e => {
     e.preventDefault();
     setData([
       ...data,
       {
         index: crypto.randomUUID(),
-        attribute: "",
-        value: ""
+        attribute: '',
+        value: ''
       }
     ]);
   };
@@ -33,8 +34,8 @@ const SpecificationTable = ({ specification }) => {
   const handleChangeValue = useCallback((e, key, item_edit) => {
     e.preventDefault();
     item_edit[key] = e.target.value;
-    setData((prev) =>
-      prev.map((item) => {
+    setData(prev =>
+      prev.map(item => {
         if (item.index === item_edit.index) {
           return item_edit;
         }
@@ -43,8 +44,8 @@ const SpecificationTable = ({ specification }) => {
     );
   }, []);
 
-  const handleRemoveLine = useCallback((id) => {
-    setData((prev) => prev.filter((item) => item.index !== id));
+  const handleRemoveLine = useCallback(id => {
+    setData(prev => prev.filter(item => item.index !== id));
   }, []);
 
   return (
@@ -70,7 +71,7 @@ const SpecificationTable = ({ specification }) => {
             </tr>
           </thead>
           <tbody>
-            {data?.map((item) => (
+            {data?.map(item => (
               <TableRow
                 key={item.index}
                 item={item}
@@ -84,7 +85,7 @@ const SpecificationTable = ({ specification }) => {
                 className="text-center hover-add fw-bold"
                 onClick={handleAddMoreLine}
                 style={{
-                  cursor: "pointer"
+                  cursor: 'pointer'
                 }}
               >
                 ADD MORE ROW

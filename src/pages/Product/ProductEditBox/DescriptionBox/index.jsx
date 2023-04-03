@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import _ from 'lodash';
 
-import TextEditor from '../../../../components/common/TextEditor';
+import { TextEditor } from '../../../../components/common';
 
 import './NavTab.css';
+import classNames from 'classnames';
 
 const DescriptionBox = ({ descriptionText }) => {
   const clear_text = descriptionText
@@ -99,13 +100,6 @@ const DescriptionBox = ({ descriptionText }) => {
 
   return (
     <div>
-      <button
-        type="button"
-        className="btn btn-success m-2"
-        onClick={() => console.log(JSON.stringify(tabs))}
-      >
-        Save
-      </button>
       <ul className="nav nav-tabs">
         {tabs?.map(tab => {
           return (
@@ -156,7 +150,9 @@ const DescriptionBox = ({ descriptionText }) => {
           return (
             <div
               id={tab.id}
-              className={'tab-pane fade' + (tab.active ? ' show active' : '')}
+              className={classNames('tab-pane fade', {
+                'show active': tab.active
+              })}
               key={tab.id}
             >
               <div className="input-group mb-2 mt-2">

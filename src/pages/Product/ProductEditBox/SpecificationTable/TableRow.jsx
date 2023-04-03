@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import React, { useState } from 'react';
 
 const lockRowIcon = {
   true: (
@@ -7,7 +7,7 @@ const lockRowIcon = {
       width="16"
       height="16"
       fill="currentColor"
-      class="bi bi-lock-fill"
+      className="bi bi-lock-fill"
       viewBox="0 0 16 16"
     >
       <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
@@ -19,7 +19,7 @@ const lockRowIcon = {
       width="16"
       height="16"
       fill="currentColor"
-      class="bi bi-unlock-fill"
+      className="bi bi-unlock-fill"
       viewBox="0 0 16 16"
     >
       <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z" />
@@ -37,7 +37,7 @@ const TableRow = ({ item, handleChangeValue, handleRemoveLine }) => {
           type="text"
           defaultValue={item.attribute}
           disabled={disabled}
-          onChange={(e) => handleChangeValue(e, "attribute", item)}
+          onChange={e => handleChangeValue(e, 'attribute', item)}
         />
       </td>
       <td>
@@ -46,7 +46,7 @@ const TableRow = ({ item, handleChangeValue, handleRemoveLine }) => {
           type="text"
           defaultValue={item.value}
           disabled={disabled}
-          onChange={(e) => handleChangeValue(e, "value", item)}
+          onChange={e => handleChangeValue(e, 'value', item)}
         />
       </td>
       <td>
@@ -67,7 +67,7 @@ const TableRow = ({ item, handleChangeValue, handleRemoveLine }) => {
               width="16"
               height="16"
               fill="currentColor"
-              class="bi bi-trash-fill"
+              className="bi bi-trash-fill"
               viewBox="0 0 16 16"
             >
               <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
@@ -79,4 +79,4 @@ const TableRow = ({ item, handleChangeValue, handleRemoveLine }) => {
   );
 };
 
-export default memo(TableRow);
+export default TableRow;

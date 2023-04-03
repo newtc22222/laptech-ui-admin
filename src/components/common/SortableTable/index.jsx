@@ -5,11 +5,7 @@ import useSort from '../../../hooks/useSort';
 
 function getIcons(label, sortBy, sortOrder) {
   if (label !== sortBy) {
-    return (
-      <div>
-        <i className="bi bi-arrow-down-up"></i>
-      </div>
-    );
+    return <i className="bi bi-arrow-down-up"></i>;
   }
 
   switch (sortOrder) {
@@ -39,6 +35,7 @@ function SortableTable({ data, config, keyFn, ...props }) {
       ...column,
       header: () => (
         <th
+          className="align-middle"
           style={{
             cursor: 'pointer',
             backgroundColor: column.label === sortBy && '#0E4893'
@@ -47,7 +44,9 @@ function SortableTable({ data, config, keyFn, ...props }) {
         >
           <div className="d-flex justify-content-between ps-2 pe-1">
             {column.label}
-            {getIcons(column.label, sortBy, sortOrder)}
+            <div className="d-flex align-items-center">
+              {getIcons(column.label, sortBy, sortOrder)}
+            </div>
           </div>
         </th>
       )

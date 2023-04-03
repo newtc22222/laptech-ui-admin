@@ -60,7 +60,7 @@ const LabelForm = ({ label, handleBack }) => {
     >
       <div>
         <a
-          className="ms-3 text-primary text-decoration-none"
+          className="mx-2 mb-2 text-primary text-decoration-none"
           href={content.form.linkChooseIcon}
           target="_blank"
         >

@@ -83,10 +83,16 @@ const ProductPage = () => {
         />
       )}
       {workMode === WorkMode.create && (
-        <ProductForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        <ProductForm
+          brandList={brandList}
+          categoryList={categoryList}
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+        />
       )}
       {workMode === WorkMode.edit && (
         <ProductForm
+          brandList={brandList}
+          categoryList={categoryList}
           product={productEdit}
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
@@ -100,6 +106,8 @@ const ProductPage = () => {
         </button>
       </PageHeader>
       <ProductTable
+        brandList={brandList}
+        categoryList={categoryList}
         productList={productList}
         productTotalRecord={productList?.length || 0}
         handleSetUpdateMode={product => action.setUpdateMode(product)}
