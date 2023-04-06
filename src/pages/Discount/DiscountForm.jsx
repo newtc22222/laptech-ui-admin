@@ -2,14 +2,16 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import { discountService } from '../../services';
-
 import ModalForm from '../../components/common/ModalForm';
-// TODO: Build validate form
 import { Form, TextInput, RadioBox } from '../../components/validation';
 
-import { makeToast, toastType } from '../../utils/makeToast';
-import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+import { discountService } from '../../services';
+import {
+  makeToast,
+  toastType,
+  isEqualObject,
+  getUpdateByUserInSystem
+} from '../../utils';
 import content from './content';
 
 const appliedTypes = ['PRODUCT', 'PURCHASE'];
@@ -28,14 +30,20 @@ const DiscountForm = ({ discount, handleBack }) => {
 
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
-      makeToast('Vui lòng cập nhật đầy đủ thông tin!', toastType.error);
+      makeToast(content.error.missing, toastType.error);
     }
   }, [errors]);
 
   const handleCreateData = data => {
+    if (data.appliedDate >= data.endedDate) {
+      makeToast(content.error.dateConflict, toastType.error);
+      return;
+    }
+
+    data.rate /= 100;
+    data.maxAmount = +data.maxAmount;
     const newDiscount = {
       ...data,
-      rate: data.rate / 100,
       ...getUpdateByUserInSystem()
     };
     discountService.create(dispatch, newDiscount, accessToken);
@@ -44,9 +52,23 @@ const DiscountForm = ({ discount, handleBack }) => {
   };
 
   const handleSaveData = data => {
+    if (data.appliedDate >= data.endedDate) {
+      makeToast(content.error.dateConflict, toastType.error);
+      return;
+    }
+
+    // special data
+    data.rate /= 100;
+    data.maxAmount = +data.maxAmount;
+
+    const newData = { ...discount, ...data };
+    if (isEqualObject(discount, newData)) {
+      makeToast(content.form.nothingChange, toastType.info);
+      return;
+    }
+
     const newDiscount = {
       ...data,
-      rate: data.rate / 100,
       ...getUpdateByUserInSystem()
     };
     discountService.update(dispatch, newDiscount, discount.id, accessToken);
@@ -82,35 +104,33 @@ const DiscountForm = ({ discount, handleBack }) => {
         <legend className="text-uppercase">{content.form.discountRange}</legend>
         <div className="row">
           <div className="col-4 mb-3">
-            <label htmlFor="discount-rate" className="form-discount">
-              {content.form.rate}
-            </label>
-            <input
-              id="discount-rate"
+            <TextInput
+              label={content.form.rate}
+              register={register}
+              errors={errors}
+              attribute="rate"
+              defaultValue={discount?.rate * 100 || 5}
               type="number"
               min="0"
               max="80"
-              className="form-control"
-              onChange={e => {
-                if (e.target.value < 0) e.target.value = 0;
-                if (e.target.value > 80) e.target.value = 80;
-              }}
-              defaultValue={discount?.rate * 100 || 5}
+              required
+              errorMessage={content.error.rate}
+              errorMessageForMin={content.error.minRate}
+              errorMessageForMax={content.error.maxRate}
             />
           </div>
           <div className="col-8 mb-3">
-            <label htmlFor="discount-max-amount" className="form-discount">
-              {content.form.maxAmount}
-            </label>
-            <input
-              id="discount-max-amount"
+            <TextInput
+              label={content.form.maxAmount}
+              register={register}
+              errors={errors}
+              attribute="maxAmount"
+              defaultValue={discount?.maxAmount || 50_000}
               type="number"
               min="0"
-              className="form-control"
-              onChange={e => {
-                if (e.target.value < 0) e.target.value = 0;
-              }}
-              defaultValue={discount?.maxAmount || 50000}
+              max={100_000_000}
+              required
+              errorMessage={content.error.maxAmount}
             />
           </div>
         </div>
@@ -119,32 +139,41 @@ const DiscountForm = ({ discount, handleBack }) => {
         <legend className="text-uppercase">{content.form.time}</legend>
         <div className="row">
           <div className="col mb-3">
-            <label htmlFor="discount-applied-date" className="form-discount">
-              {content.form.appliedDate}
-            </label>
-            <input
-              id="discount-applied-date"
-              type="datetime-local"
-              className="form-control"
+            <TextInput
+              label={content.form.appliedDate}
+              register={register}
+              errors={errors}
+              attribute="appliedDate"
               defaultValue={
-                discount?.appliedDate || new Date().toJSON().slice(0, 19)
+                discount?.appliedDate ||
+                new Date().toJSON().slice(0, 11) + '00:00'
               }
+              type="datetime-local"
+              min={new Date().toJSON().slice(0, 11) + '00:00'}
+              required
+              errorMessage={content.error.appliedDate}
             />
           </div>
           <div className="col mb-3">
-            <label htmlFor="discount-ended-date" className="form-discount">
-              {content.form.endedDate}
-            </label>
-            <input
-              id="discount-ended-date"
-              type="datetime-local"
-              className="form-control"
+            <TextInput
+              label={content.form.endedDate}
+              register={register}
+              errors={errors}
+              attribute="endedDate"
               defaultValue={
                 discount?.endedDate ||
                 new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
                   .toJSON()
-                  .slice(0, 19)
+                  .slice(0, 11) + '00:00'
               }
+              type="datetime-local"
+              min={
+                new Date(Date.now() + 1000 * 60 * 60 * 24) // 24 hours
+                  .toJSON()
+                  .slice(0, 11) + '00:00'
+              }
+              required
+              errorMessage={content.error.endedDate}
             />
           </div>
         </div>

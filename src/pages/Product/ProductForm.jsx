@@ -3,14 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { Accordion } from 'react-bootstrap';
 
-import { productService } from '../../services';
-
-import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
-
 import { ModalForm, Loading } from '../../components/common';
 // TODO: Build validate form
 import { Form, InputImage, TextInput } from '../../components/validation';
 import { DescriptionBox, SpecificationTable } from './ProductEditBox';
+
+import { productService } from '../../services';
+import { getUpdateByUserInSystem, isEqualObject } from '../../utils';
 import content from './content';
 
 // 1: brand, category

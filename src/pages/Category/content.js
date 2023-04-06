@@ -12,9 +12,11 @@ const content = {
   form: {
     name: 'tên phân loại',
     description: 'mô tả chung',
-    image: 'ảnh minh họa'
+    image: 'ảnh minh họa',
+    nothingChange: 'Dữ liệu không có thay đổi!'
   },
   error: {
+    missing: 'Vui lòng cập nhật đầy đủ thông tin!',
     name: 'Tên phân loại không được bỏ trống!',
     upload: 'Không thể cập nhật hình ảnh!'
   }

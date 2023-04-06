@@ -21,15 +21,19 @@ const content = {
     maxAmount: 'Mức giá tối đa',
     time: 'Thời gian áp dụng',
     appliedDate: 'Bắt đầu',
-    endedDate: 'Kết thúc'
+    endedDate: 'Kết thúc',
+    nothingChange: 'Dữ liệu không có thay đổi!'
   },
   error: {
+    missing: 'Vui lòng cập nhật đầy đủ thông tin!',
     code: 'Mã giảm giá không được bỏ trống!',
-    appliedType: 'kiểu áp dụng',
-    rate: 'ảnh minh họa',
-    maxAmount: 'mức giảm tối đa',
-    appliedDate: 'ngày áp dụng',
-    endedDate: 'ngày hết hạn'
+    rate: 'Mức giảm không hợp lệ!',
+    minRate: 'Mức giảm thấp nhất là 0%',
+    maxRate: 'Mức giảm cao nhất là 80%',
+    maxAmount: 'Mức giảm tối đa không được trống!',
+    appliedDate: 'Ngày áp dụng không được trống!',
+    endedDate: 'Ngày hết hạn không được trống!',
+    dateConflict: 'Vui lòng kiểm tra ngày sử dụng mã!'
   }
 };
 

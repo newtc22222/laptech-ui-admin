@@ -36,4 +36,8 @@ function removeVietnameseTones(str) {
   return str;
 }
 
-export { removeVietnameseTones };
+function createSlug(text) {
+  return removeVietnameseTones(text);
+}
+
+export default createSlug;

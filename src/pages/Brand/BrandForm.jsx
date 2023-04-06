@@ -2,13 +2,16 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import { brandService, uploadService } from '../../services';
-
 import ModalForm from '../../components/common/ModalForm';
 import { Form, InputImage, TextInput } from '../../components/validation';
 
-import { makeToast, toastType } from '../../utils/makeToast';
-import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+import { brandService, uploadService } from '../../services';
+import {
+  makeToast,
+  toastType,
+  isEqualObject,
+  getUpdateByUserInSystem
+} from '../../utils';
 import content from './content';
 
 const BrandForm = ({ brand, handleBack }) => {
@@ -25,7 +28,7 @@ const BrandForm = ({ brand, handleBack }) => {
 
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
-      makeToast('Vui lòng cập nhật đầy đủ thông tin!', toastType.error);
+      makeToast(content.error.missing, toastType.error);
     }
   }, [errors]);
 
@@ -54,6 +57,12 @@ const BrandForm = ({ brand, handleBack }) => {
   };
 
   const handleSaveData = data => {
+    const newData = { ...brand, ...data };
+    if (isEqualObject(brand, newData)) {
+      makeToast(content.form.nothingChange, toastType.info);
+      return;
+    }
+
     let promise;
     if (data.logo !== brand.logo) {
       const formData = new FormData();

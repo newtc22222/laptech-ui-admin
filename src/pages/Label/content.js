@@ -17,9 +17,11 @@ const content = {
     description: 'Thông tin chi tiết về nhãn sản phẩm',
     linkChooseIcon: 'https://icons.getbootstrap.com/',
     hintChooseIcon:
-      'Truy cập vào link https://icons.getbootstrap.com/ sau đó chọn 1 icon và copy thẻ icon được để sẵn.'
+      'Truy cập vào link https://icons.getbootstrap.com/ sau đó chọn 1 icon và copy thẻ icon được để sẵn.',
+    nothingChange: 'Dữ liệu không có thay đổi!'
   },
   error: {
+    missing: 'Vui lòng cập nhật đầy đủ thông tin!',
     icon: 'Vui lòng điền mã icon!',
     name: 'Tiêu đề không được để trống!',
     title: 'Nội dung hiển thị không được để trống!'

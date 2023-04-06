@@ -1,10 +1,9 @@
 import React from 'react';
+import classNames from 'classnames';
 
-// TODO: build sortable table
 import { Loading, SortableTable } from '../../components/common';
+import { chooseFieldsOfObject, formatDateTime } from '../../utils';
 import content from './content';
-import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
-import { formatDateTime } from '../../utils/formatTime';
 
 const fields = [
   'id',
@@ -43,17 +42,37 @@ const DiscountTable = ({
     },
     {
       label: content.appliedType,
-      render: discount => discount.appliedType,
+      render: discount => (
+        <div
+          className={classNames('text-center fw-bold', {
+            'text-primary': discount.appliedType === 'PURCHASE'
+          })}
+        >
+          {discount.appliedType}
+        </div>
+      ),
       sortValue: discount => discount.appliedType
     },
     {
       label: content.rate,
-      render: discount => discount.rate,
+      render: discount => (
+        <div
+          className={classNames('text-center fw-bold', {
+            'text-info': discount.rate > 0.1,
+            'text-warning': discount.rate > 0.3,
+            'text-danger': discount.rate > 0.5
+          })}
+        >
+          {discount.rate * 100}
+        </div>
+      ),
       sortValue: discount => discount.rate
     },
     {
       label: content.maxAmount,
-      render: discount => discount.maxAmount,
+      render: discount => (
+        <div className="text-center">{discount.maxAmount}</div>
+      ),
       sortValue: discount => discount.maxAmount
     },
     {

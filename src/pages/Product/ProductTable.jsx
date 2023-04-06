@@ -1,11 +1,10 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import { Loading, SortableTable } from '../../components/common';
 import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
 import { getCurrencyString } from '../../utils/formatCurency';
 import content from './content';
-import classNames from 'classnames';
-s;
 
 const fields = [
   'id',

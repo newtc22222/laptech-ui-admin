@@ -26,11 +26,11 @@ function ModalCustom({ show, setShow, ...props }) {
       </Modal.Header>
       <Modal.Body>{content || ''}</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          {titleCancel}
-        </Button>
         <Button variant="primary" onClick={handleDelete}>
           {titleConfirm}
+        </Button>
+        <Button variant="secondary" onClick={handleClose}>
+          {titleCancel}
         </Button>
       </Modal.Footer>
     </Modal>

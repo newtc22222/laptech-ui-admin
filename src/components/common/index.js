@@ -1,3 +1,4 @@
+import Accordion from './Accordion';
 import Loading from './Loading';
 import ModalConfirm from './ModalConfirm';
 import ModalForm from './ModalForm';
@@ -11,6 +12,7 @@ import TextEditor from './TextEditor';
 import { PageNotFound, ServerNotResponse, Unauthorization } from './Error';
 
 export {
+  Accordion,
   Loading,
   ModalConfirm,
   ModalForm,
