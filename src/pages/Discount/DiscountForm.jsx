@@ -14,7 +14,10 @@ import {
 } from '../../utils';
 import content from './content';
 
-const appliedTypes = ['PRODUCT', 'PURCHASE'];
+const appliedTypes = [
+  { label: 'Sản phẩm', value: 'PRODUCT' },
+  { label: 'Đơn hàng', value: 'PURCHASE' }
+];
 
 const DiscountForm = ({ discount, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);

@@ -95,12 +95,20 @@ const usePaging = (recordsShow, totalRecords) => {
       <nav aria-label="Page navigation">
         <ul className="pagination">
           <li className={getClassPageItem(currentPage <= 1)}>
-            <span className="page-link" onClick={actionChangePage.first}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.first}
+            >
               {'<<'}
             </span>
           </li>
           <li className={getClassPageItem(currentPage <= 1)}>
-            <span className="page-link" onClick={actionChangePage.prev}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.prev}
+            >
               {'<'}
             </span>
           </li>
@@ -111,6 +119,7 @@ const usePaging = (recordsShow, totalRecords) => {
                   className={
                     'page-link' + (page === currentPage ? ' active' : '')
                   }
+                  style={{ cursor: 'pointer' }}
                   onClick={() => actionChangePage.number(page)}
                 >
                   {page}
@@ -119,12 +128,20 @@ const usePaging = (recordsShow, totalRecords) => {
             );
           })}
           <li className={getClassPageItem(currentPage >= last_page)}>
-            <span className="page-link" onClick={actionChangePage.next}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.next}
+            >
               {'>'}
             </span>
           </li>
           <li className={getClassPageItem(currentPage >= last_page)}>
-            <span className="page-link" onClick={actionChangePage.last}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.last}
+            >
               {'>>'}
             </span>
           </li>

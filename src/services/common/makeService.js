@@ -10,7 +10,7 @@ import subText from '../../utils/getVietnameseIntonation';
  * @returns {{
  *  getAll: (dispatch, token?: string) => {},
  *  create: (dispatch, object: object, token: string) => {},
- *  update: (dispatch, object: object, token: string) => {},
+ *  update: (dispatch, object: object, objectId: number | string, token: string) => {},
  *  delete: (dispatch, objectId: string | number, token: string) => {},
  *  extraAction: object
  * }}

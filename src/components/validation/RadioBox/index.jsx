@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form';
 import classNames from 'classnames';
 
 /**
- * @param {{ control: object, name: string, defaultValue: string, options: string[], props: object }}
+ * @param {{ control: object, name: string, defaultValue: string, options: object[], props: object }}
  */
 const RadioBox = ({ control, name, defaultValue, options, ...props }) => {
   return (
@@ -17,17 +17,19 @@ const RadioBox = ({ control, name, defaultValue, options, ...props }) => {
             {props.title && <p className="text-uppercase">{props.title}</p>}
             {options?.map(option => {
               return (
-                <div className="form-check" key={option}>
+                <div className="form-check" key={option.value}>
                   <input
-                    id={option}
+                    id={option.value}
                     type="radio"
                     className="form-check-input"
                     name={name}
-                    checked={value === option}
-                    onChange={() => onChange(option)}
+                    checked={value === option.value}
+                    onChange={() => onChange(option.value)}
                     disabled={props.disabled || false}
                   />
-                  <label htmlFor={option}>{option || 'Check here!'}</label>
+                  <label htmlFor={option.value}>
+                    {option.label || 'Check here!'}
+                  </label>
                 </div>
               );
             })}

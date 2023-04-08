@@ -83,8 +83,10 @@ function TextInput({ register, errors, attribute, required, ...props }) {
           'is-invalid': required && errors[attribute]
         })}
         {...register(attribute, getRules())}
-        id={attribute}
+        id={`text-input-${attribute}`}
         defaultValue={props.defaultValue}
+        disabled={props.disabled}
+        readOnly={props.readOnly}
         required={required}
         type={props.type || 'text'}
         min={props.min}
@@ -94,7 +96,7 @@ function TextInput({ register, errors, attribute, required, ...props }) {
           'This is a default placeholder, If you know you know'
         }
       />
-      <label className="text-uppercase" htmlFor={attribute}>
+      <label className="text-uppercase" htmlFor={`text-input-${attribute}`}>
         {(props.label || 'Input').concat(' ')}
         {required && <span className="text-danger">*</span>}
       </label>

@@ -1,85 +1,95 @@
-import React, { useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { roleService } from '../../services';
-
-import { getUpdateByUserInSystem } from '../../utils/getUserInSystem';
+import { useForm } from 'react-hook-form';
 
 import ModalForm from '../../components/common/ModalForm';
-// TODO: Build validate form
-import { Form, InputImage, TextInput } from '../../components/validation';
-import content from './content';
+import { Form, AreaInput, TextInput } from '../../components/validation';
 
-const titleName = 'Tiêu đề (hiển thị trực tiếp)';
-const titleDescription = 'Thông tin chi tiết về phân quyền';
+import { roleService } from '../../services';
+import {
+  makeToast,
+  toastType,
+  isEqualObject,
+  getUpdateByUserInSystem
+} from '../../utils';
+import content from './content';
 
 const RoleForm = ({ role, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const nameRef = useRef();
-  const descriptionRef = useRef();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm();
 
-  const handleCreateData = async () => {
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      makeToast(content.error.missing, toastType.error);
+    }
+  }, [errors]);
+
+  const handleCreateData = data => {
     const newRole = {
-      name: nameRef.current.value,
-      description: descriptionRef.current.value,
+      ...data,
       ...getUpdateByUserInSystem()
     };
 
-    await roleService.create(dispatch, newRole, accessToken);
+    roleService.create(dispatch, newRole, accessToken);
+    reset();
     handleBack();
   };
 
-  const handleSaveData = async () => {
+  const handleSaveData = data => {
+    const newData = { ...role, ...data };
+    if (isEqualObject(role, newData)) {
+      makeToast(content.form.nothingChange, toastType.info);
+      return;
+    }
+
     const newRole = {
-      name: nameRef.current.value,
-      description: descriptionRef.current.value,
-      modifiedDate: new Date().toISOString(),
+      ...data,
       ...getUpdateByUserInSystem()
     };
-    await roleService.update(dispatch, newRole, role.id, accessToken);
+
+    roleService.update(dispatch, newRole, role.id, accessToken);
+    reset();
     handleBack();
   };
 
   const renderForm = (
-    <>
-      <div className="mb-3">
-        <label htmlFor="role-name" className="form-role">
-          {titleName}
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="role-name"
-          defaultValue={role?.name}
-          ref={nameRef}
-          placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="role-description" className="form-role">
-          {titleDescription}
-        </label>
-        <textarea
-          className="form-control"
-          id="role-description"
-          defaultValue={role?.description}
-          ref={descriptionRef}
-          placeholder="The person who can controll fire and water?"
-        />
-      </div>
-    </>
+    <Form
+      handleSubmit={handleSubmit}
+      submitAction={role ? handleSaveData : handleCreateData}
+      cancelAction={handleBack}
+    >
+      <TextInput
+        label={content.form.name}
+        register={register}
+        errors={errors}
+        attribute="name"
+        defaultValue={role?.name}
+        placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
+        required
+        errorMessage={content.error.name}
+      />
+      <AreaInput
+        label={content.form.description}
+        register={register}
+        errors={errors}
+        attribute="description"
+        defaultValue={role?.description}
+        placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
+        required
+        errorMessage={content.error.description}
+      />
+    </Form>
   );
 
   return (
-    <ModalForm
-      object={role}
-      handleBack={handleBack}
-      action={() => {
-        role ? handleSaveData() : handleCreateData();
-      }}
-    >
+    <ModalForm object={role} disabledFooter>
       {renderForm}
     </ModalForm>
   );

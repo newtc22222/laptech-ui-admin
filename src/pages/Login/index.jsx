@@ -58,7 +58,14 @@ const Login = () => {
 
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
-      navigate('/' + (activeTab.subTab || activeTab.tab));
+
+      const urlActive =
+        activeTab.tab === 'login'
+          ? '/'
+          : '/'
+              .concat(activeTab.tab)
+              .concat(activeTab.subTab ? '/' + activeTab.subTab : '');
+      navigate(urlActive);
     }
   };
 

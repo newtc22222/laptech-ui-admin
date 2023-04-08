@@ -1,8 +1,8 @@
-// import CheckLoginTimeout from './CheckLoginTimeout';
+import Form from './Form';
+import AreaInput from './AreaInput';
 import CheckBox from './CheckBox';
 import CheckMultipleBox from './CheckMultipleBox';
 import DatePicker from './DatePicker';
-import Form from './Form';
 import InputImage from './InputImage';
 import InputMultipleImage from './InputMultipleImage';
 import RadioBox from './RadioBox';
@@ -12,10 +12,11 @@ import SeletedInputBox from './SeletedInputBox';
 import TextInput from './TextInput';
 
 export {
+  Form,
+  AreaInput,
   CheckBox,
   CheckMultipleBox,
   DatePicker,
-  Form,
   InputImage,
   InputMultipleImage,
   RadioBox,
