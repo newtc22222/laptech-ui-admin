@@ -1,15 +1,17 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
-// import { Accordion } from 'react-bootstrap';
 
 import { Accordion, ModalForm, Loading } from '../../components/common';
-// TODO: Build validate form
-import { Form, InputImage, TextInput } from '../../components/validation';
+import { Form, SeletedInputBox, TextInput } from '../../components/validation';
 import { DescriptionBox, SpecificationTable } from './ProductEditBox';
 
 import { productService } from '../../services';
-import { getUpdateByUserInSystem, isEqualObject } from '../../utils';
+import {
+  chooseFieldsOfObject,
+  getUpdateByUserInSystem,
+  isEqualObject
+} from '../../utils';
 import content from './content';
 
 // 1: brand, category
@@ -18,22 +20,94 @@ const ProductForm = ({ product, handleBack, ...props }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
   const { brandList, categoryList } = props;
+  const brandOptions = chooseFieldsOfObject(brandList, ['id', 'name']).map(
+    i => {
+      return { id: i.id, label: i.name };
+    }
+  );
+  const categoryOptions = chooseFieldsOfObject(brandList, ['id', 'name']).map(
+    i => {
+      return { id: i.id, label: i.name };
+    }
+  );
 
   const {
+    control,
     register,
     handleSubmit,
+    getValues,
     reset,
     formState: { errors }
   } = useForm();
 
-  const handleCreateData = async () => {};
+  const handleCreateData = data => {
+    data.brandId = data.brand[0].id;
+    data.categoryId = data.category[0].id;
+    console.log(data);
+  };
 
-  const handleSaveData = async () => {};
+  const handleSaveData = data => {
+    data.brandId = data.brand[0].id;
+    data.categoryId = data.category[0].id;
+    console.log(data);
+  };
 
   const configContent = [
     {
       header: content.form.basicInformation,
-      body: <></>,
+      body: (
+        <>
+          <TextInput
+            attribute="id"
+            label={content.form.id}
+            register={register}
+            errors={errors}
+            defaultValue={product?.id}
+            placeholder="laptop-abc-core-i3-8560U-..."
+          />
+          <TextInput
+            attribute="name"
+            label={content.form.name}
+            register={register}
+            errors={errors}
+            defaultValue={product?.name}
+            placeholder="Laptop ABC Core i3-8560U/..."
+            required
+            errorMessage={content.error.name}
+          />
+          <SeletedInputBox
+            name="brand"
+            control={control}
+            errors={errors}
+            label={content.form.brandChoice}
+            placeholder="Choose brand..."
+            required
+            getValues={getValues}
+            errorMessage=""
+            defaultValue={
+              product?.brandId &&
+              brandOptions.filter(b => b.id === product.brandId)[0]
+            }
+            options={brandOptions}
+          />
+          <SeletedInputBox
+            name="category"
+            control={control}
+            errors={errors}
+            label={content.form.categoryChoice}
+            className="mt-3"
+            placeholder="Choose category..."
+            required
+            getValues={getValues}
+            errorMessage=""
+            defaultValue={
+              product?.categoryId &&
+              categoryOptions.filter(b => b.id === product.categoryId)[0]
+            }
+            options={categoryOptions}
+          />
+        </>
+      ),
       isActive: true
     },
     {

@@ -56,11 +56,13 @@ const UserForm = ({ user, handleBack }) => {
   }, [errors]);
 
   const handleCreateData = data => {
+    console.log(data);
     handleBack();
   };
 
   const handleSaveData = data => {
     const newData = { ...user, ...data };
+    console.log(newData);
     if (isEqualObject(user, data)) {
       makeToast(content.form.nothingChange, toastType.info);
       return;
@@ -91,7 +93,7 @@ const UserForm = ({ user, handleBack }) => {
         errors={errors}
         attribute="phone"
         defaultValue={user?.phone}
-        disabled={user?.phone}
+        readOnly={user?.phone}
       />
       <RadioBox
         className="border rounded-2 mb-2"

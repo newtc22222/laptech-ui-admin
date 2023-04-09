@@ -5,8 +5,6 @@ export default function makeRefreshToken(err, dispatch) {
   const storage = createLocalStorage('laptech');
 
   if (err.toString().includes('Invalid token!')) {
-    console.log(storage.get('refreshToken'));
-
     const object = {
       refreshToken: storage.get('refreshToken')
     };
