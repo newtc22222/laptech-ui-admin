@@ -7,8 +7,6 @@ import router from './routes';
 
 import AppProvider from './components/context/AppContext';
 
-import './styles/css/laptech.css';
-
 /**
  * @since 2022-12-23
  */

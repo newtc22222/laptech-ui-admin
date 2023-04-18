@@ -1,4 +1,4 @@
-import { ico_edit, ico_del } from '../../common/svg/crud';
+import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
   id: 'mã sản phẩm',
@@ -22,7 +22,11 @@ const content = {
     specifications: 'thông số kỹ thuật',
     descriptionDetail: 'mô tả chi tiết',
     labelList: 'Danh sách nhãn thông tin',
-    discountList: 'Danh sách mã chiết khấu'
+    discountList: 'Danh sách mã chiết khấu',
+    attribute: 'Thuộc tính',
+    information: 'Thông tin',
+    setting: 'Thiết lập',
+    tabTitle: 'Tiêu đề Tab'
   },
   error: {
     name: 'Tên sản phẩm không được để trống!',

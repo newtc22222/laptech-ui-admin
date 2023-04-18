@@ -1,65 +1,34 @@
-import React, { useState } from 'react';
-
-const lockRowIcon = {
-  true: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      className="bi bi-lock-fill"
-      viewBox="0 0 16 16"
-    >
-      <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
-    </svg>
-  ),
-  false: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      className="bi bi-unlock-fill"
-      viewBox="0 0 16 16"
-    >
-      <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z" />
-    </svg>
-  )
-};
+import React from 'react';
 
 const TableRow = ({ item, handleChangeValue, handleRemoveLine }) => {
-  const [disabled, setDisabled] = useState(false);
   return (
     <tr>
-      <td>
+      <td
+        onClick={() => {
+          document.getElementById(`${item.index}-inp`).focus();
+        }}
+      >
         <input
+          id={`${item.index}-inp`}
           className="w-100 border-0"
           type="text"
           defaultValue={item.attribute}
-          disabled={disabled}
           onChange={e => handleChangeValue(e, 'attribute', item)}
         />
       </td>
       <td>
-        <input
+        <textarea
           className="w-100 border-0"
+          style={{ minHeight: '50px', maxHeight: '200px' }}
           type="text"
           defaultValue={item.value}
-          disabled={disabled}
           onChange={e => handleChangeValue(e, 'value', item)}
         />
       </td>
       <td>
         <div className="d-flex gap-1 justify-content-evenly">
           <button
-            className="btn btn-sm btn-outline-secondary"
-            onClick={() => setDisabled(!disabled)}
-          >
-            {lockRowIcon[disabled]}
-          </button>
-          <button
             className="btn btn-sm btn-outline-danger"
-            disabled={disabled}
             onClick={() => handleRemoveLine(item.index)}
           >
             <svg

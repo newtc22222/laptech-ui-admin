@@ -71,7 +71,9 @@ function ProductTable({
     },
     {
       label: content.releasedDate,
-      render: product => product.releasedDate,
+      render: product => (
+        <div className="text-center">{product.releasedDate}</div>
+      ),
       sortValue: product => product.releasedDate
     },
     {
@@ -93,7 +95,11 @@ function ProductTable({
     },
     {
       label: content.listedPrice,
-      render: product => getCurrencyString(product.listedPrice),
+      render: product => (
+        <div className="text-center">
+          {getCurrencyString(product.listedPrice, 'vi-VN', 'VND')}
+        </div>
+      ),
       sortValue: product => product.listedPrice
     },
     {

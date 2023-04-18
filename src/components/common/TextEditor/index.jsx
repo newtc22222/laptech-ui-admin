@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -35,32 +35,18 @@ const formats = [
   'image'
 ];
 
-const TextEditor = ({ tab, handleSaveContent }) => {
-  const [value, setValue] = useState(tab.content || '');
-
+const TextEditor = ({ tab, handleChangeContent }) => {
   return (
     <>
       <ReactQuill
         theme="snow"
-        value={value}
-        onChange={setValue}
+        value={tab.content}
+        onChange={value => {
+          handleChangeContent(value, tab.id);
+        }}
         modules={modules}
         formats={formats}
       />
-      <div className="d-flex flex-row-reverse mt-2 gap-2">
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => setValue(tab.content)}
-        >
-          Revert
-        </button>
-        <button
-          className="btn btn-outline-primary"
-          onClick={() => handleSaveContent(value, tab.id)}
-        >
-          Save
-        </button>
-      </div>
     </>
   );
 };

@@ -1,7 +1,6 @@
-const getCurrencyString = value => {
-  value = value.toFixed(0);
-  const money = new Intl.NumberFormat(`en-US`).format(value);
-  return money.replaceAll(',', '.');
-};
+function getCurrencyString(value, format = 'en-US', currency = 'USD') {
+  const extra = { style: 'currency', currency };
+  return Intl.NumberFormat(format, extra).format(value);
+}
 
 export { getCurrencyString };

@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import PageHeader from '../../../../components/common/PageHeader';
-import Loading from '../../../../components/common/Loading';
-import ServerNotResponse from '../../../Error/ServerNotResponse';
+import {
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../../../components/common';
 
 const pageName = 'Thông tin đơn nhập hàng';
 

@@ -1,30 +1,15 @@
-import authService from './auth/auth.service';
+export { default as authService } from './auth/auth.service';
 
 // product platform
-import brandService from './products/brand.service';
-import categoryService from './products/category.service';
-import discountService from './products/discount.service';
-import importProductService from './products/importProduct.service';
-import labelService from './products/label.service';
-import productService from './products/product.service';
+export { default as brandService } from './products/brand.service';
+export { default as categoryService } from './products/category.service';
+export { default as discountService } from './products/discount.service';
+export { default as importProductService } from './products/importProduct.service';
+export { default as labelService } from './products/label.service';
+export { default as productService } from './products/product.service';
 
-import exportService from './export.service';
-import invoiceService from './invoice.service';
-import roleService from './role.service';
-import uploadService from './upload.service';
-import userService from './user.service';
-
-export {
-  authService,
-  brandService,
-  categoryService,
-  discountService,
-  importProductService,
-  labelService,
-  productService,
-  exportService,
-  invoiceService,
-  roleService,
-  uploadService,
-  userService
-};
+export { default as exportService } from './export.service';
+export { default as invoiceService } from './invoice.service';
+export { default as roleService } from './role.service';
+export { default as uploadService } from './upload.service';
+export { default as userService } from './user.service';

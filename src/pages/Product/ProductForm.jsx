@@ -3,8 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
 import { Accordion, ModalForm, Loading } from '../../components/common';
-import { Form, SeletedInputBox, TextInput } from '../../components/validation';
-import { DescriptionBox, SpecificationTable } from './ProductEditBox';
+import {
+  Form,
+  SeletedInputBox,
+  TextInput,
+  DescriptionBox,
+  SpecificationTable
+} from '../../components/validation';
 
 import { productService } from '../../services';
 import {
@@ -112,12 +117,28 @@ const ProductForm = ({ product, handleBack, ...props }) => {
     },
     {
       header: content.form.specifications,
-      body: <SpecificationTable />,
+      body: (
+        <SpecificationTable
+          control={control}
+          errors={errors}
+          getValues={getValues}
+          name="specifications"
+          defaultValue={product.specifications}
+        />
+      ),
       isActive: false
     },
     {
       header: content.form.descriptionDetail,
-      body: <DescriptionBox />,
+      body: (
+        <DescriptionBox
+          control={control}
+          errors={errors}
+          getValues={getValues}
+          name="descriptionDetail"
+          defaultValue={product.descriptionDetail}
+        />
+      ),
       isActive: true
     }
   ];

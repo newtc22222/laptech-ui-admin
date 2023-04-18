@@ -62,13 +62,11 @@ const Category = () => {
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          {...modalValue}
-        />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.create && (
         <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
       )}

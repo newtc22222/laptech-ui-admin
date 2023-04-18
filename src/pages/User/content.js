@@ -1,4 +1,4 @@
-import { ico_edit, ico_del } from '../../common/svg/crud';
+import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
   user: 'người dùng',
