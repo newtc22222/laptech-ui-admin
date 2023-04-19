@@ -92,6 +92,7 @@ const Invoice = () => {
   return (
     <div className="mt-2">
       <ModalOption
+        className="modal-xl"
         show={showModal}
         setShow={setShowModal}
         title={content.invoice}

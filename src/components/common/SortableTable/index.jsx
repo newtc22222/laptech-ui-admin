@@ -23,7 +23,8 @@ function getIcons(label, sortBy, sortOrder) {
 function SortableTable({ data, config, keyFn, ...props }) {
   const { sortOrder, sortBy, sortedData, setSortColumn } = useSort(
     data,
-    config
+    config,
+    props.defaultSort
   );
 
   const updatedConfig = config.map(column => {

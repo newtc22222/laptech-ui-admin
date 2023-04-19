@@ -1,4 +1,5 @@
 import React from 'react';
+import { Row, Col } from 'react-bootstrap';
 
 import { getCurrencyString } from '../../../../utils/formatCurency';
 import ItemCard from './ItemCard';
@@ -18,12 +19,20 @@ function ItemBox({ data: invoice, ...props }) {
     <div className="d-grid gap-2">
       <div>ID: {invoice.id}</div>
       <div>Customer: {invoice.id}</div>
-      <div>Payment type: {invoice.paymentType}</div>
+      <div>
+        Payment type: <span className="fw-bold">{invoice.paymentType}</span>
+      </div>
       <div>Item quantity: {invoice.items.length}</div>
-      <div>Total price: {getTotalPrice()}</div>
-      {invoice.items.map(item => (
-        <ItemCard key={item.id} data={item} />
-      ))}
+      <div>
+        Total price: <span className="fw-bold">{getTotalPrice()}</span>
+      </div>
+      <Row xs={1} md={2} className="g-2">
+        {invoice.items.map(item => (
+          <Col key={item.id}>
+            <ItemCard data={item} />
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 }

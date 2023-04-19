@@ -10,7 +10,7 @@ const RadioBox = ({ control, name, defaultValue, options, ...props }) => {
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue || options[0]}
+      defaultValue={defaultValue || options[0].value}
       render={({ field: { value, onChange } }) => {
         return (
           <div className={classNames('container pt-1 pb-1', props.className)}>

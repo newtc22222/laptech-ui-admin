@@ -14,6 +14,7 @@ import {
 import { productService } from '../../services';
 import {
   chooseFieldsOfObject,
+  createSlug,
   getUpdateByUserInSystem,
   isEqualObject
 } from '../../utils';
@@ -30,11 +31,12 @@ const ProductForm = ({ product, handleBack, ...props }) => {
       return { id: i.id, label: i.name };
     }
   );
-  const categoryOptions = chooseFieldsOfObject(brandList, ['id', 'name']).map(
-    i => {
-      return { id: i.id, label: i.name };
-    }
-  );
+  const categoryOptions = chooseFieldsOfObject(categoryList, [
+    'id',
+    'name'
+  ]).map(i => {
+    return { id: i.id, label: i.name };
+  });
 
   const {
     control,
@@ -46,6 +48,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
   } = useForm();
 
   const handleCreateData = data => {
+    data.id = createSlug(data.name.slice(0, data.name.indexOf('/')));
     data.brandId = data.brand[0].id;
     data.categoryId = data.category[0].id;
     console.log(data);
@@ -69,6 +72,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
             errors={errors}
             defaultValue={product?.id}
             placeholder="laptop-abc-core-i3-8560U-..."
+            readOnly={product}
           />
           <TextInput
             attribute="name"
@@ -123,7 +127,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
           errors={errors}
           getValues={getValues}
           name="specifications"
-          defaultValue={product.specifications}
+          defaultValue={product?.specifications}
         />
       ),
       isActive: false
@@ -136,7 +140,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
           errors={errors}
           getValues={getValues}
           name="descriptionDetail"
-          defaultValue={product.descriptionDetail}
+          defaultValue={product?.descriptionDetail}
         />
       ),
       isActive: true

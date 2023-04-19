@@ -33,7 +33,7 @@ function removeVietnameseTones(str) {
     /!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g,
     ' '
   );
-  return str;
+  return str.toLowerCase().replace(/\s+/g, '-');
 }
 
 function createSlug(text) {

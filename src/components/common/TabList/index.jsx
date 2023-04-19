@@ -10,7 +10,7 @@ function TabList({ configData, ...props }) {
       className={classNames(props.className)}
     >
       <Row>
-        <Col sm={3}>
+        <Col xl={2} md={3}>
           <Nav variant="pills" className="flex-column border rounded-2">
             {configData.map((item, idx) => {
               return (
@@ -31,7 +31,7 @@ function TabList({ configData, ...props }) {
             })}
           </Nav>
         </Col>
-        <Col sm={9}>
+        <Col xl={10} md={9}>
           {configData.map((item, idx) => {
             return (
               <Tab.Content key={idx}>

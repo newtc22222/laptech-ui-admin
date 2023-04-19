@@ -1,9 +1,9 @@
-import React from "react";
-import classNames from "classnames";
-import { Controller } from "react-hook-form";
-import _ from "lodash";
-import TableRow from "./TableRow";
-import "./TableRow.css";
+import React from 'react';
+import classNames from 'classnames';
+import { Controller } from 'react-hook-form';
+import _ from 'lodash';
+import TableRow from './TableRow';
+import './TableRow.css';
 
 function setDefaultValue(text) {
   return text ? JSON.parse(text) : [];
@@ -22,13 +22,13 @@ const SpecificationTable = ({
       const rows = props.getValues()[name];
       if (rows?.length > 0) {
         const emptyContent = rows
-          .filter((row) => {
+          .filter(row => {
             return !row.attribute || !row.value;
           })
-          .map((row) => _.findIndex(rows, row));
+          .map(row => _.findIndex(rows, row));
         return (
           emptyContent.length < 1 ||
-          `You have empty content in row: ${emptyContent.join(",")}!`
+          `You have empty content in row: ${emptyContent.join(',')}!`
         );
       }
     };
@@ -38,7 +38,7 @@ const SpecificationTable = ({
   const renderContent = ({ field: { value: data, onChange } }) => {
     const handleChangeValue = (e, key, item_edit) => {
       item_edit[key] = e.target.value;
-      const newData = data.map((item) => {
+      const newData = data.map(item => {
         if (item.index === item_edit.index) {
           return item_edit;
         }
@@ -52,34 +52,34 @@ const SpecificationTable = ({
         ...data,
         {
           index: crypto.randomUUID(),
-          attribute: "",
-          value: ""
+          attribute: '',
+          value: ''
         }
       ];
       onChange(newData);
     };
 
-    const handleRemoveLine = (id) => {
-      const newData = data.filter((item) => item.index !== id);
+    const handleRemoveLine = id => {
+      const newData = data.filter(item => item.index !== id);
       onChange(newData);
     };
 
-    const handleResetData = () => {
-      const newData = setDefaultValue(defaultValue);
-      onChange(newData);
-    };
+    // const handleResetData = () => {
+    //   const newData = setDefaultValue(defaultValue);
+    //   onChange(newData);
+    // };
 
-    const handleClearData = () => {
-      onChange([]);
-    };
+    // const handleClearData = () => {
+    //   onChange([]);
+    // };
 
     return (
       <div
-        className={classNames("container", {
-          "border border-danger rounded-2 py-1": errors[name]
+        className={classNames('container', {
+          'border border-danger rounded-2 py-1': errors[name]
         })}
       >
-        <div className="btn-group btn-group-sm d-flex">
+        {/* <div className="btn-group btn-group-sm d-flex">
           <button
             className="btn btn-outline-secondary"
             onClick={handleResetData}
@@ -89,18 +89,18 @@ const SpecificationTable = ({
           <button className="btn btn-outline-danger" onClick={handleClearData}>
             Clear
           </button>
-        </div>
+        </div> */}
         <div className="mt-2 table-responsive">
           <table className="table table-bordered border-dark">
             <thead className="bg-primary text-white">
               <tr className="text-center">
-                <th>Attribute</th>
-                <th>Value</th>
-                <th>Action</th>
+                <th>Thuộc tính</th>
+                <th>Giá trị</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              {data?.map((item) => (
+              {data?.map(item => (
                 <TableRow
                   key={item.index}
                   item={item}
@@ -114,7 +114,7 @@ const SpecificationTable = ({
                   className="text-center hover-add fw-bold"
                   onClick={handleAddMoreLine}
                   style={{
-                    cursor: "pointer"
+                    cursor: 'pointer'
                   }}
                 >
                   ADD MORE ROW

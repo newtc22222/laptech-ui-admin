@@ -33,8 +33,7 @@ function InvoiceTable({ invoiceList, setShowModal, setItemList, ...props }) {
           .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         return (
           <div className="text-center">
-            {/* {formatCurrency(totalCost, "vi-VN", "VND")} */}
-            {getCurrencyString(totalCost)}
+            {getCurrencyString(totalCost, 'vi-VN', 'VND')}
           </div>
         );
       },
@@ -65,7 +64,7 @@ function InvoiceTable({ invoiceList, setShowModal, setItemList, ...props }) {
       data={invoiceList}
       totalRecordData={invoiceList.length}
       config={configData}
-      // defaultSort={["desc", "Date create"]}
+      defaultSort={['desc', content.dateCreated]}
       keyFn={keyFn}
     />
   );

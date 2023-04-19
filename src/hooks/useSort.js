@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-function useSort(data, config) {
-  const [sortOrder, setSortOrder] = useState(null);
-  const [sortBy, setSortBy] = useState(null);
+function useSort(data, config, defaultSort = [null, null]) {
+  const [sortOrder, setSortOrder] = useState(defaultSort[0]);
+  const [sortBy, setSortBy] = useState(defaultSort[1]);
 
   const setSortColumn = label => {
     if (sortBy && label !== sortBy) {

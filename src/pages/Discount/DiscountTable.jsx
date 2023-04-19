@@ -99,7 +99,7 @@ const DiscountTable = ({
             </button>
             <button
               className="btn btn-danger flex-fill"
-              onClick={() => handleShowDeleteModal(discount.id, discount.name)}
+              onClick={() => handleShowDeleteModal(discount.id, discount.code)}
             >
               {content.btnDel}
             </button>

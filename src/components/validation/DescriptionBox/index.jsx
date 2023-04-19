@@ -23,8 +23,6 @@ function setDefaultValue(text) {
 }
 
 const DescriptionBox = ({ control, errors, name, defaultValue, ...props }) => {
-  console.log(errors);
-
   const getRules = () => {
     const rules = {};
     rules.validate = () => {

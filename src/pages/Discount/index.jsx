@@ -42,10 +42,10 @@ const Discount = () => {
     if (!discountList || error) discountService.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = (discountId, discountName) => {
+  const handleShowDeleteModal = (discountId, discountCode) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountName} khỏi hệ thống không?`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountCode} khỏi hệ thống không?`,
       () => {
         discountService.delete(dispatch, discountId, accessToken);
         action.showModal(false);
@@ -64,9 +64,11 @@ const Discount = () => {
 
   return (
     <div>
-      <ModalConfirm show={showModal} setShow={action.showModal} {...modalValue}>
-        {modalValue?.content}
-      </ModalConfirm>
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.create && (
         <DiscountForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
       )}
@@ -88,7 +90,7 @@ const Discount = () => {
         discountList={discountList}
         discountTotalRecord={discountList?.length}
         handleSetUpdateMode={discount => action.setUpdateMode(discount)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+        handleShowDeleteModal={(id, code) => handleShowDeleteModal(id, code)}
       />
     </div>
   );
