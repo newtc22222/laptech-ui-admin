@@ -1,15 +1,18 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
-import apiRole from '../../apis/role.api';
 
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+
+import { roleService } from '../../services';
+
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import RoleTable from './RoleTable';
 import RoleForm from './RoleForm';
-
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
-import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Quyền sử dụng người dùng';
 const objectName = 'roles';
@@ -20,18 +23,14 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Role = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    navigate,
     workMode,
     showModal,
-    roleEdit,
+    objectEdit: roleEdit,
     modalValue,
     action
-  ] = useWorkspace();
-
-  if (accessToken === null || accessToken === undefined)
-    navigate('/auth/login');
+  } = useWorkspace();
 
   const {
     data: roleList,
@@ -40,7 +39,7 @@ const Role = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!roleList) apiRole.getAll(dispatch, accessToken);
+    if (!roleList || error) roleService.getAll(dispatch, accessToken);
   }, []);
 
   const handleShowDeleteModal = useCallback((roleId, roleName) => {
@@ -48,7 +47,7 @@ const Role = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${roleName} khỏi hệ thống không?`,
       () => {
-        apiRole.delete(dispatch, roleId, accessToken);
+        roleService.delete(dispatch, roleId, accessToken);
         action.showModal(false);
       }
     );
@@ -65,13 +64,11 @@ const Role = () => {
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.create && (
         <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
       )}
@@ -81,15 +78,14 @@ const Role = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
+      </PageHeader>
       <RoleTable
         roleList={roleList}
         handleSetUpdateMode={role => action.setUpdateMode(role)}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 const titleConfirm = 'Xác nhận';
 const titleCancel = 'Huỷ bỏ';
@@ -10,7 +10,7 @@ const titleCancel = 'Huỷ bỏ';
  * @param {{ show: boolean, setShow: function, props: object}}
  * @returns {JSX.Element}
  */
-function ModalCustom({ show, setShow, props }) {
+function ModalCustom({ show, setShow, ...props }) {
   const handleClose = () => setShow(false);
   const { title, content, handleDelete } = props;
 
@@ -19,28 +19,22 @@ function ModalCustom({ show, setShow, props }) {
       show={show}
       onHide={handleClose}
       backdrop="static"
-      className="modal-lg"
+      className={classNames('modal-lg', props.className)}
     >
       <Modal.Header>
         <Modal.Title>{title || ''}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{content || ''}</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          {titleCancel}
-        </Button>
         <Button variant="primary" onClick={handleDelete}>
           {titleConfirm}
+        </Button>
+        <Button variant="secondary" onClick={handleClose}>
+          {titleCancel}
         </Button>
       </Modal.Footer>
     </Modal>
   );
 }
-
-ModalCustom.propTypes = {
-  show: PropTypes.bool.isRequired,
-  setShow: PropTypes.func.isRequired,
-  props: PropTypes.object.isRequired
-};
 
 export default ModalCustom;

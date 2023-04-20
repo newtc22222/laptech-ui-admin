@@ -1,78 +1,159 @@
 import React from 'react';
-import Loading from '../../components/common/Loading';
-import useFetch from '../../hooks/useFetch';
-import useTable from '../../components/common/SoftTable';
-import { getCurrencyString } from '../../utils/HandleCurency';
+import classNames from 'classnames';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const currencyUnit = ' đồng';
+import { DropdownMenu, Loading, SortableTable } from '../../components/common';
+import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
+import { getCurrencyString } from '../../utils/formatCurency';
+import content from './content';
+
+const fields = [
+  'id',
+  'name',
+  'brandId',
+  'categoryId',
+  'releasedDate',
+  'quantityInStock',
+  'listedPrice',
+  'createdDate',
+  'modifiedDate'
+];
 
 function ProductTable({
   productList,
+  productTotalRecord,
   handleSetUpdateMode,
-  handleShowDeleteModal
+  handleShowDeleteModal,
+  ...props
 }) {
-  const { data: brandList } = useFetch('/brands');
-  const { data: categoryList } = useFetch('/categories');
+  const { brandList, categoryList } = props;
 
-  if (
-    brandList === null ||
-    categoryList === null ||
-    productList === undefined ||
-    productList === null
-  ) {
-    return <Loading />;
+  if (!productList || !brandList || !categoryList) return <Loading />;
+
+  const data = chooseFieldsOfObject(productList, fields);
+  const config = [
+    {
+      label: content.id,
+      render: product => <div className="text-wrap">{product.id}</div>,
+      sortValue: product => product.id
+    },
+    {
+      label: content.name,
+      render: product => <div className="text-wrap">{product.name}</div>,
+      sortValue: product => product.name
+    },
+    {
+      label: content.brand,
+      render: product => {
+        const brand = brandList.filter(b => b.id === product.brandId)[0];
+        return <div className="fw-bold text-center">{brand?.name || ''}</div>;
+      },
+      sortValue: product => {
+        const brand = brandList.filter(b => b.id === product.brandId)[0];
+        return brand?.name || '';
+      }
+    },
+    {
+      label: content.category,
+      render: product => {
+        const category = categoryList.filter(
+          c => c.id === product.categoryId
+        )[0];
+        return (
+          <div className="fw-bold text-center">{category?.name || ''}</div>
+        );
+      },
+      sortValue: product => {
+        const category = categoryList.filter(
+          c => c.id === product.categoryId
+        )[0];
+        return category?.name || '';
+      }
+    },
+    {
+      label: content.releasedDate,
+      render: product => (
+        <div className="text-center">{product.releasedDate}</div>
+      ),
+      sortValue: product => product.releasedDate
+    },
+    {
+      label: content.quantityInStock,
+      render: product => {
+        const quantity = product.quantityInStock || 0;
+        return (
+          <div
+            className={classNames('fw-bold text-center', {
+              'text-primary': quantity > 3,
+              'text-danger': quantity <= 3
+            })}
+          >
+            {product.quantityInStock}
+          </div>
+        );
+      },
+      sortValue: product => product.quantityInStock
+    },
+    {
+      label: content.listedPrice,
+      render: product => (
+        <div className="text-center">
+          {getCurrencyString(product.listedPrice, 'vi-VN', 'VND')}
+        </div>
+      ),
+      sortValue: product => product.listedPrice
+    },
+    {
+      label: content.setting,
+      style: { maxWidth: '5vw' },
+      render: product => (
+        <div className="d-flex flex-wrap gap-1">
+          <DropdownMenu className="flex-fill" config={getConfigMenu(product)}>
+            {content.btnEdit}
+          </DropdownMenu>
+          <button
+            className="btn btn-danger flex-fill"
+            onClick={() => handleShowDeleteModal(product.id, product.name)}
+          >
+            {content.btnDel}
+          </button>
+        </div>
+      )
+    }
+  ];
+
+  function getConfigMenu(product) {
+    const configMenu = [
+      {
+        label: content.menu.basicInformation,
+        handle: () => handleSetUpdateMode(product)
+      },
+      {
+        label: content.menu.images,
+        handle: () => props.handleSetUpdateImageMode(product, 'edit_image')
+      },
+      {
+        label: content.menu.labels,
+        handle: () => props.handleSetUpdateLabelMode(product, 'edit_label')
+      },
+      'divider',
+      {
+        label: content.menu.discounts,
+        handle: () =>
+          props.handleSetUpdateDiscountMode(product, 'edit_discount')
+      }
+    ];
+    return configMenu;
   }
 
-  return useTable(
-    [
-      'Tên sản phẩm',
-      'Thương hiệu',
-      'Danh mục',
-      'Ảnh đại diện',
-      'Ngày ra mắt',
-      'Số lượng trong kho',
-      'Giá niêm yết',
-      'Thiết lập'
-    ],
-    () =>
-      productList?.map(product => (
-        <tr key={product.id} className="text-center">
-          <td className="fw-bolder">{product.name}</td>
-          <td className="text-secondary">{brandList[product.brandId].name}</td>
-          <td className="text-secondary">
-            {categoryList[product.categoryId].name}
-          </td>
-          <td>
-            <img src={''} />
-          </td>
-          <td>{product.releasedDate}</td>
-          <td>
-            <p className="fw-bold">0</p>
-          </td>
-          <td>
-            <p className="fw-bold">
-              {getCurrencyString(product.listedPrice) + currencyUnit}
-            </p>
-          </td>
-          <td style={{ width: '10%' }}>
-            <button
-              className="btn btn-secondary w-100 mb-2"
-              onClick={() => handleSetUpdateMode(product)}
-            >
-              {titleButtonUpdate}
-            </button>{' '}
-            <br />
-            <button
-              className="btn btn-danger w-100"
-              onClick={() => handleShowDeleteModal(product.id, product.name)}
-            >
-              {titleButtonDelete}
-            </button>
-          </td>
-        </tr>
-      ))
+  const keyFn = product => product.id;
+
+  return (
+    <SortableTable
+      data={data}
+      config={config}
+      keyFn={keyFn}
+      totalRecordData={productTotalRecord}
+    />
   );
 }
 

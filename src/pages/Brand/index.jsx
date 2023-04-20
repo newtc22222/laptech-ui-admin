@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiBrand from '../../apis/product/brand.api';
+import { brandService } from '../../services';
 
-import BrandTable from './BrandTable';
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import BrandForm from './BrandForm';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
-import ServerNotResponse from '../Error/ServerNotResponse';
+import BrandTable from './BrandTable';
 
 const pageName = 'Thương hiệu';
 const objectName = 'brands';
@@ -18,18 +20,14 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const BrandPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    Navigate,
     workMode,
     showModal,
-    brandEdit,
+    objectEdit: brandEdit,
     modalValue,
     action
-  ] = useWorkspace();
-
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
+  } = useWorkspace();
 
   const {
     data: brandList,
@@ -39,7 +37,7 @@ const BrandPage = () => {
 
   // Loading
   useEffect(() => {
-    if (!brandList) apiBrand.getAll(dispatch);
+    if (!brandList || error) brandService.getAll(dispatch);
   }, []);
 
   // Show delete modal
@@ -48,7 +46,7 @@ const BrandPage = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
       () => {
-        apiBrand.delete(dispatch, brandId, accessToken);
+        brandService.delete(dispatch, brandId, accessToken);
         action.showModal(false);
       }
     );
@@ -65,13 +63,11 @@ const BrandPage = () => {
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.create && (
         <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
       )}
@@ -81,15 +77,14 @@ const BrandPage = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
+      </PageHeader>
       <BrandTable
         brandList={brandList}
         brandTotalRecord={brandList?.length}

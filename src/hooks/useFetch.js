@@ -18,12 +18,12 @@ function useFetch(url, option) {
     const callApi = async () => {
       setLoading(true);
       await fetch(BASE_URL + url, option)
-        .then(res => {
-          if (res.ok) return res.json();
+        .then(result => {
+          if (result.ok) return result.json();
           throw new Exception('Not found!');
         })
-        .then(data => {
-          if (isMount) setData(data);
+        .then(response => {
+          if (isMount) setData(response.data);
         })
         .catch(err => setError(err))
         .finally(setLoading(false));

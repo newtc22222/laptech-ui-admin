@@ -1,22 +1,17 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import apiAuth from '../../apis/auth';
-import HashString from '../../utils/HandleStoreLocal';
-import { AppContext } from '../../context/AppContext';
+
+import authService from '../../services/auth/auth.service';
+import HashString from '../../utils/hashData';
+import useAppContext from '../../hooks/useAppContext';
+import content from './content';
 // import Captcha from './Captcha';
 
 /**
  * @link: https://startbootstrap.com/previews/sb-admin-2
  * @since 2022-12-31
  */
-
-const titleWelcome = 'Welcome back!';
-const titlePhone = 'Số điện thoại';
-const titlePassword = 'Mật khẩu';
-const titleBtnSubmit = 'Xác nhận';
-const titleForgotPassword = 'Quên mật khẩu?';
-
 const Login = () => {
   const storeDataHash = localStorage.getItem('storeData');
   let rmb_phone = '',
@@ -28,9 +23,11 @@ const Login = () => {
     [rmb_phone, rmb_password, rmb_check] = storeData.split(';');
   }
 
-  const { handleSetActiveTab } = useContext(AppContext);
+  const { activeTab } = useAppContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Login data
   const [phone, setPhone] = useState(rmb_phone);
   const passwordRef = useRef();
   // const captchaRef = useRef(); // features
@@ -51,7 +48,7 @@ const Login = () => {
       password: passwordRef.current.value
       // captcha: captchaRef.current.value // will update later
     };
-    const data = await apiAuth.login(dispatch, account);
+    const data = await authService.login(dispatch, account);
 
     if (data) {
       if (remember) {
@@ -61,10 +58,80 @@ const Login = () => {
 
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
-      handleSetActiveTab('home');
-      navigate('/');
+
+      const urlActive =
+        activeTab.tab === 'login'
+          ? '/'
+          : '/'
+              .concat(activeTab.tab)
+              .concat(activeTab.subTab ? '/' + activeTab.subTab : '');
+      navigate(urlActive);
     }
   };
+
+  const renderForm = (
+    <div className="p-5">
+      <div className="text-center">
+        <h1 className="h4 text-primary mb-4">{content.welcome}</h1>
+      </div>
+      <div>
+        <div className="mb-3">
+          <label htmlFor="inputPhone" className="form-label">
+            {content.phone}
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="inputPhone"
+            aria-describedby="phoneHelp"
+            value={phone}
+            onChange={handleChangePhone}
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="inputPassword" className="form-label">
+            {content.password}
+          </label>
+          <input
+            type="password"
+            className="form-control"
+            id="inputPassword"
+            defaultValue={HashString.decrypt(rmb_password)}
+            ref={passwordRef}
+          />
+        </div>
+        {/* <Captcha captchaRef={captchaRef} /> */}
+        <div className="mb-3 form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="exampleCheck1"
+            checked={remember}
+            onChange={() => setRemember(!remember)}
+          />
+          <label className="form-check-label" htmlFor="exampleCheck1">
+            {content.remember}
+          </label>
+        </div>
+        <button
+          className="btn btn-primary w-100"
+          type="button"
+          onClick={e => {
+            e.preventDefault();
+            handleLogin();
+          }}
+        >
+          {content.btnSubmit}
+        </button>
+      </div>
+      <hr />
+      <div className="text-center">
+        <a className="small" href="forgot-password.html" target="_blank">
+          {content.forgotPassword}
+        </a>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container">
@@ -80,76 +147,7 @@ const Login = () => {
                     className="h-100 w-100"
                   />
                 </div>
-                <div className="col-lg-6">
-                  <div className="p-5">
-                    <div className="text-center">
-                      <h1 className="h4 text-primary mb-4">{titleWelcome}</h1>
-                    </div>
-                    <div>
-                      <div className="mb-3">
-                        <label htmlFor="inputPhone" className="form-label">
-                          {titlePhone}
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="inputPhone"
-                          aria-describedby="phoneHelp"
-                          value={phone}
-                          onChange={handleChangePhone}
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="inputPassword" className="form-label">
-                          {titlePassword}
-                        </label>
-                        <input
-                          type="password"
-                          className="form-control"
-                          id="inputPassword"
-                          defaultValue={HashString.decrypt(rmb_password)}
-                          ref={passwordRef}
-                        />
-                      </div>
-                      {/* <Captcha captchaRef={captchaRef} /> */}
-                      <div className="mb-3 form-check">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          id="exampleCheck1"
-                          checked={remember}
-                          onChange={() => setRemember(!remember)}
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="exampleCheck1"
-                        >
-                          Ghi nhớ đăng nhập
-                        </label>
-                      </div>
-                      <button
-                        className="btn btn-primary w-100"
-                        type="button"
-                        onClick={e => {
-                          e.preventDefault();
-                          handleLogin();
-                        }}
-                      >
-                        {titleBtnSubmit}
-                      </button>
-                    </div>
-                    <hr />
-                    <div className="text-center">
-                      <a
-                        className="small"
-                        href="forgot-password.html"
-                        target="_blank"
-                      >
-                        {titleForgotPassword}
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                <div className="col-lg-6">{renderForm}</div>
               </div>
             </div>
           </div>

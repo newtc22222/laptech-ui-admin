@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
-import apiUser from '../../apis/user.api';
 
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+
+import { userService } from '../../services';
+
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import UserTable from './UserTable';
 import UserForm from './UserForm';
-
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
-import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Người dùng hệ thống';
 const objectName = 'users';
@@ -17,18 +20,14 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const User = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    Navigate,
     workMode,
     showModal,
-    userEdit,
+    objectEdit: userEdit,
     modalValue,
     action
-  ] = useWorkspace();
-
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
+  } = useWorkspace();
 
   const {
     data: userList,
@@ -38,7 +37,7 @@ const User = () => {
 
   // Loading
   useEffect(() => {
-    if (!userList) apiUser.getAll(dispatch, accessToken);
+    if (!userList || error) userService.getAll(dispatch, accessToken);
   }, []);
 
   // Show delete modal
@@ -47,7 +46,7 @@ const User = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${userName} khỏi hệ thống không?`,
       () => {
-        apiUser.delete(dispatch, userId, accessToken);
+        userService.delete(dispatch, userId, accessToken);
         action.showModal(false);
       }
     );
@@ -64,13 +63,11 @@ const User = () => {
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.create && (
         <UserForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
       )}
@@ -80,15 +77,14 @@ const User = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
+      </PageHeader>
       <UserTable
         userList={userList}
         userTotalRecord={userList?.length}

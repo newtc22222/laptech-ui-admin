@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
-import getRecordShowIndex from '../utils/HandleRecordShow';
+import getRecordShowIndex from '../utils/getRecordShowIndex';
 
 const list_amount_record_on_page = [5, 10, 25, 50, 100];
 const max_paging_show = 7;
@@ -51,7 +51,10 @@ const usePaging = (recordsShow, totalRecords) => {
         break;
     }
     // handle the last
-    if (currentPage > last_page - max_paging_show + 3) {
+    if (
+      currentPage > last_page - max_paging_show + 3 &&
+      last_page > max_paging_show
+    ) {
       page_start = last_page - max_paging_show;
     }
     const page_end = page_start + max_paging_show;
@@ -92,12 +95,20 @@ const usePaging = (recordsShow, totalRecords) => {
       <nav aria-label="Page navigation">
         <ul className="pagination">
           <li className={getClassPageItem(currentPage <= 1)}>
-            <span className="page-link" onClick={actionChangePage.first}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.first}
+            >
               {'<<'}
             </span>
           </li>
           <li className={getClassPageItem(currentPage <= 1)}>
-            <span className="page-link" onClick={actionChangePage.prev}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.prev}
+            >
               {'<'}
             </span>
           </li>
@@ -108,6 +119,7 @@ const usePaging = (recordsShow, totalRecords) => {
                   className={
                     'page-link' + (page === currentPage ? ' active' : '')
                   }
+                  style={{ cursor: 'pointer' }}
                   onClick={() => actionChangePage.number(page)}
                 >
                   {page}
@@ -116,12 +128,20 @@ const usePaging = (recordsShow, totalRecords) => {
             );
           })}
           <li className={getClassPageItem(currentPage >= last_page)}>
-            <span className="page-link" onClick={actionChangePage.next}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.next}
+            >
               {'>'}
             </span>
           </li>
           <li className={getClassPageItem(currentPage >= last_page)}>
-            <span className="page-link" onClick={actionChangePage.last}>
+            <span
+              className="page-link"
+              style={{ cursor: 'pointer' }}
+              onClick={actionChangePage.last}
+            >
               {'>>'}
             </span>
           </li>

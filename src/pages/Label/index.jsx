@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiLabel from '../../apis/product/label.api';
+import { labelService } from '../../services';
 
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
-import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Nhãn thuộc tính của sản phẩm';
 const objectName = 'labels';
@@ -21,18 +23,14 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Label = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    Navigate,
     workMode,
     showModal,
-    labelEdit,
+    objectEdit: labelEdit,
     modalValue,
     action
-  ] = useWorkspace();
-
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
+  } = useWorkspace();
 
   const {
     data: labelList,
@@ -41,7 +39,7 @@ const Label = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!labelList) apiLabel.getAll(dispatch);
+    if (!labelList || error) labelService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (labelId, labelName) => {
@@ -49,27 +47,12 @@ const Label = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${labelName} khỏi hệ thống không?`,
       () => {
-        apiLabel.delete(dispatch, labelId, accessToken);
+        labelService.delete(dispatch, labelId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
   };
-
-  // Change work mode
-  if (workMode === WorkMode.create) {
-    return (
-      <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-    );
-  }
-  if (workMode === WorkMode.edit) {
-    return (
-      <LabelForm
-        label={labelEdit}
-        handleBack={() => action.changeWorkMode(WorkMode.view)}
-      />
-    );
-  }
 
   if (isFetching) {
     return <Loading />;
@@ -81,13 +64,11 @@ const Label = () => {
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.create && (
         <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
       )}
@@ -97,15 +78,14 @@ const Label = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
+      </PageHeader>
       <LabelTable
         labelList={labelList}
         labelTotalRecord={labelList?.length}

@@ -1,10 +1,11 @@
 import React from 'react';
-import SoftTable from '../../components/common/SoftTable';
-import Loading from '../../components/common/Loading';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const headerList = ['ID', 'Tên phân quyền', 'Mô tả', 'Thiết lập'];
+// TODO: build sortable table
+import { Loading, SortableTable } from '../../components/common';
+import { chooseFieldsOfObject } from '../../utils';
+import content from './content';
+
+const fields = ['id', 'name', 'description', 'createdDate', 'modifiedDate'];
 
 /**
  * @since 2023-02-13
@@ -17,35 +18,55 @@ const RoleTable = ({
 }) => {
   if (roleList === null || roleList === undefined) return <Loading />;
 
-  return (
-    <SoftTable
-      headerList={headerList}
-      dataList={roleList}
-      totalRecordData={roleTotalRecord}
-      cb_handleRow={(idx_start, idx_end) =>
-        roleList.slice(idx_start, idx_end).map(role => (
-          <tr key={role.id} className="text-center">
-            <td>{role.id}</td>
-            <td className="fw-bolder">{role.name}</td>
-            <td className="fw-bold text-secondary">{role.description}</td>
-            <td style={{ width: '10%' }}>
-              <button
-                className="btn btn-secondary w-100 mb-2"
-                onClick={() => handleSetUpdateMode(role)}
-              >
-                {titleButtonUpdate}
-              </button>{' '}
-              <br />
-              <button
-                className="btn btn-danger w-100"
-                onClick={() => handleShowDeleteModal(role.id, role.name)}
-              >
-                {titleButtonDelete}
-              </button>
-            </td>
-          </tr>
-        ))
+  const data = chooseFieldsOfObject(roleList, fields);
+  const config = [
+    {
+      label: content.id,
+      render: role => role.id,
+      sortValue: role => role.id
+    },
+    {
+      label: content.name,
+      render: role => <div className="fw-bold">{role.name}</div>,
+      sortValue: role => role.name
+    },
+    {
+      label: content.description,
+      render: role => role.description,
+      sortValue: role => role.description
+    },
+    {
+      label: content.setting,
+      style: { maxWidth: '5vw' },
+      render: role => {
+        return (
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-secondary flex-fill"
+              onClick={() => handleSetUpdateMode(role)}
+            >
+              {content.btnEdit}
+            </button>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() => handleShowDeleteModal(role.id, role.name)}
+            >
+              {content.btnDel}
+            </button>
+          </div>
+        );
       }
+    }
+  ];
+
+  const keyFn = role => role.id;
+
+  return (
+    <SortableTable
+      data={data}
+      config={config}
+      keyFn={keyFn}
+      totalRecordData={roleTotalRecord}
     />
   );
 };

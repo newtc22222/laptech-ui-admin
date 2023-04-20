@@ -3,8 +3,8 @@ import {
   setNewAccessToken
 } from '../../store/slice/auth.slice';
 import FetchAPI from '../custom/fetch-api';
-import { makeToast, toastType } from '../../helper/makeToast';
-import { createLocalStorage } from '../../helper/createStorage';
+import { makeToast, toastType } from '../../utils/makeToast';
+import { createLocalStorage } from '../../utils/createStorage';
 
 const apiAuth = {
   login: async (dispatch, account) => {

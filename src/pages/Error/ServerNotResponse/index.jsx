@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { AppContext } from '../../../context/AppContext';
+
+import useAppContext from '../../../hooks/useAppContext';
 
 /**
  * @since 2022-12-22
@@ -8,7 +9,7 @@ import { AppContext } from '../../../context/AppContext';
 const titleBackHome = 'Server toang rồi! Về trang chủ đợi tiếp đi!';
 
 const ServerNotResponse = () => {
-  const { handleSetActiveTab } = useContext(AppContext);
+  const { handleSetActiveTab } = useAppContext();
 
   return (
     <div className="container text-center">

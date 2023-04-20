@@ -1,44 +1,22 @@
 // import { lazy } from 'react';
-import About from './About';
-import Banner from './Banner';
-import BrandPage from './Brand';
-import Category from './Category';
-import Discount from './Discount';
-import DashBoard from './Home';
-import FAQ from './FAQs';
-import Feature from './Feature';
-import Invoice from './Invoice';
-import Label from './Label';
-import Login from './Login';
-import PageNotFound from './Error/PageNotFound';
-import Notification from './Notification';
-import Pricing from './Pricing';
-import ProductPage from './Product';
-import Statistic from './Statistic';
-import Setting from './Setting';
-import Role from './Role';
-import User from './User';
-
-// const About = lazy(() => import('./About'));
-
-export {
-  About,
-  Banner,
-  BrandPage,
-  Category,
-  Discount,
-  DashBoard,
-  FAQ,
-  Feature,
-  Invoice,
-  Label,
-  Login,
-  Notification,
-  PageNotFound,
-  Pricing,
-  ProductPage,
-  Statistic,
-  Setting,
-  Role,
-  User
-};
+export { default as About } from './About';
+export { default as Banner } from './Banner';
+export { default as BrandPage } from './Brand';
+export { default as Category } from './Category';
+export { default as Discount } from './Discount';
+export { default as DashBoard } from './Home';
+export { default as FAQ } from './FAQs';
+export { default as Feature } from './Feature';
+export { default as Invoice } from './Invoice';
+export { default as ImportPage } from './Invoice/pages/ImportPage';
+export { default as OrderPage } from './Invoice/pages/OrderPage';
+export { default as Label } from './Label';
+export { default as Login } from './Login';
+export { default as PageNotFound } from './Error/PageNotFound';
+export { default as Notification } from './Notification';
+export { default as Pricing } from './Pricing';
+export { default as ProductPage } from './Product';
+export { default as Statistic } from './Statistic';
+export { default as Setting } from './Setting';
+export { default as Role } from './Role';
+export { default as User } from './User';

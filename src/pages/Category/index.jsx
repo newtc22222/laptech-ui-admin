@@ -1,16 +1,19 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import apiCategory from '../../apis/product/category.api';
+import { categoryService } from '../../services';
+
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 
 import CategoryTable from './CategoryTable';
 import CategoryForm from './CategoryForm';
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
-import ServerNotResponse from '../Error/ServerNotResponse';
 
 const pageName = 'Phân loại hàng hóa';
 const objectName = 'categories';
@@ -18,18 +21,14 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const Category = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    Navigate,
     workMode,
     showModal,
-    categoryEdit,
+    objectEdit: categoryEdit,
     modalValue,
     action
-  ] = useWorkspace();
-
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
+  } = useWorkspace();
 
   const {
     data: categoryList,
@@ -38,7 +37,7 @@ const Category = () => {
   } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!categoryList) apiCategory.getAll(dispatch);
+    if (!categoryList || error) categoryService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = (categoryId, categoryName) => {
@@ -46,7 +45,7 @@ const Category = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
       () => {
-        apiCategory.delete(dispatch, categoryId, accessToken);
+        categoryService.delete(dispatch, categoryId, accessToken);
         action.showModal(false);
       }
     );
@@ -63,13 +62,11 @@ const Category = () => {
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.create && (
         <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
       )}
@@ -79,15 +76,14 @@ const Category = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
+      </PageHeader>
       <CategoryTable
         categoryList={categoryList}
         categoryTotalRecord={categoryList?.length}
