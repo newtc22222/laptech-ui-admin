@@ -117,7 +117,7 @@ const SpecificationTable = ({
                     cursor: 'pointer'
                   }}
                 >
-                  ADD MORE ROW
+                  THÊM THÔNG TIN
                 </td>
               </tr>
             </tbody>

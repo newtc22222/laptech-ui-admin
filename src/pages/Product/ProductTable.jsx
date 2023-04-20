@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { Loading, SortableTable } from '../../components/common';
+import { DropdownMenu, Loading, SortableTable } from '../../components/common';
 import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
 import { getCurrencyString } from '../../utils/formatCurency';
 import content from './content';
@@ -106,13 +106,10 @@ function ProductTable({
       label: content.setting,
       style: { maxWidth: '5vw' },
       render: product => (
-        <div className="d-flex flex-wrap gap-2">
-          <button
-            className="btn btn-secondary flex-fill"
-            onClick={() => handleSetUpdateMode(product)}
-          >
+        <div className="d-flex flex-wrap gap-1">
+          <DropdownMenu className="flex-fill" config={getConfigMenu(product)}>
             {content.btnEdit}
-          </button>
+          </DropdownMenu>
           <button
             className="btn btn-danger flex-fill"
             onClick={() => handleShowDeleteModal(product.id, product.name)}
@@ -123,6 +120,30 @@ function ProductTable({
       )
     }
   ];
+
+  function getConfigMenu(product) {
+    const configMenu = [
+      {
+        label: content.menu.basicInformation,
+        handle: () => handleSetUpdateMode(product)
+      },
+      {
+        label: content.menu.images,
+        handle: () => props.handleSetUpdateImageMode(product, 'edit_image')
+      },
+      {
+        label: content.menu.labels,
+        handle: () => props.handleSetUpdateLabelMode(product, 'edit_label')
+      },
+      'divider',
+      {
+        label: content.menu.discounts,
+        handle: () =>
+          props.handleSetUpdateDiscountMode(product, 'edit_discount')
+      }
+    ];
+    return configMenu;
+  }
 
   const keyFn = product => product.id;
 

@@ -12,11 +12,11 @@ const content = {
   btnEdit: ico_edit,
   btnDel: ico_del,
   form: {
-    basicInformation: 'Thông tin cơ bản',
+    basicInformation: 'thông tin cơ bản',
     id: 'mã sản phẩm',
     name: 'tên sản phẩm hiển thị',
-    brandChoice: 'chọn thương hiệu',
-    categoryChoice: 'chọn phân loại',
+    brandChoice: 'thương hiệu',
+    categoryChoice: 'phân loại',
     releasedDate: 'ngày ra mắt',
     listedPrice: 'giá niêm yết',
     specifications: 'thông số kỹ thuật',
@@ -27,6 +27,15 @@ const content = {
     information: 'Thông tin',
     setting: 'Thiết lập',
     tabTitle: 'Tiêu đề Tab'
+  },
+  form_image: { title: 'Điều chỉnh hình ảnh' },
+  form_label: { title: 'Điều chỉnh nhãn sản phẩm' },
+  form_discount: { title: 'Điều chỉnh mã chiết khấu' },
+  menu: {
+    basicInformation: 'Thông tin cơ bản',
+    images: 'Hình ảnh sản phẩm',
+    labels: 'Nhãn sản phẩm',
+    discounts: 'Mã chiết khấu'
   },
   error: {
     name: 'Tên sản phẩm không được để trống!',

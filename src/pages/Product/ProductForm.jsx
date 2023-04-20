@@ -115,6 +115,19 @@ const ProductForm = ({ product, handleBack, ...props }) => {
             }
             options={categoryOptions}
           />
+          <TextInput
+            attribute="listedPrice"
+            label={content.form.listedPrice}
+            register={register}
+            errors={errors}
+            getValues={getValues}
+            type="number"
+            className="mt-3"
+            defaultValue={product?.listedPrice}
+            min={'0'}
+            required
+            errorMessage={content.error.listedPrice}
+          />
         </>
       ),
       isActive: true

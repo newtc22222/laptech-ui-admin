@@ -44,7 +44,7 @@ function TextInput({ register, errors, attribute, required, ...props }) {
           const errorMessage =
             props.errorMessageForMin || 'Min value is ' + props.min;
           rules.min = {
-            value: props.min,
+            value: Number(props.min),
             message: errorMessage
           };
         }
@@ -52,7 +52,7 @@ function TextInput({ register, errors, attribute, required, ...props }) {
           const errorMessage =
             props.errorMessageForMax || 'Max value is ' + props.max;
           rules.max = {
-            value: props.max,
+            value: Number(props.max),
             message: errorMessage
           };
         }
@@ -79,7 +79,7 @@ function TextInput({ register, errors, attribute, required, ...props }) {
   return (
     <div className="form-floating">
       <input
-        className={className('form-control', {
+        className={className('form-control', props.className, {
           'is-invalid': required && errors[attribute]
         })}
         {...register(attribute, getRules())}

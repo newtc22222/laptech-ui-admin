@@ -38,7 +38,7 @@ function ModalForm({ children, object, action, handleBack, ...props }) {
       className={classNames('modal-xl', props.className)}
     >
       <Modal.Header>
-        <h2>{object ? titleEditMode : titleCreateMode}</h2>
+        <h2>{props.title || (object ? titleEditMode : titleCreateMode)}</h2>
         {object && (
           <div style={{ fontSize: '0.65rem' }}>
             <p>{titleCreatedDate + getStringBackTime(object?.createdDate)}</p>

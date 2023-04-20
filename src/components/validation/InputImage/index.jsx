@@ -12,7 +12,7 @@ const InputImage = ({
   ...props
 }) => {
   const defaultWidth = width || 200;
-  const defaultHeight = height || 150;
+  const defaultHeight = height || 200;
   const defaultImg = `https://placeholder.pics/svg/${defaultWidth}x${defaultHeight}/1B82FF-95EDFF/000000-FFFFFF/choose%20image`;
 
   const getImage = value => {
@@ -52,11 +52,11 @@ const InputImage = ({
                 }}
               />
             </div>
-            <div className="d-flex mt-2">
+            <div className="d-grid g-2">
               <img
                 alt="uploadImg"
                 style={{ maxWidth: defaultWidth, maxHeight: defaultHeight }}
-                className={classNames('img-fuild img-thumbnail', {
+                className={classNames('img-fluid img-thumbnail', {
                   'border border-danger': errors[name]
                 })}
                 src={getImage(value) || defaultImg}

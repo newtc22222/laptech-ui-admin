@@ -13,6 +13,11 @@ import {
 } from '../../components/common';
 import ProductTable from './ProductTable';
 import ProductForm from './ProductForm';
+import {
+  ProductDiscountForm,
+  ProductImageForm,
+  ProductLabelForm
+} from './components';
 
 const pageName = 'Sản phẩm';
 const objectName = 'products';
@@ -73,6 +78,51 @@ const ProductPage = () => {
     return <ServerNotResponse />;
   }
 
+  function renderFormModal() {
+    switch (workMode) {
+      case WorkMode.create:
+        return (
+          <ProductForm
+            brandList={brandList}
+            categoryList={categoryList}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      case WorkMode.edit:
+        return (
+          <ProductForm
+            brandList={brandList}
+            categoryList={categoryList}
+            product={productEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      case 'edit_image':
+        return (
+          <ProductImageForm
+            product={productEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      case 'edit_label':
+        return (
+          <ProductLabelForm
+            product={productEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      case 'edit_discount':
+        return (
+          <ProductDiscountForm
+            product={productEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      default:
+        return <></>;
+    }
+  }
+
   return (
     <div>
       <ModalConfirm
@@ -80,21 +130,7 @@ const ProductPage = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && (
-        <ProductForm
-          brandList={brandList}
-          categoryList={categoryList}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
-      {workMode === WorkMode.edit && (
-        <ProductForm
-          brandList={brandList}
-          categoryList={categoryList}
-          product={productEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
+      {renderFormModal()}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
@@ -110,6 +146,15 @@ const ProductPage = () => {
         productTotalRecord={productList?.length || 0}
         handleSetUpdateMode={product => action.setUpdateMode(product)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
+        handleSetUpdateImageMode={(product, specWorkMode) =>
+          action.setUpdateMode(product, specWorkMode)
+        } // update
+        handleSetUpdateLabelMode={(product, specWorkMode) =>
+          action.setUpdateMode(product, specWorkMode)
+        } // update
+        handleSetUpdateDiscountMode={(product, specWorkMode) =>
+          action.setUpdateMode(product, specWorkMode)
+        } // update
       />
     </div>
   );

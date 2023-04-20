@@ -1,7 +1,7 @@
 export { default as Form } from './Form';
 export { default as AreaInput } from './AreaInput';
 export { default as CheckBox } from './CheckBox';
-export { default as CheckMultipleBox } from './CheckMultipleBox';
+export { default as CheckBoxGroup } from './CheckBoxGroup';
 export { default as DatePicker } from './DatePicker';
 export { default as DescriptionBox } from './DescriptionBox';
 export { default as InputImage } from './InputImage';

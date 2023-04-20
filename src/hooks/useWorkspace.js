@@ -59,9 +59,9 @@ const useWorkspace = () => {
       setObjectEdit(null);
       setWorkMode(WorkMode.create);
     },
-    setUpdateMode: object => {
+    setUpdateMode: (object, specialWorkMode) => {
       setObjectEdit(object);
-      setWorkMode(WorkMode.edit);
+      setWorkMode(specialWorkMode || WorkMode.edit);
     }
   };
 

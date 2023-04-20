@@ -2,6 +2,8 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import classNames from 'classnames';
 
+import './index.css';
+
 const InputMultipleImage = ({
   control,
   errors,
@@ -12,7 +14,7 @@ const InputMultipleImage = ({
   ...props
 }) => {
   const defaultWidth = width || 200;
-  const defaultHeight = height || 150;
+  const defaultHeight = height || 200;
   const defaultImg = `https://placeholder.pics/svg/${defaultWidth}x${defaultHeight}/1B82FF-95EDFF/000000-FFFFFF/choose%20image`;
 
   function getImage(value) {
@@ -20,20 +22,24 @@ const InputMultipleImage = ({
   }
 
   function getRequiredRule() {
-    if (props.required)
-      return {
-        validate: () => {
-          return props.getValues(name).length > 0;
-        }
+    const rules = {};
+    if (props.required) {
+      rules.validate = () => {
+        return (
+          props.getValues(name).length > 0 ||
+          props.errorMessage ||
+          'You need to provide at least 1 picture!'
+        );
       };
-    return {};
+    }
+    return rules;
   }
 
   return (
     <Controller
       name={name}
       control={control}
-      defaultValue={[...defaultValue] || []}
+      defaultValue={defaultValue || []}
       rules={getRequiredRule()}
       render={({ field: { value, onChange } }) => {
         return (
@@ -86,7 +92,7 @@ const InputMultipleImage = ({
                     key={idx}
                     style={{ maxWidth: defaultWidth, maxHeight: defaultHeight }}
                     className={classNames(
-                      'img-fuild img-thumbnail img-can-del',
+                      'w-100 img-fluid img-thumbnail img-can-del',
                       {
                         'border border-danger': errors[name]
                       }
