@@ -38,6 +38,7 @@ const content = {
     discounts: 'Mã chiết khấu'
   },
   error: {
+    missing: 'Vui lòng cập nhật đầy đủ thông tin!',
     name: 'Tên sản phẩm không được để trống!',
     brandChoice: 'Vui lòng cung cấp tên thương hiệu!',
     categoryChoice: 'Vui lòng chọn loại sản phẩm!',

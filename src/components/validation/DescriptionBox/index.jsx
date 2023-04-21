@@ -10,16 +10,18 @@ function setDefaultValue(text) {
   const clearText = text
     ? text.replace(/style="/g, 'style=\\"').replace(/\);"/g, ');\\"')
     : null;
-  return (
-    JSON.parse(clearText) || [
+  try {
+    return JSON.parse(clearText);
+  } catch (err) {
+    return [
       {
         id: crypto.randomUUID().replace(/-/g, ''),
         title: 'New tab',
         content: '',
         active: true
       }
-    ]
-  );
+    ];
+  }
 }
 
 const DescriptionBox = ({ control, errors, name, defaultValue, ...props }) => {
