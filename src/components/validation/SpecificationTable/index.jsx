@@ -5,6 +5,13 @@ import _ from 'lodash';
 import TableRow from './TableRow';
 import './TableRow.css';
 
+const content = {
+  attribute: 'thuộc tính',
+  value: 'giá trị',
+  add_more: 'thêm thông tin',
+  error: 'Bạn có dữ liệu trống ở dòng:'
+};
+
 function setDefaultValue(text) {
   return text ? JSON.parse(text) : [];
 }
@@ -28,7 +35,7 @@ const SpecificationTable = ({
           .map(row => _.findIndex(rows, row));
         return (
           emptyContent.length < 1 ||
-          `You have empty content in row: ${emptyContent.join(',')}!`
+          `${content.error} ${emptyContent.join(',')}`
         );
       }
     };
@@ -64,38 +71,18 @@ const SpecificationTable = ({
       onChange(newData);
     };
 
-    // const handleResetData = () => {
-    //   const newData = setDefaultValue(defaultValue);
-    //   onChange(newData);
-    // };
-
-    // const handleClearData = () => {
-    //   onChange([]);
-    // };
-
     return (
       <div
         className={classNames('container', {
           'border border-danger rounded-2 py-1': errors[name]
         })}
       >
-        {/* <div className="btn-group btn-group-sm d-flex">
-          <button
-            className="btn btn-outline-secondary"
-            onClick={handleResetData}
-          >
-            Reset
-          </button>
-          <button className="btn btn-outline-danger" onClick={handleClearData}>
-            Clear
-          </button>
-        </div> */}
         <div className="mt-2 table-responsive">
           <table className="table table-bordered border-dark">
             <thead className="bg-primary text-white">
               <tr className="text-center">
-                <th>Thuộc tính</th>
-                <th>Giá trị</th>
+                <th className="text-uppercase">{content.attribute}</th>
+                <th className="text-uppercase">{content.value}</th>
                 <th></th>
               </tr>
             </thead>
@@ -111,13 +98,13 @@ const SpecificationTable = ({
               <tr>
                 <td
                   colSpan="3"
-                  className="text-center hover-add fw-bold"
+                  className="text-center text-uppercase fw-bold hover-add"
                   onClick={handleAddMoreLine}
                   style={{
                     cursor: 'pointer'
                   }}
                 >
-                  THÊM THÔNG TIN
+                  {content.add_more}
                 </td>
               </tr>
             </tbody>
