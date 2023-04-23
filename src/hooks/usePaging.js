@@ -88,10 +88,8 @@ const usePaging = (recordsShow, totalRecords) => {
     [idx_start, idx_end] = [0, recordsShow];
   }
 
-  return [
-    idx_start,
-    idx_end,
-    () => (
+  const renderPagination = () => {
+    return (
       <nav aria-label="Page navigation">
         <ul className="pagination">
           <li className={getClassPageItem(currentPage <= 1)}>
@@ -146,29 +144,27 @@ const usePaging = (recordsShow, totalRecords) => {
             </span>
           </li>
           {/* Go to specified page */}
-          <li className="page-item">
-            <div className="input-group">
-              <input
-                className="page-link"
-                type="number"
-                value={goToPage || ''}
-                min="1"
-                max={last_page}
-                onChange={handleChangeGoToPage}
-                required
-              />
-              <button
-                className="btn btn-outline-primary"
-                type="button"
-                onClick={() => {
-                  if (goToPage && page_list.includes(goToPage)) {
-                    actionChangePage.number(goToPage);
-                  }
-                }}
-              >
-                Go to
-              </button>
-            </div>
+          <li className="page-item input-group">
+            <input
+              className="page-link w-50"
+              type="number"
+              value={goToPage || ''}
+              min="1"
+              max={last_page}
+              onChange={handleChangeGoToPage}
+              required
+            />
+            <button
+              className="btn btn-outline-primary"
+              type="button"
+              onClick={() => {
+                if (goToPage && page_list.includes(goToPage)) {
+                  actionChangePage.number(goToPage);
+                }
+              }}
+            >
+              Go to
+            </button>
           </li>
           {/* Choose a number of records show on 1 page */}
           <li className="page-item ms-2">
@@ -188,8 +184,10 @@ const usePaging = (recordsShow, totalRecords) => {
           </li>
         </ul>
       </nav>
-    )
-  ];
+    );
+  };
+
+  return [idx_start, idx_end, renderPagination];
 };
 
 export default usePaging;

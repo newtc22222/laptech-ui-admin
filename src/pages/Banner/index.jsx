@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import useFetch from '../../hooks/useFetch';
 
-import { PageHeader, Loading } from '../../components/common';
+import { CalendarPicker, PageHeader, Loading } from '../../components/common';
 import ServerNotResponse from '../Error/ServerNotResponse';
 import content from './content';
 
@@ -10,6 +10,7 @@ const Banner = () => {
   const [filterDate, setFilterDate] = useState(
     new Date().toJSON().slice(0, 10)
   );
+
   const { data: bannerList, isFetching, error } = useFetch('/banners');
 
   if (isFetching) {
@@ -27,27 +28,16 @@ const Banner = () => {
           {content.titleBtnAdd}
         </button>
       </PageHeader>
-      <div className="input-group mb-2 mt-2">
-        <label className="input-group-text" htmlFor="filterBanner">
-          {content.filterByDate}
-        </label>
-        <input
-          id="filterBanner"
-          className="form-control"
-          type="date"
-          value={filterDate}
-          onChange={e => {
-            setFilterDate(e.target.value);
-          }}
-          onKeyDown={e => e.preventDefault()}
-        />
-      </div>
+      <CalendarPicker selected={filterDate} setSelected={setFilterDate} />
       <div className="d-flex flex-wrap gap-2">
         {bannerList
-          ?.filter(
-            banner =>
-              banner.usedDate <= filterDate && filterDate <= banner.endedDate
-          )
+          ?.filter(banner => {
+            const filterDateJSON = new Date(filterDate).toJSON().slice(0, 10);
+            return (
+              banner.usedDate <= filterDateJSON &&
+              filterDateJSON <= banner.endedDate
+            );
+          })
           .map(banner => {
             return (
               <img

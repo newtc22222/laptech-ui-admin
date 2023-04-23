@@ -11,6 +11,7 @@ const content = {
   setting: 'thiết lập',
   btnEdit: ico_edit,
   btnDel: ico_del,
+  nothingChange: 'Không có thay đổi thông tin',
   form: {
     basicInformation: 'thông tin cơ bản',
     id: 'mã sản phẩm',
@@ -28,7 +29,14 @@ const content = {
     setting: 'Thiết lập',
     tabTitle: 'Tiêu đề Tab'
   },
-  form_image: { title: 'Điều chỉnh hình ảnh' },
+  form_image: {
+    title: 'Điều chỉnh hình ảnh',
+    label: 'Danh sách hình ảnh',
+    advertise: 'Quảng cáo',
+    detail: 'Ảnh chi tiết',
+    extra: 'Ảnh bổ sung',
+    feedback: 'Ảnh phản hồi'
+  },
   form_label: { title: 'Điều chỉnh nhãn sản phẩm' },
   form_discount: { title: 'Điều chỉnh mã chiết khấu' },
   menu: {
@@ -38,12 +46,14 @@ const content = {
     discounts: 'Mã chiết khấu'
   },
   error: {
+    missing: 'Vui lòng cập nhật đầy đủ thông tin!',
     name: 'Tên sản phẩm không được để trống!',
     brandChoice: 'Vui lòng cung cấp tên thương hiệu!',
     categoryChoice: 'Vui lòng chọn loại sản phẩm!',
     releasedDate: 'Vui lòng ngày sản xuất!',
     listedPrice: 'Giá niêm yết không được để trống!',
-    descriptionDetail: 'Thông tin mô tả chi tiết không được để trống!'
+    descriptionDetail: 'Thông tin mô tả chi tiết không được để trống!',
+    upload: 'Không thể cập nhật hình ảnh'
   }
 };
 

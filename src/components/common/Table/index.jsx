@@ -47,7 +47,14 @@ function Table({ data, config, keyFn, ...props }) {
           <tbody>{renderedRows}</tbody>
         </table>
       </div>
-      <Paging />
+      {data.length > 0 && (
+        <div className="d-flex flex-wrap justify-content-between">
+          <div className="my-2 text-muted">
+            Show item {idx_start + 1} to {idx_end} of {data.length} items.
+          </div>
+          <Paging />
+        </div>
+      )}
     </>
   );
 }

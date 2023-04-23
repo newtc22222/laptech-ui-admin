@@ -14,6 +14,8 @@ const fields = [
   'releasedDate',
   'quantityInStock',
   'listedPrice',
+  'specifications',
+  'descriptionDetail',
   'createdDate',
   'modifiedDate'
 ];

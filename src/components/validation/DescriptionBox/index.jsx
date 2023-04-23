@@ -6,20 +6,39 @@ import _ from 'lodash';
 import { TextEditor } from '../../common';
 import './NavTab.css';
 
+const content = {
+  title_of_tab: 'Tiêu đề',
+  error_min: 'Mô tả chi tiết cần sử dụng ít nhất 1 tab!',
+  error_empty: 'Mô tả đang bị thiếu ở tab:'
+};
+
 function setDefaultValue(text) {
-  const clearText = text
-    ? text.replace(/style="/g, 'style=\\"').replace(/\);"/g, ');\\"')
-    : null;
-  return (
-    JSON.parse(clearText) || [
+  if (!text) {
+    return [
       {
         id: crypto.randomUUID().replace(/-/g, ''),
         title: 'New tab',
         content: '',
         active: true
       }
-    ]
-  );
+    ];
+  }
+
+  const clearText = text
+    ? text.replace(/style="/g, 'style=\\"').replace(/\);"/g, ');\\"')
+    : null;
+  try {
+    return JSON.parse(clearText);
+  } catch (err) {
+    return [
+      {
+        id: crypto.randomUUID().replace(/-/g, ''),
+        title: 'New tab',
+        content: '',
+        active: true
+      }
+    ];
+  }
 }
 
 const DescriptionBox = ({ control, errors, name, defaultValue, ...props }) => {
@@ -28,7 +47,7 @@ const DescriptionBox = ({ control, errors, name, defaultValue, ...props }) => {
     rules.validate = () => {
       const description = props.getValues()[name];
       if (description.length === 0) {
-        return 'You need to create at least 1 tab!';
+        return content.error_min;
       }
       const emptyContentTab = description.filter(des => des.content === '');
       const emptyTab = emptyContentTab.map(
@@ -36,7 +55,7 @@ const DescriptionBox = ({ control, errors, name, defaultValue, ...props }) => {
       );
       return (
         emptyContentTab.length < 1 ||
-        `You have an empty content in tab: ${emptyTab.join(',')}!`
+        `${content.error_empty} ${emptyTab.join(',')}!`
       );
     };
     return rules;
@@ -168,7 +187,9 @@ const DescriptionBox = ({ control, errors, name, defaultValue, ...props }) => {
                 key={tab.id}
               >
                 <div className="input-group mb-2 mt-2">
-                  <span className="input-group-text">Title of tab</span>
+                  <span className="input-group-text">
+                    {content.title_of_tab}
+                  </span>
                   <input
                     type="text"
                     className="form-control"

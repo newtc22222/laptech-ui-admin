@@ -67,6 +67,7 @@ const InputMultipleImage = ({
                 id="inputMultipleImage"
                 className="btn btn-outline-secondary"
                 type="button"
+                disabled={props.disabled}
                 onClick={() => {
                   onChange({ target: { value: defaultValue } });
                 }}
@@ -77,6 +78,7 @@ const InputMultipleImage = ({
                 id="inputMultipleImage"
                 className="btn btn-outline-dark"
                 type="button"
+                disabled={props.disabled}
                 onClick={() => {
                   onChange({ target: { value: [] } });
                 }}

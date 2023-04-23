@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-
-const BASE_URL = 'http://localhost:8088/api/v1';
+import { BASE_URL } from '../apis/config';
 
 /**
  *

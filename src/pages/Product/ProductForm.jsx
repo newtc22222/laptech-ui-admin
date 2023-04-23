@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -16,7 +16,8 @@ import {
   chooseFieldsOfObject,
   createSlug,
   getUpdateByUserInSystem,
-  isEqualObject
+  makeToast,
+  toastType
 } from '../../utils';
 import content from './content';
 
@@ -47,17 +48,52 @@ const ProductForm = ({ product, handleBack, ...props }) => {
     formState: { errors }
   } = useForm();
 
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      makeToast(content.error.missing, toastType.error);
+    }
+  }, [errors]);
+
   const handleCreateData = data => {
-    data.id = createSlug(data.name.slice(0, data.name.indexOf('/')));
-    data.brandId = data.brand[0].id;
-    data.categoryId = data.category[0].id;
-    console.log(data);
+    const newProduct = {
+      id: createSlug(data.name.slice(0, data.name.indexOf('/'))),
+      brandId: data.brand[0].id,
+      categoryId: data.category[0].id,
+      name: data.name,
+      releasedDate: data.releasedDate,
+      quantityInStock: 0,
+      listedPrice: data.listedPrice,
+      specifications:
+        data.specifications.length > 1
+          ? JSON.stringify(data.specifications)
+          : undefined,
+      descriptionDetail: JSON.stringify(data.descriptionDetail),
+      ...getUpdateByUserInSystem()
+    };
+    productService.create(dispatch, newProduct, accessToken);
+    reset();
+    handleBack();
   };
 
   const handleSaveData = data => {
-    data.brandId = data.brand[0].id;
-    data.categoryId = data.category[0].id;
-    console.log(data);
+    const newProduct = {
+      id: data.id,
+      brandId: data.brand[0].id,
+      categoryId: data.category[0].id,
+      name: data.name,
+      releasedDate: data.releasedDate,
+      quantityInStock: 0, // fixed
+      listedPrice: data.listedPrice,
+      specifications:
+        data.specifications.length > 1
+          ? JSON.stringify(data.specifications)
+          : undefined,
+      descriptionDetail: JSON.stringify(data.descriptionDetail),
+      ...getUpdateByUserInSystem()
+    };
+    productService.update(dispatch, newProduct, product.id, accessToken);
+    reset();
+    handleBack();
   };
 
   const configContent = [
@@ -116,6 +152,18 @@ const ProductForm = ({ product, handleBack, ...props }) => {
             options={categoryOptions}
           />
           <TextInput
+            attribute="releasedDate"
+            label={content.form.releasedDate}
+            register={register}
+            errors={errors}
+            getValues={getValues}
+            type="date"
+            className="mt-3"
+            defaultValue={product?.releasedDate}
+            required
+            errorMessage={content.error.releasedDate}
+          />
+          <TextInput
             attribute="listedPrice"
             label={content.form.listedPrice}
             register={register}
@@ -143,7 +191,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
           defaultValue={product?.specifications}
         />
       ),
-      isActive: false
+      isActive: !!product?.specifications
     },
     {
       header: content.form.descriptionDetail,
