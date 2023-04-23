@@ -191,7 +191,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
           defaultValue={product?.specifications}
         />
       ),
-      isActive: !!product.specifications
+      isActive: !!product?.specifications
     },
     {
       header: content.form.descriptionDetail,

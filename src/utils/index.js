@@ -6,7 +6,7 @@ import { getStringBackTime, formatDateTime } from './formatTime';
 import { getUpdateByUserInSystem } from './getUserInSystem';
 import getVietnameseIntonation from './getVietnameseIntonation';
 import { makeToast, toastType } from './makeToast';
-import isEqualObject from './compareTwoObjects';
+import { isEqualObject, isEqualObjectExact } from './compareTwoObjects';
 import validateEmail from './validateEmail';
 import { checkPasswordStrength } from './validatePassword';
 
@@ -23,6 +23,7 @@ export {
   makeToast,
   toastType,
   isEqualObject,
+  isEqualObjectExact,
   validateEmail,
   checkPasswordStrength
 };

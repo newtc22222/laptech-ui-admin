@@ -52,41 +52,39 @@ const CheckBoxGroup = ({ control, name, errors, options, ...props }) => {
             )}
           >
             {props.title && <h4 className="mb-1">{props.title}</h4>}
-            <div>
-              {props.searchBar && (
-                <div>
+            {props.searchBar && (
+              <div>
+                <input
+                  className="form-control my-1"
+                  type="text"
+                  placeholder="Search ..."
+                  value={filterText}
+                  onChange={handleChangeOption}
+                />
+              </div>
+            )}
+            {optionsFilter.map(o => {
+              return (
+                <div
+                  key={o.id}
+                  className={classNames('form-check', o.className, {
+                    'form-switch': props.useSwitch
+                  })}
+                >
                   <input
-                    className="form-control my-1"
-                    type="text"
-                    placeholder="Search ..."
-                    value={filterText}
-                    onChange={handleChangeOption}
+                    id={o.id}
+                    type="checkbox"
+                    className="form-check-input"
+                    disabled={o.disabled || false}
+                    checked={_.findIndex(value, o) !== -1}
+                    onChange={() => handleChoose(o)}
                   />
+                  <label htmlFor={o.id}>
+                    {o.render || o.label || 'Check here!'}
+                  </label>
                 </div>
-              )}
-              {optionsFilter.map(o => {
-                return (
-                  <div
-                    key={o.id}
-                    className={classNames('form-check', o.className, {
-                      'form-switch': props.useSwitch
-                    })}
-                  >
-                    <input
-                      id={o.id}
-                      type="checkbox"
-                      className="form-check-input"
-                      disabled={o.disabled || false}
-                      checked={_.findIndex(value, o) !== -1}
-                      onChange={() => handleChoose(o)}
-                    />
-                    <label htmlFor={o.id}>
-                      {o.render || o.label || 'Check here!'}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
+              );
+            })}
             {errors[name] && (
               <span className="text-danger">{errors[name].message}</span>
             )}

@@ -13,6 +13,17 @@ const content = {
 };
 
 function setDefaultValue(text) {
+  if (!text) {
+    return [
+      {
+        id: crypto.randomUUID().replace(/-/g, ''),
+        title: 'New tab',
+        content: '',
+        active: true
+      }
+    ];
+  }
+
   const clearText = text
     ? text.replace(/style="/g, 'style=\\"').replace(/\);"/g, ');\\"')
     : null;

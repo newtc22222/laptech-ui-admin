@@ -9,4 +9,11 @@ function isEqualObject(a, b) {
   return _.isEqual(a, b);
 }
 
-export default isEqualObject;
+function isEqualObjectExact(a, b) {
+  return (
+    _.differenceWith(a, b, _.isEqual).length === 0 &&
+    _.differenceWith(b, a, _.isEqual).length === 0
+  );
+}
+
+export { isEqualObject, isEqualObjectExact };
