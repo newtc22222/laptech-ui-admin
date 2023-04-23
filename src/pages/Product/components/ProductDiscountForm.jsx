@@ -31,7 +31,6 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors }
   } = useForm();
 
@@ -46,9 +45,6 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
     const newData = data.discountList.map(d => d.id);
     const removeDiscount = _.differenceWith(oldData, newData, _.isEqual);
     const addDiscount = _.differenceWith(newData, oldData, _.isEqual);
-
-    console.log(removeDiscount);
-    console.log(addDiscount);
 
     if (removeDiscount.length === 0 && addDiscount.length === 0) {
       makeToast(content.nothingChange, toastType.info);
