@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   PageHeader,
   Loading,
   ServerNotResponse
 } from '../../../../components/common';
+import { importProductService } from '../../../../services';
 
 const pageName = 'Thông tin đơn nhập hàng';
 
@@ -19,9 +20,12 @@ const ImportPage = () => {
     error
   } = useSelector(state => state['imports']);
 
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const dispatch = useDispatch();
+
   // Loading
   useEffect(() => {
-    // if (!importList) .getAll(dispatch, accessToken);
+    importProductService.getAll(dispatch, accessToken); // refresh when mount
   }, []);
 
   if (isFetching) {

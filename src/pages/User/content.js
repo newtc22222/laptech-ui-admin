@@ -17,6 +17,7 @@ const content = {
     phone: 'số điện thoại',
     gender: 'giới tính',
     status: 'Kích hoạt tài khoản',
+    roles: 'phân quyền',
     nothingChange: 'Dữ liệu không có thay đổi!'
   },
   error: {

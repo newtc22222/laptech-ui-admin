@@ -50,7 +50,8 @@ function Table({ data, config, keyFn, ...props }) {
       {data.length > 0 && (
         <div className="d-flex flex-wrap justify-content-between">
           <div className="my-2 text-muted">
-            Show item {idx_start + 1} to {idx_end} of {data.length} items.
+            Show {idx_start + 1} - {idx_end} of{' '}
+            {data.length + (data.length > 1 ? ' records' : ' record')}.
           </div>
           <Paging />
         </div>
