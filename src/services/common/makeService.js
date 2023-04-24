@@ -52,7 +52,6 @@ function makeService(objectName, action, extraAction) {
       );
     },
     create: async (dispatch, object, token) => {
-      // console.table('call api', object);
       await apiCall.POST(
         objectName,
         object,

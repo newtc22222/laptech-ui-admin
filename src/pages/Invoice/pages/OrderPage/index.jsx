@@ -7,12 +7,13 @@ import InvoiceTable from './InvoiceTable';
 import ItemBox from './ItemBox';
 import content from './content';
 
-import invoiceList from '../../../../samples/invoice';
+import hardInvoiceList from '../../../../samples/hardInvoiceList';
 
 const Invoice = () => {
   const tabStatusList = Object.keys(content.status);
   const [showModal, setShowModal] = useState(false);
-  const [itemList, setItemList] = useState(null);
+  const [invoiceList, setInvoiceList] = useState(hardInvoiceList);
+  const [invoice, setInvoice] = useState(null);
 
   const configData = tabStatusList.map(tab => {
     const invoiceListOfTab = invoiceList.filter(i => i.orderStatus === tab);
@@ -23,24 +24,43 @@ const Invoice = () => {
       body: (
         <InvoiceTable
           invoiceList={invoiceListOfTab}
-          setItemList={setItemList}
+          setInvoice={setInvoice}
           setShowModal={setShowModal}
         />
       )
     };
   });
 
-  function renderOption() {
-    const status = itemList?.orderStatus;
+  function renderOption(item) {
+    const status = item?.orderStatus;
+
+    function changeStatus(newStatus) {
+      setInvoiceList(prev =>
+        prev.map(i => {
+          if (i.id === item.id) {
+            return { ...i, orderStatus: newStatus };
+          }
+          return i;
+        })
+      );
+      setShowModal(false);
+    }
+
     const otherStatus = () => {
       switch (status) {
         case 'PENDING':
           return (
             <>
-              <button className="btn btn-primary">
+              <button
+                className="btn btn-primary"
+                onClick={() => changeStatus('WAIT_CONFIRMED')}
+              >
                 {content.changeStatus['CONFIRMED']}
               </button>
-              <button className="btn btn-danger">
+              <button
+                className="btn btn-danger"
+                onClick={() => changeStatus('IGNORED')}
+              >
                 {content.changeStatus['REJECTED']}
               </button>
             </>
@@ -48,10 +68,16 @@ const Invoice = () => {
         case 'WAIT_CONFIRMED':
           return (
             <>
-              <button className="btn btn-primary">
+              <button
+                className="btn btn-primary"
+                onClick={() => changeStatus('PREPARED')}
+              >
                 {content.changeStatus['PREPARED']}
               </button>
-              <button className="btn btn-danger">
+              <button
+                className="btn btn-danger"
+                onClick={() => changeStatus('IGNORED')}
+              >
                 {content.changeStatus['REJECTED']}
               </button>
             </>
@@ -59,10 +85,16 @@ const Invoice = () => {
         case 'PREPARED':
           return (
             <>
-              <button className="btn btn-primary">
+              <button
+                className="btn btn-primary"
+                onClick={() => changeStatus('SHIPPED')}
+              >
                 {content.changeStatus['SHIPPED']}
               </button>
-              <button className="btn btn-danger">
+              <button
+                className="btn btn-danger"
+                onClick={() => changeStatus('IGNORED')}
+              >
                 {content.changeStatus['REJECTED']}
               </button>
             </>
@@ -70,13 +102,22 @@ const Invoice = () => {
         case 'SHIPPED':
           return (
             <>
-              <button className="btn btn-success">
+              <button
+                className="btn btn-success"
+                onClick={() => changeStatus('RECEIVED')}
+              >
                 {content.changeStatus['RECEIVED']}
               </button>
-              <button className="btn btn-warning">
+              <button
+                className="btn btn-warning"
+                onClick={() => changeStatus('CANCELED')}
+              >
                 {content.changeStatus['CANCELED']}
               </button>
-              <button className="btn btn-danger">
+              <button
+                className="btn btn-danger"
+                onClick={() => changeStatus('FAILED')}
+              >
                 {content.changeStatus['FAILED']}
               </button>
             </>
@@ -97,9 +138,9 @@ const Invoice = () => {
         setShow={setShowModal}
         title={content.invoice}
         titleCancel="Trở lại"
-        renderOption={renderOption()}
+        renderOption={renderOption(invoice)}
       >
-        <ItemBox data={itemList} />
+        <ItemBox data={invoice} />
       </ModalOption>
       <TabList configData={configData} />
     </div>

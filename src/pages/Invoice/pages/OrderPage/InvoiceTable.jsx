@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { SortableTable } from '../../../../components/common';
-import { getCurrencyString } from '../../../../utils/formatCurency';
+import { getCurrencyString, formatDateTime } from '../../../../utils';
 import content from './content';
 
-function InvoiceTable({ invoiceList, setShowModal, setItemList, ...props }) {
+function InvoiceTable({ invoiceList, setShowModal, setInvoice, ...props }) {
   const configData = [
     {
       label: content.id,
@@ -17,7 +17,7 @@ function InvoiceTable({ invoiceList, setShowModal, setItemList, ...props }) {
     },
     {
       label: content.dateCreated,
-      render: data => data.createdDate.toLocaleString(),
+      render: data => formatDateTime(data.createdDate),
       sortValue: data => data.createdDate
     },
     {
@@ -47,7 +47,7 @@ function InvoiceTable({ invoiceList, setShowModal, setItemList, ...props }) {
             className="btn btn-outline-secondary text-uppercase"
             onClick={() => {
               setShowModal(true);
-              setItemList(data);
+              setInvoice(data);
             }}
           >
             {content.btnShow}
