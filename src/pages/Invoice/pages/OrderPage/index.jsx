@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 
-import { ModalOption, TabList } from '../../../../components/common';
+import {
+  CountdownRefresh,
+  ModalOption,
+  PageHeader,
+  TabList
+} from '../../../../components/common';
+import { invoiceService } from '../../../../services';
 
 import InvoiceTable from './InvoiceTable';
 import ItemBox from './ItemBox';
@@ -9,13 +16,21 @@ import content from './content';
 
 import hardInvoiceList from '../../../../samples/hardInvoiceList';
 
+const pageName = 'Thông tin đơn nhập hàng';
+
 const Invoice = () => {
-  const tabStatusList = Object.keys(content.status);
   const [showModal, setShowModal] = useState(false);
   const [invoiceList, setInvoiceList] = useState(hardInvoiceList);
   const [invoice, setInvoice] = useState(null);
 
-  const configData = tabStatusList.map(tab => {
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    invoiceService.getAll(dispatch, accessToken);
+  }, []);
+
+  const configData = Object.keys(content.status).map(tab => {
     const invoiceListOfTab = invoiceList.filter(i => i.orderStatus === tab);
     return {
       key: tab.toLowerCase(),
@@ -142,6 +157,12 @@ const Invoice = () => {
       >
         <ItemBox data={invoice} />
       </ModalOption>
+      <PageHeader pageName={pageName}>
+        <CountdownRefresh
+          countdownTime={1000 * 20}
+          handleChange={() => setInvoiceList(_.shuffle(invoiceList))}
+        />
+      </PageHeader>
       <TabList configData={configData} />
     </div>
   );

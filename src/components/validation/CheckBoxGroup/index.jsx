@@ -51,7 +51,9 @@ const CheckBoxGroup = ({ control, name, errors, options, ...props }) => {
               props.className
             )}
           >
-            {props.title && <h4 className="mb-1">{props.title}</h4>}
+            {props.title && (
+              <span className="mb-1 text-uppercase">{props.title}</span>
+            )}
             {props.searchBar && (
               <div>
                 <input
