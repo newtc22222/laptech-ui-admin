@@ -3,13 +3,12 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import _ from 'lodash';
 
 import { ListColorRGB } from '../colors';
@@ -17,46 +16,44 @@ import { ListColorRGB } from '../colors';
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
 );
 
-const LineChart = ({ labels, datasets, ...props }) => {
+const BarChart = ({ labels, datasets, ...props }) => {
   const listColor = _.shuffle(ListColorRGB);
 
   const options = {
-    responsive: true,
+    indexAxis: props.horizontal && 'y',
+    elements: {
+      bar: {
+        borderWidth: 2
+      }
+    },
     interaction: props.interaction && {
       mode: 'index',
       intersect: false
     },
+    responsive: true,
     plugins: {
       legend: {
         position: props.legendPosition || 'top'
       },
       title: {
         display: true,
-        text: props.title
+        text: props.title || ''
+      }
+    },
+    scales: {
+      x: {
+        stacked: props.stacked || false
+      },
+      y: {
+        stacked: props.stacked || false
       }
     }
-    // scales: {
-    //   y: {
-    //     type: "linear",
-    //     display: true,
-    //     position: "left"
-    //   },
-    //   y1: {
-    //     type: "linear",
-    //     display: true,
-    //     position: "right",
-    //     grid: {
-    //       drawOnChartArea: false
-    //     }
-    //   }
-    // }
   };
 
   const dataConfig = {
@@ -65,15 +62,13 @@ const LineChart = ({ labels, datasets, ...props }) => {
       const color = listColor.shift();
       return {
         ...set,
-        backgroundColor: `rgba(${color}, 0.2)`,
+        backgroundColor: `rgba(${color}, 0.7)`,
         borderColor: `rgba(${color}, 1)`
       };
     })
   };
 
-  return (
-    <Line options={options} data={dataConfig} className={props.className} />
-  );
+  return <Bar options={options} data={dataConfig} />;
 };
 
-export default LineChart;
+export default BarChart;

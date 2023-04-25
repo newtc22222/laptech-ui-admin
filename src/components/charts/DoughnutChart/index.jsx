@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import classNames from 'classnames';
 
 import { ListColorRGB } from '../colors';
@@ -23,7 +23,7 @@ function getPieCSS(piece) {
   return pieCSS;
 }
 
-const PieChart = ({ labels, data, ...props }) => {
+const DoughnutChart = ({ labels, data, ...props }) => {
   const dataConfig = {
     labels: labels,
     datasets: [
@@ -32,20 +32,10 @@ const PieChart = ({ labels, data, ...props }) => {
         data: data,
         ...getPieCSS(labels.length)
       }
-      // {
-      //   label: props.label || "Quantity",
-      //   data: _.shuffle(data),
-      //   ...getPieCSS(labels.length)
-      // }, // put chart inside
-      // {
-      //   label: props.label || "Quantity",
-      //   data: _.shuffle(data),
-      //   ...getPieCSS(labels.length)
-      // },
     ]
   };
 
-  return <Pie data={dataConfig} className={classNames(props.className)} />;
+  return <Doughnut data={dataConfig} className={classNames(props.className)} />;
 };
 
-export default PieChart;
+export default DoughnutChart;
