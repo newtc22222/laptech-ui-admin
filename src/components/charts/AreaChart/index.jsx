@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,10 +8,10 @@ import {
   LineElement,
   Title,
   Tooltip,
+  Filler,
   Legend
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import _ from 'lodash';
 
 import { ListColorRGB } from '../colors';
 
@@ -21,10 +22,11 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
+  Filler,
   Legend
 );
 
-const LineChart = ({ labels, datasets, ...props }) => {
+const AreaChart = ({ labels, datasets, ...props }) => {
   const listColor = _.shuffle(ListColorRGB);
 
   const options = {
@@ -33,6 +35,7 @@ const LineChart = ({ labels, datasets, ...props }) => {
       mode: 'index',
       intersect: false
     },
+    // stacked: true,
     plugins: {
       legend: {
         position: props.legendPosition || 'top'
@@ -42,21 +45,6 @@ const LineChart = ({ labels, datasets, ...props }) => {
         text: props.title
       }
     }
-    // scales: {
-    //   y: {
-    //     type: "linear",
-    //     display: true,
-    //     position: "left"
-    //   },
-    //   y1: {
-    //     type: "linear",
-    //     display: true,
-    //     position: "right",
-    //     grid: {
-    //       drawOnChartArea: false
-    //     }
-    //   }
-    // }
   };
 
   const dataConfig = {
@@ -65,6 +53,7 @@ const LineChart = ({ labels, datasets, ...props }) => {
       const color = listColor.shift();
       return {
         ...set,
+        fill: true,
         backgroundColor: `rgba(${color}, 0.2)`,
         borderColor: `rgba(${color}, 1)`
       };
@@ -76,4 +65,4 @@ const LineChart = ({ labels, datasets, ...props }) => {
   );
 };
 
-export default LineChart;
+export default AreaChart;
