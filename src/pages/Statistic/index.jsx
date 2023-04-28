@@ -1,32 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import PageHeader from '../../components/common/PageHeader';
-// import Loading from '../../components/common/Loading';
-// import ServerNotResponse from '../Error/ServerNotResponse';
+import StatisticProduct from './Products';
+import StatisticProfits from './Profits';
 
-const pageName = 'Thống kê dữ liệu';
-
-/**
- * @since 2023-03-22
- */
-const Statistic = () => {
-  useEffect(() => {
-    // if (!importList) .getAll(dispatch, accessToken);
-  }, []);
-
-  // if (isFetching) {
-  //   return <Loading />;
-  // }
-
-  // if (error) {
-  //   return <ServerNotResponse />;
-  // }
-
+function Statistic() {
   return (
-    <div>
-      <PageHeader pageName={pageName}></PageHeader>
-    </div>
+    <>
+      <StatisticProduct />
+      <StatisticProfits />
+    </>
   );
-};
+}
 
 export default Statistic;
