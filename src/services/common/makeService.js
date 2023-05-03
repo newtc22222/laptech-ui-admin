@@ -11,11 +11,11 @@ import subText from '../../utils/getVietnameseIntonation';
  *  getAll: (dispatch, token?: string) => {},
  *  create: (dispatch, object: object, token: string) => {},
  *  update: (dispatch, object: object, objectId: number | string, token: string) => {},
- *  delete: (dispatch, objectId: string | number, token: string) => {},
- *  extraAction: object
+ *  updatePartial: (dispatch, object: object, objectId: number | string, token: string) => {},
+ *  delete: (dispatch, objectId: string | number, token: string) => {}
  * }}
  */
-function makeService(objectName, action, extraAction) {
+function makeService(objectName, action) {
   const objectNameVI = subText[objectName];
 
   /**
@@ -84,6 +84,23 @@ function makeService(objectName, action, extraAction) {
         err => handleFetchError(err, dispatch)
       );
     },
+    updatePartial: async (dispatch, updateProperties, objectId, token) => {
+      await apiCall.PATCH(
+        `${objectName}/${objectId}`,
+        updateProperties,
+        token,
+        () => handleFetchStart(dispatch),
+        result => {
+          makeToast(
+            `Dữ liệu của ${objectNameVI} vừa được cập nhật vào cơ sở dữ liệu!`,
+            toastType.success
+          );
+          updateProperties.id = objectId;
+          dispatch(action.updateSuccess(updateProperties));
+        },
+        err => handleFetchError(err, dispatch)
+      );
+    },
     delete: async (dispatch, objectId, token) => {
       await apiCall.DELETE(
         `${objectName}/${objectId}`,
@@ -96,8 +113,7 @@ function makeService(objectName, action, extraAction) {
         },
         err => handleFetchError(err, dispatch)
       );
-    },
-    ...extraAction
+    }
   };
 }
 

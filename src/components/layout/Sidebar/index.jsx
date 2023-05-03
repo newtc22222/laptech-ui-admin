@@ -89,8 +89,27 @@ const sideBarTab = [
   {
     name: 'statistic',
     title: 'Thống kê',
-    url: '/statistic',
-    icon: <i className="fs-4 bi bi-bar-chart-fill"></i>
+    icon: <i className="fs-4 bi bi-bar-chart-fill"></i>,
+    subTab: [
+      {
+        name: 'income',
+        title: 'Doanh thu',
+        icon: <i className="fs-4 bi bi-bar-chart-fill"></i>,
+        url: '/statistic/income'
+      },
+      {
+        name: 'product',
+        title: 'Sản phẩm',
+        icon: <i className="fs-5 me-2 bi bi-laptop"></i>,
+        url: '/statistic/product'
+      },
+      {
+        name: 'user-experiance',
+        title: 'Trải nghiệm khách hàng',
+        icon: <i className="fs-4 bi-person-circle"></i>,
+        url: '/statistic/customer'
+      }
+    ]
   },
   {
     name: 'user',

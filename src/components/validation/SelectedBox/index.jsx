@@ -2,7 +2,14 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import classNames from 'classnames';
 
-const SelectedBox = ({ control, name, defaultValue, options, ...props }) => {
+const SelectedBox = ({
+  control,
+  errors,
+  name,
+  defaultValue,
+  options,
+  ...props
+}) => {
   function getDefaultValue() {
     if (defaultValue) return defaultValue;
     return props.required ? options[0] : null;
@@ -12,12 +19,13 @@ const SelectedBox = ({ control, name, defaultValue, options, ...props }) => {
     <Controller
       control={control}
       name={name}
+      rules={{ required: props.required || 'Please choose 1!' }}
       defaultValue={getDefaultValue()}
       render={({ field: { value, onChange } }) => {
         const handleChange = e => {
           const choice =
             e.target.value !== props.defaultText ? e.target.value : null;
-          onChange(choice);
+          onChange(options.filter(o => o.value === choice)[0]);
         };
 
         return (
@@ -41,10 +49,14 @@ const SelectedBox = ({ control, name, defaultValue, options, ...props }) => {
                 </option>
               ))}
             </select>
-            <label htmlFor="floatingSelect">
+            <label htmlFor="floatingSelect" className="text-uppercase">
               {props.label || 'Choose value below'}
             </label>
-            {/* <p className="text-danger small">{errors[attribute]?.message}</p> */}
+            {errors[name] && (
+              <p className="text-danger small">
+                {props.errorMessage || errors[name].message}
+              </p>
+            )}
           </div>
         );
       }}

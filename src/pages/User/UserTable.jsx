@@ -1,32 +1,16 @@
 import React from 'react';
 
-import SoftTable from '../../components/common/SoftTable';
-// TODO: build sortable table
 import { Loading, SortableTable } from '../../components/common';
-import { chooseFieldsOfObject, getStringBackTime } from '../../utils';
+import { chooseFieldsOfObject, makeToast, toastType } from '../../utils';
 import content from './content';
 import classNames from 'classnames';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const headerList = [
-  'ID',
-  'Tên người dùng',
-  'Số điện thoại',
-  'Giới tính',
-  'Trạng thái tài khoản',
-  'Lần đăng nhập gần nhất',
-  'Thiết lập'
-];
-const gender = {
-  MALE: 'Nam',
-  FEMALE: 'Nữ',
-  OTHER: 'Khác'
-};
 const fields = [
   'id',
   'name',
   'phone',
+  'email',
+  'dateOfBirth',
   'gender',
   'active',
   'createdDate',
@@ -62,8 +46,8 @@ const UserTable = ({
     },
     {
       label: content.gender,
-      render: user => user.gender,
-      sortValue: user => user.gender
+      render: user => content.genderVietsub[user.gender],
+      sortValue: user => content.genderVietsub[user.gender]
     },
     {
       label: content.status,
@@ -71,7 +55,7 @@ const UserTable = ({
         <span
           className={classNames('badge text-uppercase', {
             'text-bg-success': user.active,
-            'text-bg-secondary': user.inactive
+            'text-bg-secondary': user.active === false
           })}
         >
           {user.active ? content.active : content.inactive}
@@ -93,7 +77,13 @@ const UserTable = ({
             </button>
             <button
               className="btn btn-danger flex-fill"
-              onClick={() => handleShowDeleteModal(user.id, user.name)}
+              onClick={() => {
+                if (user.active) {
+                  makeToast(content.rejected, toastType.warning);
+                  return;
+                }
+                handleShowDeleteModal(user.id, user.name);
+              }}
             >
               {content.btnDel}
             </button>

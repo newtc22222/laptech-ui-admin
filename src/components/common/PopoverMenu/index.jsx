@@ -1,6 +1,6 @@
-import classNames from "classnames";
-import React from "react";
-import { OverlayTrigger, Popover } from "react-bootstrap";
+import React from 'react';
+import classNames from 'classnames';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 function PopoverMenu({ children, config, ...props }) {
   const renderPopover = (
@@ -13,11 +13,11 @@ function PopoverMenu({ children, config, ...props }) {
               <div
                 key={idx}
                 className={classNames(
-                  "list-group-item list-group-item-action",
+                  'list-group-item list-group-item-action',
                   item.className
                 )}
                 onClick={item.handle}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: 'pointer' }}
               >
                 {item.label}
               </div>
@@ -33,7 +33,7 @@ function PopoverMenu({ children, config, ...props }) {
       flip
       rootClose
       trigger="click"
-      placement={props.placement || "auto"}
+      placement={props.placement || 'auto'}
       overlay={renderPopover}
     >
       {children}

@@ -20,6 +20,7 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const User = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
+  const userInSystem = useSelector(state => state.auth.user);
   const {
     dispatch,
     workMode,
@@ -61,6 +62,24 @@ const User = () => {
     return <ServerNotResponse />;
   }
 
+  function renderFormModal() {
+    switch (workMode) {
+      case WorkMode.create:
+        return (
+          <UserForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        );
+      case WorkMode.edit:
+        return (
+          <UserForm
+            user={userEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      default:
+        return <></>;
+    }
+  }
+
   return (
     <div>
       <ModalConfirm
@@ -68,15 +87,7 @@ const User = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && (
-        <UserForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <UserForm
-          user={userEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
+      {renderFormModal()}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
@@ -86,8 +97,8 @@ const User = () => {
         </button>
       </PageHeader>
       <UserTable
-        userList={userList}
-        userTotalRecord={userList?.length}
+        userList={userList?.filter(u => u.id !== userInSystem.id)}
+        userTotalRecord={!!userList ? userList.length - 1 : 0}
         handleSetUpdateMode={user => action.setUpdateMode(user)}
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
       />

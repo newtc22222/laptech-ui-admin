@@ -37,7 +37,6 @@ const router = createBrowserRouter(
       {/* PUBLIC */}
       <Route path="auth/login" element={<Login />} />
       <Route path="about" element={<About />} />
-      <Route path="setting" element={<Setting />} />
       <Route path="faqs" element={<FAQ />} />
       <Route path="features" element={<Feature />} />
       <Route path="pricing" element={<Pricing />} />
@@ -60,7 +59,12 @@ const router = createBrowserRouter(
           <Route path="order" element={<OrderPage />} />
           <Route path="" element={<Invoice />} />
         </Route>
-        <Route path="statistic" element={<Statistic />} />
+        <Route path="setting" element={<Setting />} />
+        <Route path="statistic">
+          <Route path="income" element={<Statistic />} />
+          <Route path="product" element={<Statistic />} />
+          <Route path="customer" element={<Statistic />} />
+        </Route>
       </Route>
     </Route>
   )
