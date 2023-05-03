@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import _ from 'lodash';
 
-import ModalForm from '../../components/common/ModalForm';
-import {
-  CheckBox,
-  CheckBoxGroup,
-  Form,
-  RadioBox,
-  TextInput
-} from '../../components/validation';
+import { Loading, ModalForm } from '../../components/common';
+import { Form } from '../../components/validation';
+import CreateForm from './form/CreateForm';
+import EditForm from './form/EditForm';
 
 import useFetch from '../../hooks/useFetch';
-import { roleService, userService } from '../../services';
+import { roleService, userService, userRoleService } from '../../services';
 import {
   makeToast,
   toastType,
@@ -20,46 +17,36 @@ import {
   getUpdateByUserInSystem
 } from '../../utils';
 import content from './content';
-import { Loading } from '../../components/common';
-
-const genderOptions = [
-  {
-    label: 'Nam',
-    value: 'MALE'
-  },
-  {
-    label: 'Nữ',
-    value: 'FEMALE'
-  },
-  {
-    label: 'Khác',
-    value: 'OTHER'
-  }
-];
 
 /**
  * @since 2023-02-14
  */
 const UserForm = ({ user, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
+  const userInSystem = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
+
+  const { data: roleOfUser } = useFetch(
+    `/users/${user?.id || userInSystem.id}/roles`,
+    {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${accessToken}` }
+    }
+  );
 
   const {
     data: roleList,
     isRoleFetching,
     isRoleError
   } = useSelector(state => state['roles']);
-  const { data: roleOfUser } = useFetch(`/users/${user.id}/roles`, {
-    method: 'GET',
-    headers: { Authorization: `Bearer ${accessToken}` }
-  });
 
   const {
     register,
     control,
     handleSubmit,
+    getValues,
     reset,
-    formState: { errors, getValues }
+    formState: { errors }
   } = useForm();
 
   useEffect(() => {
@@ -73,33 +60,78 @@ const UserForm = ({ user, handleBack }) => {
   }, []);
 
   const handleCreateData = data => {
-    console.log(data);
+    const userData = {
+      name: data.name,
+      gender: data.gender.value,
+      dateOfBirth: data.dateOfBirth,
+      email: !data.email ? undefined : data.email,
+      phone: data.phone,
+      password: data.password,
+      ...getUpdateByUserInSystem()
+    };
+
+    userService.create(dispatch, userData, accessToken);
+    reset();
     handleBack();
   };
 
   const handleSaveData = data => {
-    const newData = { ...user, ...data };
-    console.log(newData);
-    if (isEqualObject(user, data)) {
+    const newData = {
+      ...user,
+      name: data.name,
+      gender: typeof data.gender === 'string' ? data.gender : data.gender.value,
+      dateOfBirth: data.dateOfBirth,
+      email: !data.email ? null : data.email,
+      active: data.active
+    };
+    // check role
+    const oldRole = roleOfUser.map(r => r.id);
+    const newRole = data.roleList.map(r => r.id);
+    const removeRole = _.differenceWith(oldRole, newRole, _.isEqual);
+    const addRole = _.differenceWith(newRole, oldRole, _.isEqual);
+
+    // handle change
+    if (isEqualObject(newData, user) && isEqualObject(removeRole, addRole)) {
       makeToast(content.form.nothingChange, toastType.info);
       return;
-    }
+    } else {
+      if (!isEqualObject(newData, user)) {
+        userService.updatePartial(
+          dispatch,
+          { ...newData, ...getUpdateByUserInSystem() },
+          user.id,
+          accessToken
+        );
+      }
+      // role
+      addRole.forEach(r => {
+        userRoleService.add(dispatch, { roleId: r }, user.id, accessToken);
+      });
+      removeRole.forEach(r => {
+        userRoleService.remove(dispatch, { roleId: r }, user.id, accessToken);
+      });
+      // active
+      if (newData.active !== user.active) {
+        newData.active
+          ? userService.activeUser(
+              user.id,
+              getUpdateByUserInSystem(),
+              accessToken
+            )
+          : userService.blockUser(
+              user.id,
+              getUpdateByUserInSystem(),
+              accessToken
+            );
+      }
 
-    handleBack();
+      reset();
+      handleBack();
+    }
   };
 
   const renderForm = () => {
-    if (!roleList || isRoleFetching || !roleOfUser) return <Loading />;
-
-    const configOption = roleList
-      ? roleList.map(role => {
-          return {
-            id: role.id,
-            label: role.name,
-            className: 'mt-1'
-          };
-        })
-      : [];
+    if (!roleList || isRoleFetching) return <Loading />;
 
     return (
       <Form
@@ -107,56 +139,24 @@ const UserForm = ({ user, handleBack }) => {
         submitAction={user ? handleSaveData : handleCreateData}
         cancelAction={handleBack}
       >
-        <TextInput
-          label={content.form.name}
-          register={register}
-          errors={errors}
-          attribute="name"
-          defaultValue={user?.name}
-          readOnly={user?.name}
-          required
-          errorMessage={content.error.name}
-        />
-        <TextInput
-          label={content.form.phone}
-          register={register}
-          errors={errors}
-          attribute="phone"
-          defaultValue={user?.phone}
-          readOnly={user?.phone}
-        />
-        <RadioBox
-          className="border rounded-2 mb-2"
-          title={content.form.gender}
-          control={control}
-          name="gender"
-          defaultValue={user?.gender}
-          options={genderOptions}
-        />
-        <CheckBoxGroup
-          control={control}
-          errors={errors}
-          title={content.form.roles}
-          className="d-flex flex-column gap-1 border rounded my-2 px-2 py-1"
-          name="roleList"
-          options={configOption}
-          required
-          getValues={getValues}
-          defaultValue={roleOfUser.map(role => {
-            return {
-              id: role.id,
-              label: role.name,
-              className: 'mt-1'
-            };
-          })}
-        />
-        <CheckBox
-          control={control}
-          label={content.form.status}
-          name="active"
-          useSwitch
-          checked={user?.active}
-        />
+        {user ? (
+          <EditForm
+            user={user}
+            roleList={roleList}
+            register={register}
+            control={control}
+            errors={errors}
+            getValues={getValues}
+          />
+        ) : (
+          <CreateForm
+            roleList={roleList}
+            register={register}
+            control={control}
+            errors={errors}
+            getValues={getValues}
+          />
+        )}
       </Form>
     );
   };
