@@ -13,11 +13,20 @@ const titleModifiedDate = 'Thời gian chỉnh sửa gần nhất: ';
 
 /**
  * @since 2023-02-10
- * @param {{ children: JSX.Element, object: object, action: () => {}, handleBack: function, props: object}}
+ * @param {{ children: JSX.Element, object: object, action: () => {}, handleBack: function, disabledFooter: boolean, props: object}}
  * @return {JSX.Element}
  */
-function ModalForm({ children, object, action, handleBack, ...props }) {
-  const renderFooter = props.disabledFooter ? null : (
+function ModalForm({
+  children,
+  object,
+  action,
+  handleBack,
+  disabledFooter,
+  ...props
+}) {
+  const renderFooter = disabledFooter ? (
+    <></>
+  ) : (
     <Modal.Footer>
       <div>
         <button className="btn btn-primary fw-bold me-3" onClick={action}>
