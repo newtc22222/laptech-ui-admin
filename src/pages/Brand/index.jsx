@@ -61,6 +61,24 @@ const BrandPage = () => {
     return <ServerNotResponse />;
   }
 
+  function renderFormModal() {
+    switch (workMode) {
+      case WorkMode.create:
+        return (
+          <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        );
+      case WorkMode.edit:
+        return (
+          <BrandForm
+            brand={brandEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      default:
+        return <></>;
+    }
+  }
+
   return (
     <div>
       <ModalConfirm
@@ -68,15 +86,7 @@ const BrandPage = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && (
-        <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <BrandForm
-          brand={brandEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
+      {renderFormModal()}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
