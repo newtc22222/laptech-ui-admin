@@ -148,13 +148,13 @@ const ProductPage = () => {
         handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
         handleSetUpdateImageMode={(product, specWorkMode) =>
           action.setUpdateMode(product, specWorkMode)
-        } // update
+        }
         handleSetUpdateLabelMode={(product, specWorkMode) =>
           action.setUpdateMode(product, specWorkMode)
-        } // update
+        }
         handleSetUpdateDiscountMode={(product, specWorkMode) =>
           action.setUpdateMode(product, specWorkMode)
-        } // update
+        }
       />
     </div>
   );

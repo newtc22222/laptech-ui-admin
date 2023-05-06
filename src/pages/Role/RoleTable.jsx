@@ -50,6 +50,7 @@ const RoleTable = ({
             <button
               className="btn btn-danger flex-fill"
               onClick={() => handleShowDeleteModal(role.id, role.name)}
+              disabled={content.fixedRole.includes(role.name)}
             >
               {content.btnDel}
             </button>

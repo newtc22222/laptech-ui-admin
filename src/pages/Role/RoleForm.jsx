@@ -72,6 +72,7 @@ const RoleForm = ({ role, handleBack }) => {
         attribute="name"
         defaultValue={role?.name}
         placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
+        readOnly={content.fixedRole.includes(role?.name)}
         required
         errorMessage={content.error.name}
       />

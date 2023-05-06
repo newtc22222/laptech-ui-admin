@@ -52,7 +52,7 @@ const InputImage = ({
                 }}
               />
             </div>
-            <div className="d-grid g-2">
+            <div className="mt-2 d-grid g-2">
               <img
                 alt="uploadImg"
                 style={{ maxWidth: defaultWidth, maxHeight: defaultHeight }}

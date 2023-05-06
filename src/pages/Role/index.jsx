@@ -62,6 +62,24 @@ const Role = () => {
     return <ServerNotResponse />;
   }
 
+  function renderFormModal() {
+    switch (workMode) {
+      case WorkMode.create:
+        return (
+          <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        );
+      case WorkMode.edit:
+        return (
+          <RoleForm
+            role={roleEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      default:
+        return <></>;
+    }
+  }
+
   return (
     <div>
       <ModalConfirm
@@ -69,15 +87,7 @@ const Role = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && (
-        <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <RoleForm
-          role={roleEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
+      {renderFormModal()}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"

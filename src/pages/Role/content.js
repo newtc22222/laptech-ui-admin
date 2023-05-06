@@ -17,7 +17,8 @@ const content = {
     missing: 'Vui lòng cập nhật đầy đủ thông tin!',
     name: 'Tên phân quyền không được bỏ trống!',
     description: 'Thông tin mô tả không được bỏ trống!'
-  }
+  },
+  fixedRole: ['ADMIN', 'MANAGER', 'USER']
 };
 
 export default content;

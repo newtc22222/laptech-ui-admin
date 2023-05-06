@@ -62,6 +62,24 @@ const Label = () => {
     return <ServerNotResponse />;
   }
 
+  function renderFormModal() {
+    switch (workMode) {
+      case WorkMode.create:
+        return (
+          <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
+        );
+      case WorkMode.edit:
+        return (
+          <LabelForm
+            label={labelEdit}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
+      default:
+        return <></>;
+    }
+  }
+
   return (
     <div>
       <ModalConfirm
@@ -69,15 +87,7 @@ const Label = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && (
-        <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
-      {workMode === WorkMode.edit && (
-        <LabelForm
-          label={labelEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
-      )}
+      {renderFormModal()}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
