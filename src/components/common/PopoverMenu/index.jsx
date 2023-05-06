@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 
-function PopoverMenu({ children, config, ...props }) {
+function PopoverMenu({ children, config, triggerType, ...props }) {
   const renderPopover = (
     <Popover id="popover-menu">
       {props.header && <Popover.Header>{props.header}</Popover.Header>}
@@ -32,7 +32,7 @@ function PopoverMenu({ children, config, ...props }) {
     <OverlayTrigger
       flip
       rootClose
-      trigger="click"
+      trigger={triggerType || 'hover'}
       placement={props.placement || 'auto'}
       overlay={renderPopover}
     >
