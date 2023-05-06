@@ -9,7 +9,8 @@ function makeCollapseService(objectNameMain, objectNameExtra) {
    * @param {string} customMessage
    */
   function handleFetchError(err, dispatch, customMessage = null) {
-    const defaultMessage = 'Dữ liệu lỗi, không thể gửi đến server!';
+    const defaultMessage =
+      'Không thể gửi dữ liệu đến server! Vui lòng thử lại lần nữa';
     makeToast(customMessage || defaultMessage, toastType.error);
     makeRefreshToken(err, dispatch);
   }
