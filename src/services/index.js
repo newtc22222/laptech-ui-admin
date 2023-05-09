@@ -1,5 +1,6 @@
 export { default as authService } from './auth/auth.service';
 
+export { default as bannerService } from './banner.service';
 // product platform
 export { default as brandService } from './products/brand.service';
 export { default as categoryService } from './products/category.service';
