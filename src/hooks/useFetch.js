@@ -19,7 +19,7 @@ function useFetch(url, option) {
       await fetch(BASE_URL + url, option)
         .then(result => {
           if (result.ok) return result.json();
-          throw new Exception('Not found!');
+          throw new Error('Not found!');
         })
         .then(response => {
           if (isMount) setData(response.data);
@@ -33,7 +33,7 @@ function useFetch(url, option) {
     return () => {
       isMount = false;
     };
-  }, [url]);
+  }, [url, option]);
 
   return { data, loading, error };
 }
