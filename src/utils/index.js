@@ -1,29 +1,12 @@
-import chooseFieldsOfObject from './chooseFieldsOfObject';
-import createSlug from './createSlug';
-import { createLocalStorage, createSessionStorage } from './createStorage';
-import { getCurrencyString } from './formatCurency';
-import { getStringBackTime, formatDateTime } from './formatTime';
-import { getUpdateByUserInSystem } from './getUserInSystem';
-import getVietnameseIntonation from './getVietnameseIntonation';
-import { makeToast, toastType } from './makeToast';
-import { isEqualObject, isEqualObjectExact } from './compareTwoObjects';
-import validateEmail from './validateEmail';
-import { checkPasswordStrength } from './validatePassword';
-
-export {
-  chooseFieldsOfObject,
-  createSlug,
-  createLocalStorage,
-  createSessionStorage,
-  getCurrencyString,
-  getStringBackTime,
-  formatDateTime,
-  getUpdateByUserInSystem,
-  getVietnameseIntonation,
-  makeToast,
-  toastType,
-  isEqualObject,
-  isEqualObjectExact,
-  validateEmail,
-  checkPasswordStrength
-};
+export { default as chooseFieldsOfObject } from './chooseFieldsOfObject';
+export { default as createSlug } from './createSlug';
+export { createLocalStorage, createSessionStorage } from './createStorage';
+export { getCurrencyString } from './formatCurency';
+export { getStringBackTime, formatDateTime } from './formatTime';
+export { getUpdateByUserInSystem } from './getUserInSystem';
+export { default as getVietnameseIntonation } from './getVietnameseIntonation';
+export { default as HashString } from './hashData';
+export { makeToast, toastType } from './makeToast';
+export { isEqualObject, isEqualObjectExact } from './compareTwoObjects';
+export { default as validateEmail } from './validateEmail';
+export { checkPasswordStrength } from './validatePassword';
