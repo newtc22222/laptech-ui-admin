@@ -33,16 +33,15 @@ import {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<AppLayout />}>
-      {/* PUBLIC */}
+    <Route path="">
       <Route path="auth/login" element={<Login />} />
-      <Route path="about" element={<About />} />
-      <Route path="faqs" element={<FAQ />} />
-      <Route path="features" element={<Feature />} />
-      <Route path="pricing" element={<Pricing />} />
-      <Route path="/*" element={<PageNotFound />} />
-      {/* PRIVATE */}
       <Route element={<AuthRoutes />}>
+        <Route path="about" element={<About />} />
+        <Route path="faqs" element={<FAQ />} />
+        <Route path="features" element={<Feature />} />
+        <Route path="pricing" element={<Pricing />} />
+        <Route path="*" element={<PageNotFound />} />
+        {/* MAIN */}
         <Route path="" element={<DashBoard />} />
         <Route path="home" element={<DashBoard />} />
         <Route path="role" element={<Role />} />

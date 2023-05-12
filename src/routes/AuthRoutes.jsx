@@ -1,5 +1,6 @@
 import React from 'react';
-import { useLocation, Navigate, Outlet } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
+import AppLayout from '../components/layout/AppLayout';
 
 import { createLocalStorage } from '../utils/createStorage';
 
@@ -18,7 +19,7 @@ function AuthRoutes() {
     storage.remove('maxAgeToken');
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
-  return <Outlet />;
+  return <AppLayout />;
 }
 
 export default AuthRoutes;
