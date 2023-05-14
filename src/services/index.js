@@ -11,7 +11,10 @@ export {
 export { default as productImageService } from './products/image.service';
 export { default as importProductService } from './products/importProduct.service';
 export { labelService, productLabelService } from './products/label.service';
-export { default as productService } from './products/product.service';
+export {
+  productService,
+  productAccessoriesService
+} from './products/product.service';
 
 export { default as invoiceService } from './invoice.service';
 export { roleService, userRoleService } from './role.service';

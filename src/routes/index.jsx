@@ -16,9 +16,9 @@ import {
   DashBoard,
   FAQ,
   Feature,
-  Invoice,
   ImportPage,
   OrderPage,
+  ViewPage,
   Label,
   Login,
   Notification,
@@ -56,7 +56,7 @@ const router = createBrowserRouter(
         <Route path="invoice">
           <Route path="import" element={<ImportPage />} />
           <Route path="order" element={<OrderPage />} />
-          <Route path="" element={<Invoice />} />
+          <Route path="" element={<ViewPage />} />
         </Route>
         <Route path="setting" element={<Setting />} />
         <Route path="statistic">
