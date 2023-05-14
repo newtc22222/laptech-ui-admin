@@ -33,7 +33,7 @@ function useFetch(url, option) {
     return () => {
       isMount = false;
     };
-  }, [url, option]);
+  }, [url]);
 
   return { data, loading, error };
 }
