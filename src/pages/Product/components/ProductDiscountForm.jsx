@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,17 +15,42 @@ import {
 } from '../../../utils';
 import content from '../content';
 
+const renderOption = discount => {
+  return (
+    <nav aria-label="breadcrumb">
+      <ol className="breadcrumb ps-2">
+        <li className="breadcrumb-item">{discount.code}</li>
+        <li className="breadcrumb-item">
+          <span className="fw-bold text-success">
+            {discount.rate * 100 + '%'}
+          </span>
+          {' - '}
+          <span className="text-danger">
+            {getCurrencyString(discount.maxAmount, 'vi-VN', 'VND')}
+          </span>
+        </li>
+        <li className="breadcrumb-item fw-bold">
+          {formatDateTime(discount.appliedDate) +
+            ' - ' +
+            formatDateTime(discount.endedDate)}
+        </li>
+      </ol>
+    </nav>
+  );
+};
+
 const ProductDiscountForm = ({ product, handleBack, ...props }) => {
   const {
     data: discountList,
     isFetching,
     error
   } = useSelector(state => state['discounts']);
+  const [refreshKey, setRefreshKey] = useState(0);
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const { data: discountListOfProduct } = useFetch(
-    `/products/${product.id}/discounts`
+    `/products/${product.id}/discounts?key=${refreshKey}`
   );
 
   const {
@@ -52,48 +77,30 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
     }
 
     // handle change
-    removeDiscount.forEach(discountId => {
-      productDiscountService.remove(
-        dispatch,
-        { discountId: discountId },
-        product.id,
-        accessToken
-      );
-    });
-
-    addDiscount.forEach(discountId => {
-      productDiscountService.add(
-        dispatch,
-        { discountId: discountId },
-        product.id,
-        accessToken
-      );
-    });
-  };
-
-  const renderOption = d => {
-    return (
-      <nav aria-label="breadcrumb">
-        <ol className="breadcrumb ps-2">
-          <li className="breadcrumb-item">{d.code}</li>
-          <li className="breadcrumb-item">
-            <span className="fw-bold text-success">{d.rate * 100 + '%'}</span>
-            {' - '}
-            <span className="text-danger">
-              {getCurrencyString(d.maxAmount, 'vi-VN', 'VND')}
-            </span>
-          </li>
-          <li className="breadcrumb-item fw-bold">
-            {formatDateTime(d.appliedDate) +
-              ' - ' +
-              formatDateTime(d.endedDate)}
-          </li>
-        </ol>
-      </nav>
+    Promise.all(
+      removeDiscount.map(async discountId => {
+        await productDiscountService.remove(
+          dispatch,
+          { discountId: discountId },
+          product.id,
+          accessToken
+        );
+      })
     );
+    Promise.all(
+      addDiscount.map(async discountId => {
+        await productDiscountService.add(
+          dispatch,
+          { discountId: discountId },
+          product.id,
+          accessToken
+        );
+      })
+    );
+    setRefreshKey(prev => prev + 1);
   };
 
-  const renderForm = () => {
+  const MainForm = () => {
     if (isFetching) return <Loading />;
 
     const configOption = discountList
@@ -143,7 +150,7 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
       title={content.form_discount.title}
       disabledFooter
     >
-      {renderForm()}
+      <MainForm />
     </ModalForm>
   );
 };

@@ -39,10 +39,18 @@ const content = {
   },
   form_label: { title: 'Điều chỉnh nhãn sản phẩm' },
   form_discount: { title: 'Điều chỉnh mã chiết khấu' },
+  form_accessory: {
+    title: 'Điều chỉnh phụ kiện sản phẩm',
+    name: 'Tên phụ kiện: ',
+    brand: 'Thương hiệu: ',
+    category: 'Loại: ',
+    price: 'Giá thành: '
+  },
   menu: {
     basicInformation: 'Thông tin cơ bản',
     images: 'Hình ảnh sản phẩm',
     labels: 'Nhãn sản phẩm',
+    accessories: 'Phụ kiện theo kèm',
     discounts: 'Mã chiết khấu'
   },
   error: {

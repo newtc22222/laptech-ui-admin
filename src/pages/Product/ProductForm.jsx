@@ -23,10 +23,10 @@ import content from './content';
 
 // 1: brand, category
 // n: image, label, discount
-const ProductForm = ({ product, handleBack, ...props }) => {
+const ProductForm = ({ product, handleBack, brandList, categoryList, ...props }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
-  const { brandList, categoryList } = props;
+  
   const brandOptions = chooseFieldsOfObject(brandList, ['id', 'name']).map(
     i => {
       return { id: i.id, label: i.name };
@@ -208,7 +208,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
     }
   ];
 
-  const renderForm = () => {
+  const MainForm = () => {
     if (!brandList || !categoryList) return <Loading />;
     return (
       <Form
@@ -223,7 +223,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
 
   return (
     <ModalForm object={product} disabledFooter>
-      {renderForm()}
+      <MainForm />
     </ModalForm>
   );
 };

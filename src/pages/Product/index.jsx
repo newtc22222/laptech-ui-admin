@@ -14,6 +14,7 @@ import {
 import ProductTable from './ProductTable';
 import ProductForm from './ProductForm';
 import {
+  ProductAccessoriesForm,
   ProductDiscountForm,
   ProductImageForm,
   ProductLabelForm
@@ -111,6 +112,15 @@ const ProductPage = () => {
             handleBack={() => action.changeWorkMode(WorkMode.view)}
           />
         );
+      case 'edit_accessories':
+        return (
+          <ProductAccessoriesForm
+            product={productEdit}
+            brandList={brandList}
+            categoryList={categoryList}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
       case 'edit_discount':
         return (
           <ProductDiscountForm
@@ -150,6 +160,9 @@ const ProductPage = () => {
           action.setUpdateMode(product, specWorkMode)
         }
         handleSetUpdateLabelMode={(product, specWorkMode) =>
+          action.setUpdateMode(product, specWorkMode)
+        }
+        handleSetUpdateAccessoriesMode={(product, specWorkMode) =>
           action.setUpdateMode(product, specWorkMode)
         }
         handleSetUpdateDiscountMode={(product, specWorkMode) =>
