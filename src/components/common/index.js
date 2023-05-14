@@ -9,6 +9,7 @@ export { default as ModalOption } from './ModalOption';
 export { default as PageHeader } from './PageHeader';
 export { default as PopoverMenu } from './PopoverMenu';
 export { default as SearchBar } from './SearchBar';
+export { default as Skeleton } from './Skeleton';
 export { default as SortableTable } from './SortableTable';
 export { default as Tabbed } from './Tabbed';
 export { default as Table } from './Table';

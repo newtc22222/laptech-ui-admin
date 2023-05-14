@@ -3,7 +3,7 @@ const subText = {
   categories: 'phân loại',
   discounts: 'mã chiết khấu',
   labels: 'nhãn thuộc tính',
-  imports: 'đơn nhập hàng',
+  imported: 'đơn nhập hàng',
   invoices: 'đơn bán hàng',
   products: 'sản phẩm',
   roles: 'phân quyền',

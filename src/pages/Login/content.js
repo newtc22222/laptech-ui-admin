@@ -1,5 +1,6 @@
 const content = {
-  welcome: 'Welcome back!',
+  welcome: 'HỆ THỐNG QUẢN LÝ LAPTECH',
+  missing: 'Vui lòng nhập đầy đủ thông tin!',
   phone: 'Số điện thoại',
   password: 'Mật khẩu',
   remember: 'Ghi nhớ đăng nhập',

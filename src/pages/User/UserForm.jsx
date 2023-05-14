@@ -130,7 +130,7 @@ const UserForm = ({ user, handleBack }) => {
     }
   };
 
-  const renderForm = () => {
+  const MainForm = () => {
     if (!roleList || isRoleFetching) return <Loading />;
 
     return (
@@ -143,6 +143,7 @@ const UserForm = ({ user, handleBack }) => {
           <EditForm
             user={user}
             roleList={roleList}
+            roleOfUser={roleOfUser}
             register={register}
             control={control}
             errors={errors}
@@ -163,7 +164,7 @@ const UserForm = ({ user, handleBack }) => {
 
   return (
     <ModalForm object={user} disabledFooter>
-      {renderForm()}
+      <MainForm />
     </ModalForm>
   );
 };

@@ -53,7 +53,11 @@ const Header = () => {
   return (
     <header className="navbar navbar-dark bg-dark navbar-expand-sm sticky-top">
       <div className="container-fluid d-flex flex-wrap">
-        <Link to="/" className="nav me-auto text-decoration-none">
+        <Link
+          to="/"
+          className="nav me-auto text-decoration-none"
+          onClick={() => handleSetActiveTab('home')}
+        >
           <span className="fs-3 fw-bold text-info">LAPTECH</span>
         </Link>
         <button

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 
 const icon = {
   run: (
@@ -23,14 +23,14 @@ const icon = {
   )
 };
 
-const CountdownRefresh = ({ countdownTime, handleChange }) => {
+const CountdownRefresh = ({ countdownTime, handleChange, isPause }) => {
   const timeId = useRef();
-  const [pause, setPause] = useState(false);
+  const [pause, setPause] = useState(isPause);
   const [timeShow, setTimeShow] = useState(countdownTime / 1000);
 
   useEffect(() => {
     timeId.current = setInterval(() => {
-      if (!pause) setTimeShow((prev) => prev - 1);
+      if (!pause) setTimeShow(prev => prev - 1);
     }, 1000);
     return () => clearInterval(timeId.current);
   }, [pause]);
@@ -46,7 +46,7 @@ const CountdownRefresh = ({ countdownTime, handleChange }) => {
     <button
       className="btn btn-success"
       type="button"
-      onClick={() => setPause((prev) => !prev)}
+      onClick={() => setPause(prev => !prev)}
     >
       {pause ? icon.pause : icon.run}
       {timeShow}

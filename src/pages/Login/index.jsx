@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
-import authService from '../../services/auth/auth.service';
-import HashString from '../../utils/hashData';
 import useAppContext from '../../hooks/useAppContext';
+import { authService } from '../../services';
+import { HashString, makeToast, toastType } from '../../utils';
 import content from './content';
 // import Captcha from './Captcha';
 
@@ -43,6 +44,11 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    if (!phone || !passwordRef.current.value) {
+      makeToast(content.missing, toastType.warning);
+      return;
+    }
+
     const account = {
       phone: phone,
       password: passwordRef.current.value
@@ -72,33 +78,31 @@ const Login = () => {
   const renderForm = (
     <div className="p-5">
       <div className="text-center">
-        <h1 className="h4 text-primary mb-4">{content.welcome}</h1>
+        <h3 className="text-primary mb-3">{content.welcome}</h3>
       </div>
       <div>
-        <div className="mb-3">
-          <label htmlFor="inputPhone" className="form-label">
-            {content.phone}
-          </label>
+        <div className="form-floating mb-3">
           <input
             type="text"
             className="form-control"
             id="inputPhone"
             aria-describedby="phoneHelp"
+            placeholder="0123 456 xxx"
             value={phone}
             onChange={handleChangePhone}
           />
+          <label htmlFor="inputPhone">{content.phone}</label>
         </div>
-        <div className="mb-3">
-          <label htmlFor="inputPassword" className="form-label">
-            {content.password}
-          </label>
+        <div className="form-floating mb-3">
           <input
             type="password"
             className="form-control"
             id="inputPassword"
+            placeholder="13579ASDFGH"
             defaultValue={HashString.decrypt(rmb_password)}
             ref={passwordRef}
           />
+          <label htmlFor="inputPassword">{content.password}</label>
         </div>
         {/* <Captcha captchaRef={captchaRef} /> */}
         <div className="mb-3 form-check">
@@ -134,26 +138,29 @@ const Login = () => {
   );
 
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-xl-10 col-lg-12 col-md-9">
-          <div className="card o-hidden border-0 shadow-lg my-5">
-            <div className="card-body p-0">
-              <div className="row">
-                <div className="col-lg-6 d-none d-lg-block bg-login-image">
-                  <img
-                    src={require('./work.png')}
-                    alt="Login image"
-                    className="h-100 w-100"
-                  />
+    <>
+      <ToastContainer />
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-xl-10 col-lg-12 col-md-9">
+            <div className="card o-hidden border-0 shadow-lg my-5">
+              <div className="card-body p-0">
+                <div className="row">
+                  <div className="col-lg-6 d-none d-lg-block bg-login-image">
+                    <img
+                      src={require('./work.png')}
+                      alt="Login image"
+                      className="h-100 w-100"
+                    />
+                  </div>
+                  <div className="col-lg-6">{renderForm}</div>
                 </div>
-                <div className="col-lg-6">{renderForm}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

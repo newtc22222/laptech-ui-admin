@@ -1,55 +1,110 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Col, Row } from 'react-bootstrap';
 
-import useFetch from '../../hooks/useFetch';
+import {
+  CalendarPicker,
+  ModalConfirm,
+  PageHeader
+} from '../../components/common';
+import BannerBox from './components/BannerBox';
+import BannerForm from './components/BannerForm';
 
-import { CalendarPicker, PageHeader, Loading } from '../../components/common';
-import ServerNotResponse from '../Error/ServerNotResponse';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+import { bannerService } from '../../services';
+import { getUpdateByUserInSystem } from '../../utils';
 import content from './content';
 
 const Banner = () => {
-  const [filterDate, setFilterDate] = useState(
-    new Date().toJSON().slice(0, 10)
-  );
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [filterDate, setFilterDate] = useState(new Date());
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const {
+    dispatch,
+    workMode,
+    showModal,
+    objectEdit: bannerEdit,
+    modalValue,
+    action
+  } = useWorkspace();
 
-  const { data: bannerList, isFetching, error } = useFetch('/banners');
+  const handleShowDeleteModal = bannerId => {
+    action.addModalValue(
+      `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} khỏi hệ thống không?`,
+      async () => {
+        await bannerService.remove(
+          dispatch,
+          getUpdateByUserInSystem(),
+          bannerId,
+          accessToken
+        );
+        setRefreshKey(prev => prev + 1);
+        action.showModal(false);
+      }
+    );
+    action.showModal(true);
+  };
 
-  if (isFetching) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <ServerNotResponse />;
+  function renderFormModal() {
+    switch (workMode) {
+      case WorkMode.create:
+        return (
+          <BannerForm
+            handleBack={() => {
+              setRefreshKey(prev => prev + 1);
+              action.changeWorkMode(WorkMode.view);
+            }}
+          />
+        );
+      case WorkMode.edit:
+        return (
+          <BannerForm
+            banner={bannerEdit}
+            handleBack={() => {
+              setRefreshKey(prev => prev + 1);
+              action.changeWorkMode(WorkMode.view);
+            }}
+          />
+        );
+      default:
+        return <></>;
+    }
   }
 
   return (
-    <div>
+    <>
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
+      {renderFormModal()}
       <PageHeader pageName={content.pageName}>
-        <button className="btn btn-primary fw-bold">
+        <button
+          className="btn btn-primary fw-bold"
+          type="button"
+          onClick={() => action.changeWorkMode(WorkMode.create)}
+        >
           {content.titleBtnAdd}
         </button>
       </PageHeader>
-      <CalendarPicker selected={filterDate} setSelected={setFilterDate} />
-      <div className="d-flex flex-wrap gap-2">
-        {bannerList
-          ?.filter(banner => {
-            const filterDateJSON = new Date(filterDate).toJSON().slice(0, 10);
-            return (
-              banner.usedDate <= filterDateJSON &&
-              filterDateJSON <= banner.endedDate
-            );
-          })
-          .map(banner => {
-            return (
-              <img
-                key={banner.id}
-                src={banner.path}
-                alt={banner.title}
-                title="Click vào hình ảnh để thay đổi thông tin!"
-              />
-            );
-          })}
-      </div>
-    </div>
+      <Row>
+        <Col xl={3}>
+          <div className="sticky-top" style={{ top: '10vh' }}>
+            <CalendarPicker selected={filterDate} setSelected={setFilterDate} />
+          </div>
+        </Col>
+        <Col xl={9}>
+          <BannerBox
+            refreshKey={refreshKey}
+            filterDate={filterDate}
+            handleShowDeleteModal={handleShowDeleteModal}
+            handleShowUpdateModal={banner => action.setUpdateMode(banner)}
+          />
+        </Col>
+      </Row>
+    </>
   );
 };
 

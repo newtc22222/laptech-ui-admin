@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-
-import { brandService } from '../../services';
-
 import {
   ModalConfirm,
   PageHeader,
@@ -13,6 +9,9 @@ import {
 } from '../../components/common';
 import BrandForm from './BrandForm';
 import BrandTable from './BrandTable';
+
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+import { brandService } from '../../services';
 
 const pageName = 'Thương hiệu';
 const objectName = 'brands';

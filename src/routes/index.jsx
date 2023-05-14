@@ -16,9 +16,9 @@ import {
   DashBoard,
   FAQ,
   Feature,
-  Invoice,
   ImportPage,
   OrderPage,
+  ViewPage,
   Label,
   Login,
   Notification,
@@ -33,16 +33,15 @@ import {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<AppLayout />}>
-      {/* PUBLIC */}
+    <Route path="">
       <Route path="auth/login" element={<Login />} />
-      <Route path="about" element={<About />} />
-      <Route path="faqs" element={<FAQ />} />
-      <Route path="features" element={<Feature />} />
-      <Route path="pricing" element={<Pricing />} />
-      <Route path="/*" element={<PageNotFound />} />
-      {/* PRIVATE */}
       <Route element={<AuthRoutes />}>
+        <Route path="about" element={<About />} />
+        <Route path="faqs" element={<FAQ />} />
+        <Route path="features" element={<Feature />} />
+        <Route path="pricing" element={<Pricing />} />
+        <Route path="*" element={<PageNotFound />} />
+        {/* MAIN */}
         <Route path="" element={<DashBoard />} />
         <Route path="home" element={<DashBoard />} />
         <Route path="role" element={<Role />} />
@@ -57,7 +56,7 @@ const router = createBrowserRouter(
         <Route path="invoice">
           <Route path="import" element={<ImportPage />} />
           <Route path="order" element={<OrderPage />} />
-          <Route path="" element={<Invoice />} />
+          <Route path="" element={<ViewPage />} />
         </Route>
         <Route path="setting" element={<Setting />} />
         <Route path="statistic">

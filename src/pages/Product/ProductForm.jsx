@@ -23,10 +23,16 @@ import content from './content';
 
 // 1: brand, category
 // n: image, label, discount
-const ProductForm = ({ product, handleBack, ...props }) => {
+const ProductForm = ({
+  product,
+  handleBack,
+  brandList,
+  categoryList,
+  ...props
+}) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
-  const { brandList, categoryList } = props;
+
   const brandOptions = chooseFieldsOfObject(brandList, ['id', 'name']).map(
     i => {
       return { id: i.id, label: i.name };
@@ -82,7 +88,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
       categoryId: data.category[0].id,
       name: data.name,
       releasedDate: data.releasedDate,
-      quantityInStock: 0, // fixed
+      quantityInStock: product.quantityInStock, // fixed
       listedPrice: data.listedPrice,
       specifications:
         data.specifications.length > 1
@@ -101,6 +107,42 @@ const ProductForm = ({ product, handleBack, ...props }) => {
       header: content.form.basicInformation,
       body: (
         <>
+          <div className="row border rounded-2 mx-1 mb-3">
+            <div className="col-6">
+              <SeletedInputBox
+                name="brand"
+                control={control}
+                errors={errors}
+                label={content.form.brandChoice}
+                placeholder="Choose brand..."
+                required
+                getValues={getValues}
+                errorMessage=""
+                defaultValue={
+                  product?.brandId &&
+                  brandOptions.filter(b => b.id === product.brandId)[0]
+                }
+                options={brandOptions}
+              />
+            </div>
+            <div className="col-6">
+              <SeletedInputBox
+                name="category"
+                control={control}
+                errors={errors}
+                label={content.form.categoryChoice}
+                placeholder="Choose category..."
+                required
+                getValues={getValues}
+                errorMessage=""
+                defaultValue={
+                  product?.categoryId &&
+                  categoryOptions.filter(b => b.id === product.categoryId)[0]
+                }
+                options={categoryOptions}
+              />
+            </div>
+          </div>
           <TextInput
             attribute="id"
             label={content.form.id}
@@ -119,37 +161,6 @@ const ProductForm = ({ product, handleBack, ...props }) => {
             placeholder="Laptop ABC Core i3-8560U/..."
             required
             errorMessage={content.error.name}
-          />
-          <SeletedInputBox
-            name="brand"
-            control={control}
-            errors={errors}
-            label={content.form.brandChoice}
-            placeholder="Choose brand..."
-            required
-            getValues={getValues}
-            errorMessage=""
-            defaultValue={
-              product?.brandId &&
-              brandOptions.filter(b => b.id === product.brandId)[0]
-            }
-            options={brandOptions}
-          />
-          <SeletedInputBox
-            name="category"
-            control={control}
-            errors={errors}
-            label={content.form.categoryChoice}
-            className="mt-3"
-            placeholder="Choose category..."
-            required
-            getValues={getValues}
-            errorMessage=""
-            defaultValue={
-              product?.categoryId &&
-              categoryOptions.filter(b => b.id === product.categoryId)[0]
-            }
-            options={categoryOptions}
           />
           <TextInput
             attribute="releasedDate"
@@ -208,7 +219,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
     }
   ];
 
-  const renderForm = () => {
+  const MainForm = () => {
     if (!brandList || !categoryList) return <Loading />;
     return (
       <Form
@@ -223,7 +234,7 @@ const ProductForm = ({ product, handleBack, ...props }) => {
 
   return (
     <ModalForm object={product} disabledFooter>
-      {renderForm()}
+      <MainForm />
     </ModalForm>
   );
 };

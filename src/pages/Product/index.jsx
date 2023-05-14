@@ -1,27 +1,24 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-
-import { brandService, categoryService, productService } from '../../services';
-
 import {
   ModalConfirm,
   PageHeader,
   Loading,
   ServerNotResponse
 } from '../../components/common';
-import ProductTable from './ProductTable';
-import ProductForm from './ProductForm';
 import {
+  ProductAccessoriesForm,
   ProductDiscountForm,
   ProductImageForm,
   ProductLabelForm
 } from './components';
+import ProductTable from './ProductTable';
+import ProductForm from './ProductForm';
 
-const pageName = 'Sản phẩm';
-const objectName = 'products';
-const titleButtonAdd = 'Thêm thông tin';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+import { brandService, categoryService, productService } from '../../services';
+import content from './content';
 
 const ProductPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
@@ -38,7 +35,7 @@ const ProductPage = () => {
     data: productList,
     isFetching,
     error
-  } = useSelector(state => state[objectName]);
+  } = useSelector(state => state['products']);
 
   const {
     data: brandList,
@@ -60,8 +57,8 @@ const ProductPage = () => {
 
   const handleShowDeleteModal = (productId, productName) => {
     action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${productName} khỏi hệ thống không?`,
+      `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${productName} khỏi hệ thống không?`,
       () => {
         productService.delete(dispatch, productId, accessToken);
         action.showModal(false);
@@ -111,6 +108,15 @@ const ProductPage = () => {
             handleBack={() => action.changeWorkMode(WorkMode.view)}
           />
         );
+      case 'edit_accessories':
+        return (
+          <ProductAccessoriesForm
+            product={productEdit}
+            brandList={brandList}
+            categoryList={categoryList}
+            handleBack={() => action.changeWorkMode(WorkMode.view)}
+          />
+        );
       case 'edit_discount':
         return (
           <ProductDiscountForm
@@ -131,13 +137,23 @@ const ProductPage = () => {
         {...modalValue}
       />
       {renderFormModal()}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
+      <PageHeader pageName={content.pageName}>
+        <div className="d-flex flex-row gap-2">
+          <button
+            type="button"
+            className="btn btn-success fw-bold"
+            onClick={() => productService.getAll(dispatch)}
+          >
+            {content.titleBtnReload}
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary fw-bold"
+            onClick={action.setCreateMode}
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       <ProductTable
         brandList={brandList}
@@ -150,6 +166,9 @@ const ProductPage = () => {
           action.setUpdateMode(product, specWorkMode)
         }
         handleSetUpdateLabelMode={(product, specWorkMode) =>
+          action.setUpdateMode(product, specWorkMode)
+        }
+        handleSetUpdateAccessoriesMode={(product, specWorkMode) =>
           action.setUpdateMode(product, specWorkMode)
         }
         handleSetUpdateDiscountMode={(product, specWorkMode) =>

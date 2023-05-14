@@ -1,37 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import _ from 'lodash';
 
 import {
   CountdownRefresh,
+  Loading,
+  ModalConfirm,
   ModalOption,
   PageHeader,
+  ServerNotResponse,
   TabList
-} from '../../../../components/common';
-import { invoiceService } from '../../../../services';
+} from '../../../components/common';
+import { InvoiceTable, ItemBox } from './components';
 
-import InvoiceTable from './InvoiceTable';
-import ItemBox from './ItemBox';
+import useWorkspace, { WorkMode } from '../../../hooks/useWorkspace';
+import { invoiceService } from '../../../services';
+import { getUpdateByUserInSystem, makeToast, toastType } from '../../../utils';
 import content from './content';
 
-import hardInvoiceList from '../../../../samples/hardInvoiceList';
-
-const pageName = 'Thông tin đơn nhập hàng';
-
 const Invoice = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [invoiceList, setInvoiceList] = useState(hardInvoiceList);
-  const [invoice, setInvoice] = useState(null);
-
   const accessToken = useSelector(state => state.auth.accessToken);
-  const dispatch = useDispatch();
+  const {
+    dispatch,
+    workMode,
+    showModal,
+    objectEdit: invoiceEdit,
+    modalValue,
+    action
+  } = useWorkspace();
+
+  const {
+    data: invoiceList,
+    isFetching,
+    error
+  } = useSelector(state => state['invoices']);
 
   useEffect(() => {
     invoiceService.getAll(dispatch, accessToken);
-  }, []);
+  }, [dispatch, accessToken]);
+
+  if (!invoiceList || isFetching) return <Loading />;
+  if (error) return <ServerNotResponse />;
+
+  const handleShowDeleteModal = invoiceId => {
+    action.addModalValue(
+      `Xác nhận xoá ${content.pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} có mã ${invoiceId} khỏi hệ thống không?`,
+      () => {
+        invoiceService.delete(dispatch, invoiceId, accessToken);
+        action.showModal(false);
+      }
+    );
+    action.showModal(true);
+  };
 
   const configData = Object.keys(content.status).map(tab => {
-    const invoiceListOfTab = invoiceList.filter(i => i.orderStatus === tab);
+    const invoiceListOfTab = invoiceList?.filter(i => i.orderStatus === tab);
     return {
       key: tab.toLowerCase(),
       title: content.status[tab],
@@ -39,8 +63,8 @@ const Invoice = () => {
       body: (
         <InvoiceTable
           invoiceList={invoiceListOfTab}
-          setInvoice={setInvoice}
-          setShowModal={setShowModal}
+          handleSetUpdateMode={invoice => action.setUpdateMode(invoice)}
+          handleShowDeleteModal={handleShowDeleteModal}
         />
       )
     };
@@ -50,15 +74,35 @@ const Invoice = () => {
     const status = item?.orderStatus;
 
     function changeStatus(newStatus) {
-      setInvoiceList(prev =>
-        prev.map(i => {
-          if (i.id === item.id) {
-            return { ...i, orderStatus: newStatus };
-          }
-          return i;
-        })
-      );
-      setShowModal(false);
+      if (invoiceEdit.status === newStatus) {
+        makeToast(content.changeStatus.nothing, toastType.info);
+        return;
+      }
+
+      if (newStatus === 'RECEIVED') {
+        invoiceService.update(
+          dispatch,
+          {
+            ...invoiceEdit,
+            orderStatus: newStatus,
+            isPaid: true,
+            ...getUpdateByUserInSystem()
+          },
+          invoiceEdit.id,
+          accessToken
+        );
+      } else {
+        invoiceService.updateStatus(
+          dispatch,
+          {
+            orderStatus: newStatus,
+            ...getUpdateByUserInSystem()
+          },
+          invoiceEdit.id,
+          accessToken
+        );
+      }
+      action.changeWorkMode(WorkMode.view);
     }
 
     const otherStatus = () => {
@@ -146,22 +190,38 @@ const Invoice = () => {
   }
 
   return (
-    <div className="mt-2">
-      <ModalOption
-        className="modal-xl"
+    <div>
+      <ModalConfirm
         show={showModal}
-        setShow={setShowModal}
-        title={content.invoice}
-        titleCancel="Trở lại"
-        renderOption={renderOption(invoice)}
-      >
-        <ItemBox data={invoice} />
-      </ModalOption>
-      <PageHeader pageName={pageName}>
-        <CountdownRefresh
-          countdownTime={1000 * 20}
-          handleChange={() => setInvoiceList(_.shuffle(invoiceList))}
-        />
+        setShow={action.showModal}
+        {...modalValue}
+      />
+      {workMode === WorkMode.edit && (
+        <ModalOption
+          className="modal-xl"
+          title={content.invoice}
+          titleCancel="Trở lại"
+          handleBack={() => action.changeWorkMode(WorkMode.view)}
+          renderOption={renderOption(invoiceEdit)}
+        >
+          <ItemBox data={invoiceEdit} />
+        </ModalOption>
+      )}
+      <PageHeader pageName={content.pageName}>
+        <div className="d-flex gap-2">
+          <CountdownRefresh
+            isPause
+            countdownTime={1000 * 20}
+            handleChange={() => invoiceService.getAll(dispatch, accessToken)}
+          />
+          <button
+            type="button"
+            onClick={() => invoiceService.getAll(dispatch, accessToken)}
+            className="btn btn-primary"
+          >
+            {content.titleBtnReload}
+          </button>
+        </div>
       </PageHeader>
       <TabList configData={configData} />
     </div>

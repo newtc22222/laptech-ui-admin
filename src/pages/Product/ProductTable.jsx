@@ -22,13 +22,13 @@ const fields = [
 
 function ProductTable({
   productList,
+  brandList,
+  categoryList,
   productTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal,
   ...props
 }) {
-  const { brandList, categoryList } = props;
-
   if (!productList || !brandList || !categoryList) return <Loading />;
 
   const data = chooseFieldsOfObject(productList, fields);
@@ -138,6 +138,11 @@ function ProductTable({
         handle: () => props.handleSetUpdateLabelMode(product, 'edit_label')
       },
       'divider',
+      {
+        label: content.menu.accessories,
+        handle: () =>
+          props.handleSetUpdateAccessoriesMode(product, 'edit_accessories')
+      },
       {
         label: content.menu.discounts,
         handle: () =>

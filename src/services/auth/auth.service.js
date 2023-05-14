@@ -65,9 +65,9 @@ const authService = {
     );
     return auth;
   },
-  updateUser: async (newInfor, userId, token) => {
+  updateInformation: async (newInfor, token) => {
     await apiCall.PUT(
-      `users/${userId}`,
+      `changeMyInformation`,
       newInfor,
       token,
       () => {},
@@ -81,9 +81,9 @@ const authService = {
     );
   },
   // { oldPassword, newPassword }
-  updatePassword: async (passwordForm, userId, token) => {
+  updatePassword: async (passwordForm, token) => {
     await apiCall.PATCH(
-      `users/${userId}`,
+      `changePasswordp`,
       passwordForm,
       token,
       () => {},

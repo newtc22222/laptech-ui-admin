@@ -2,9 +2,14 @@ import React from 'react';
 
 import { SortableTable } from '../../../../components/common';
 import { getCurrencyString, formatDateTime } from '../../../../utils';
-import content from './content';
+import content from '../content';
 
-function InvoiceTable({ invoiceList, setShowModal, setInvoice, ...props }) {
+function InvoiceTable({
+  invoiceList,
+  handleSetUpdateMode,
+  handleShowDeleteModal,
+  ...rest
+}) {
   const configData = [
     {
       label: content.id,
@@ -20,25 +25,25 @@ function InvoiceTable({ invoiceList, setShowModal, setInvoice, ...props }) {
       render: data => formatDateTime(data.createdDate),
       sortValue: data => data.createdDate
     },
-    {
-      label: content.itemQuantity,
-      render: data => <div className="text-center">{data.items.length}</div>,
-      sortValue: data => data.items.length
-    },
-    {
-      label: content.totalCost,
-      render: data => {
-        const totalCost = data.items
-          .map(i => i.discountPrice * i.quantity)
-          .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        return (
-          <div className="text-center">
-            {getCurrencyString(totalCost, 'vi-VN', 'VND')}
-          </div>
-        );
-      },
-      sortValue: data => data.items.length
-    },
+    // {
+    //   label: content.itemQuantity,
+    //   render: data => <div className="text-center">{data.items.length}</div>,
+    //   sortValue: data => data.items.length
+    // },
+    // {
+    //   label: content.totalCost,
+    //   render: data => {
+    //     const totalCost = data.items
+    //       .map(i => i.discountPrice * i.quantity)
+    //       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    //     return (
+    //       <div className="text-center">
+    //         {getCurrencyString(totalCost, 'vi-VN', 'VND')}
+    //       </div>
+    //     );
+    //   },
+    //   sortValue: data => data.items.length
+    // },
     {
       label: content.setting,
       render: data => {
@@ -46,8 +51,7 @@ function InvoiceTable({ invoiceList, setShowModal, setInvoice, ...props }) {
           <button
             className="btn btn-outline-secondary text-uppercase"
             onClick={() => {
-              setShowModal(true);
-              setInvoice(data);
+              handleSetUpdateMode(data);
             }}
           >
             {content.btnShow}

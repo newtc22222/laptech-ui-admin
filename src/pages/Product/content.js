@@ -1,6 +1,9 @@
 import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
+  pageName: 'Sản phẩm',
+  titleBtnReload: 'Tải lại dữ liệu',
+  titleBtnAdd: 'Thêm thông tin',
   id: 'mã sản phẩm',
   name: 'tên sản phẩm',
   brand: 'thương hiệu',
@@ -39,10 +42,18 @@ const content = {
   },
   form_label: { title: 'Điều chỉnh nhãn sản phẩm' },
   form_discount: { title: 'Điều chỉnh mã chiết khấu' },
+  form_accessory: {
+    title: 'Điều chỉnh phụ kiện sản phẩm',
+    name: 'Tên phụ kiện: ',
+    brand: 'Thương hiệu: ',
+    category: 'Loại: ',
+    price: 'Giá thành: '
+  },
   menu: {
     basicInformation: 'Thông tin cơ bản',
     images: 'Hình ảnh sản phẩm',
     labels: 'Nhãn sản phẩm',
+    accessories: 'Phụ kiện theo kèm',
     discounts: 'Mã chiết khấu'
   },
   error: {

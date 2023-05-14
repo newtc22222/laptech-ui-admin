@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import ModalForm from '../../components/common/ModalForm';
+import { ModalForm } from '../../components/common';
 import { Form, InputImage, TextInput } from '../../components/validation';
 
 import { brandService, uploadService } from '../../services';

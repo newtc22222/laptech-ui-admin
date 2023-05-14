@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,17 +10,30 @@ import { labelService, productLabelService } from '../../../services';
 import { makeToast, toastType } from '../../../utils';
 import content from '../content';
 
+const renderOption = label => {
+  return (
+    <div
+      title={label.title}
+      className="d-flex justify-content-center border border-primary rounded-2 px-3 py-1"
+    >
+      <div className="me-2" dangerouslySetInnerHTML={{ __html: label.icon }} />
+      {label.name + ' - ' + label.title}
+    </div>
+  );
+};
+
 const ProductLabelForm = ({ product, handleBack, ...props }) => {
   const {
     data: labelList,
     isFetching,
     error
   } = useSelector(state => state['labels']);
+  const [refreshKey, setRefreshKey] = useState(0);
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const { data: labelListOfProduct } = useFetch(
-    `/products/${product.id}/labels`
+    `/products/${product.id}/labels?key=${refreshKey}`
   );
 
   const {
@@ -47,41 +60,30 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
     }
 
     // handle change
-    removeLabel.forEach(labelId => {
-      productLabelService.remove(
-        dispatch,
-        { labelId: labelId },
-        product.id,
-        accessToken
-      );
-    });
-
-    addLabel.forEach(labelId => {
-      productLabelService.add(
-        dispatch,
-        { labelId: labelId },
-        product.id,
-        accessToken
-      );
-    });
-  };
-
-  const renderOption = label => {
-    return (
-      <div
-        title={label.title}
-        className="d-flex justify-content-center border border-primary rounded-2 px-3 py-1"
-      >
-        <div
-          className="me-2"
-          dangerouslySetInnerHTML={{ __html: label.icon }}
-        />
-        {label.name + ' - ' + label.title}
-      </div>
+    Promise.all(
+      removeLabel.map(async labelId => {
+        await productLabelService.remove(
+          dispatch,
+          { labelId: labelId },
+          product.id,
+          accessToken
+        );
+      })
     );
+    Promise.all(
+      addLabel.map(async labelId => {
+        await productLabelService.add(
+          dispatch,
+          { labelId: labelId },
+          product.id,
+          accessToken
+        );
+      })
+    );
+    setRefreshKey(prev => prev + 1);
   };
 
-  const renderForm = () => {
+  const MainForm = () => {
     if (isFetching) return <Loading />;
 
     const configOption = labelList
@@ -123,7 +125,7 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
 
   return (
     <ModalForm object={product} title={content.form_label.title} disabledFooter>
-      {renderForm()}
+      <MainForm />
     </ModalForm>
   );
 };

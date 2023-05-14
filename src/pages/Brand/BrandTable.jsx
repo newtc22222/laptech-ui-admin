@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Loading, SortableTable } from '../../components/common';
 
-import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
+import { chooseFieldsOfObject } from '../../utils';
 import content from './content';
 
 const fields = [
@@ -21,7 +21,7 @@ const BrandTable = ({
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (brandList === null || brandList === undefined) return <Loading />;
+  if (!brandList) return <Loading />;
 
   const data = chooseFieldsOfObject(brandList, fields);
   const config = [
