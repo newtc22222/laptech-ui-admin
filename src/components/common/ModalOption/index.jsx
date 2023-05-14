@@ -2,31 +2,22 @@ import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import classNames from 'classnames';
 
-const titleCancel = 'Huỷ bỏ';
-
-/**
- *
- * @param {{ show: boolean, setShow: function, props: object}}
- * @returns {JSX.Element}
- */
-function ModalOption({ children, show, setShow, ...props }) {
-  const handleClose = () => setShow(false);
-
+function ModalOption({ children, handleBack, ...rest }) {
   return (
     <Modal
-      show={show}
-      onHide={handleClose}
+      show
+      onHide={handleBack}
       backdrop="static"
-      className={classNames('modal-lg', props.className)}
+      className={classNames('modal-lg', rest.className)}
     >
       <Modal.Header>
-        <Modal.Title>{props?.title || ''}</Modal.Title>
+        <Modal.Title>{rest?.title || ''}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
       <Modal.Footer>
-        {props.renderOption}
-        <Button variant="secondary" onClick={handleClose}>
-          {props.titleCancel || titleCancel}
+        {rest.renderOption}
+        <Button variant="secondary" onClick={handleBack}>
+          {rest.titleCancel || 'Huỷ bỏ'}
         </Button>
       </Modal.Footer>
     </Modal>

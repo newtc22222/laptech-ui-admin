@@ -12,8 +12,6 @@ const BannerBox = ({
   const { data: bannerList } = useFetch(`/banners?key=${refreshKey}`);
   const filterDatePrecision = Date.parse(filterDate).toPrecision();
 
-  console.log('render');
-
   if (!bannerList) return <></>;
 
   return (
