@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import {
   CheckBox,
@@ -7,7 +6,6 @@ import {
   SelectedBox,
   TextInput
 } from '../../../components/validation';
-import useFetch from '../../../hooks/useFetch';
 import content from '../content';
 
 /**
@@ -16,18 +14,13 @@ import content from '../content';
 const EditForm = ({
   user,
   roleList,
+  roleOfUser,
   register,
   control,
   errors,
   getValues,
-  ...props
+  ...rest
 }) => {
-  const accessToken = useSelector(state => state.auth.accessToken);
-  const { data: roleOfUser } = useFetch(`/users/${user?.id}/roles`, {
-    method: 'GET',
-    headers: { Authorization: `Bearer ${accessToken}` }
-  });
-
   if (!user || !roleList || !roleOfUser) return <></>;
 
   const configOption = roleList
