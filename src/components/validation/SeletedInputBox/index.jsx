@@ -36,7 +36,7 @@ const SelectedInputBox = ({
       render={({ field: { value, onChange } }) => {
         return (
           <div
-            className={classNames('border rounded-2 p-2', props.className, {
+            className={classNames('p-2', props.className, {
               'border-danger': errors[name]
             })}
           >
