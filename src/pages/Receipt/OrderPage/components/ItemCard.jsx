@@ -38,9 +38,9 @@ function ItemCard({ data: item, ...rest }) {
     <Card className="h-100">
       <Card.Body>
         <Row>
-          <Col xs={3}>
+          <Col sx={6}>
             <img
-              className="img-fluid"
+              className="img-thumbnail"
               src={item.imageRepresent}
               alt={item.id}
             />
