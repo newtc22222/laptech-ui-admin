@@ -60,7 +60,7 @@ const LabelTable = ({
             className="d-flex justify-content-center border border-primary rounded-2"
           >
             <div
-              className="me-2"
+              className="mx-2"
               dangerouslySetInnerHTML={{ __html: label.icon }}
             />
             {label.name}
