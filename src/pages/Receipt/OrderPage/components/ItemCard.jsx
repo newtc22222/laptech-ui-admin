@@ -3,7 +3,7 @@ import { Card, Col, Row } from 'react-bootstrap';
 
 import { getCurrencyString } from '../../../../utils';
 
-function ItemCard({ data: item, ...props }) {
+function ItemCard({ data: item, ...rest }) {
   const { price, discountPrice, quantity } = item;
 
   function displayPrice() {

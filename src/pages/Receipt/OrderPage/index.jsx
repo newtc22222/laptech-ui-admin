@@ -14,7 +14,7 @@ import {
 import { InvoiceTable, ItemBox } from './components';
 
 import useWorkspace, { WorkMode } from '../../../hooks/useWorkspace';
-import { invoiceService } from '../../../services';
+import { invoiceService, userService } from '../../../services';
 import { getUpdateByUserInSystem, makeToast, toastType } from '../../../utils';
 import content from './content';
 
@@ -34,13 +34,19 @@ const Invoice = () => {
     isFetching,
     error
   } = useSelector(state => state['invoices']);
+  const {
+    data: userList,
+    isUserFetching,
+    isUserError
+  } = useSelector(state => state['users']);
 
   useEffect(() => {
     invoiceService.getAll(dispatch, accessToken);
+    if (!userList || isUserError) userService.getAll(dispatch, accessToken);
   }, [dispatch, accessToken]);
 
-  if (!invoiceList || isFetching) return <Loading />;
-  if (error) return <ServerNotResponse />;
+  if (!invoiceList || isFetching || isUserFetching) return <Loading />;
+  if (error || isUserError) return <ServerNotResponse />;
 
   const handleShowDeleteModal = invoiceId => {
     action.addModalValue(
@@ -63,6 +69,7 @@ const Invoice = () => {
       body: (
         <InvoiceTable
           invoiceList={invoiceListOfTab}
+          userList={userList}
           handleSetUpdateMode={invoice => action.setUpdateMode(invoice)}
           handleShowDeleteModal={handleShowDeleteModal}
         />
@@ -204,7 +211,10 @@ const Invoice = () => {
           handleBack={() => action.changeWorkMode(WorkMode.view)}
           renderOption={renderOption(invoiceEdit)}
         >
-          <ItemBox data={invoiceEdit} />
+          <ItemBox
+            data={invoiceEdit}
+            user={invoiceEdit && _.find(userList, { id: invoiceEdit.userId })}
+          />
         </ModalOption>
       )}
       <PageHeader pageName={content.pageName}>
