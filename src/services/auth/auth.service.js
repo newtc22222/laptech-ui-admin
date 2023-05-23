@@ -1,4 +1,5 @@
 import apiCall from '../../apis';
+import makeRefreshToken from '../common/makeRefreshToken';
 import { makeToast, toastType } from '../../utils/makeToast';
 import { createLocalStorage } from '../../utils/createStorage';
 import {
@@ -59,11 +60,25 @@ const authService = {
         storage.set('accessToken', result.accessToken);
         dispatch(setNewAccessToken(result.accessToken));
       },
-      () => {
+      err => {
         makeToast('Hết hạn đăng nhập, vui lòng đăng nhập lại!', toastType.info);
       }
     );
     return auth;
+  },
+  getCurrentUser: async (dispatch, token) => {
+    await apiCall.GET_ALL(
+      'getCurrentUser',
+      null,
+      token,
+      () => {},
+      result => {
+        console.log(result);
+      },
+      err => {
+        makeRefreshToken(err, dispatch);
+      }
+    );
   },
   updateInformation: async (newInfor, token) => {
     await apiCall.PUT(
