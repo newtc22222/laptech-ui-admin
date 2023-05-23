@@ -10,10 +10,10 @@ function getIcons(label, sortBy, sortOrder) {
 
   switch (sortOrder) {
     case 'asc':
-      return <i className="bi bi-arrow-up"></i>;
+      return <i className="bi bi-arrow-down"></i>;
 
     case 'desc':
-      return <i className="bi bi-arrow-down"></i>;
+      return <i className="bi bi-arrow-up"></i>;
 
     default:
       return <i className="bi bi-arrow-down-up"></i>;
