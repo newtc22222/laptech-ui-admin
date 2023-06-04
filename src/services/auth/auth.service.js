@@ -48,7 +48,7 @@ const authService = {
     );
     return auth;
   },
-  refreshToken: async (dispatch, refreshToken) => {
+  refreshToken: async (dispatch, refreshToken, recall = null) => {
     let auth;
     await apiCall.POST(
       `auth/refreshToken`,
@@ -59,6 +59,7 @@ const authService = {
         const storage = createLocalStorage('laptech');
         storage.set('accessToken', result.accessToken);
         dispatch(setNewAccessToken(result.accessToken));
+        if (typeof recall === 'function') recall(dispatch, result.accessToken);
       },
       err => {
         makeToast('Hết hạn đăng nhập, vui lòng đăng nhập lại!', toastType.info);

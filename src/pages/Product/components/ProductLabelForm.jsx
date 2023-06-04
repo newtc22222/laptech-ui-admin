@@ -28,12 +28,12 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
     isFetching,
     error
   } = useSelector(state => state['labels']);
-  const [refreshKey, setRefreshKey] = useState(0);
+
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const { data: labelListOfProduct } = useFetch(
-    `/products/${product.id}/labels?key=${refreshKey}`
+    `/products/${product.id}/labels`
   );
 
   const {
@@ -80,7 +80,7 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
         );
       })
     );
-    setRefreshKey(prev => prev + 1);
+    handleBack();
   };
 
   const MainForm = () => {

@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { logout, setCredentials } from '../../../store/slice/auth.slice';
 import { createLocalStorage } from '../../../utils';
-import { authService } from '../../../services';
 
 import TabHeader from './TabHeader';
 import useAppContext from '../../../hooks/useAppContext';
@@ -39,10 +38,6 @@ const Header = () => {
       dispatch(setCredentials(payload));
     }
   }
-
-  useEffect(() => {
-    authService.getCurrentUser(dispatch, storage.get('accessToken'));
-  }, []);
 
   const handleLogout = () => {
     storage.remove('user');

@@ -31,26 +31,35 @@ function makeService(objectName, action) {
    * @param {useDispatch} dispatch
    * @param {string} customMessage
    */
-  function handleFetchError(err, dispatch, customMessage = null) {
-    const defaultMessage = 'Dữ liệu lỗi, không thể gửi đến server!';
+  function handleFetchError(err, dispatch, customMessage = null, reCall) {
+    const defaultMessage =
+      'Hệ thống gặp vấn đề khi xử lý, vui lòng thử lại sau ít phút nữa!';
     makeToast(customMessage || defaultMessage, toastType.error);
     dispatch(action.fetchFailed());
-    makeRefreshToken(err, dispatch);
+    makeRefreshToken(err, dispatch, reCall);
   }
 
+  const handleGetAll = async (dispatch, token = null) => {
+    await apiCall.GET_ALL(
+      objectName,
+      null,
+      token,
+      () => handleFetchStart(dispatch),
+      data => {
+        dispatch(action.getSuccess(data));
+      },
+      err =>
+        handleFetchError(
+          err,
+          dispatch,
+          'Không thể kết nối đến Server!',
+          (dispatch, token) => handleGetAll(dispatch, token) // callback to re-fetch
+        )
+    );
+  };
+
   return {
-    getAll: async (dispatch, token = null) => {
-      await apiCall.GET_ALL(
-        objectName,
-        null,
-        token,
-        () => handleFetchStart(dispatch),
-        data => {
-          dispatch(action.getSuccess(data));
-        },
-        err => handleFetchError(err, dispatch, 'Không thể kết nối đến Server!')
-      );
-    },
+    getAll: handleGetAll,
     create: async (dispatch, object, token) => {
       await apiCall.POST(
         objectName,
