@@ -19,7 +19,6 @@ function makeService(objectName, action) {
   const objectNameVI = subText[objectName];
 
   /**
-   *
    * @param {useDispatch} dispatch
    */
   function handleFetchStart(dispatch) {
@@ -53,76 +52,104 @@ function makeService(objectName, action) {
           err,
           dispatch,
           'Không thể kết nối đến Server!',
-          (dispatch, token) => handleGetAll(dispatch, token) // callback to re-fetch
+          newToken => handleGetAll(dispatch, newToken) // callback to re-fetch
+        )
+    );
+  };
+
+  const handleCreate = async (dispatch, object, token) => {
+    await apiCall.POST(
+      objectName,
+      object,
+      token,
+      () => handleFetchStart(dispatch),
+      result => {
+        makeToast(
+          `Một ${objectNameVI} vừa được thêm vào cơ sở dữ liệu!`,
+          toastType.success
+        );
+        dispatch(action.createSuccess(result)); // new object
+      },
+      err =>
+        handleFetchError(
+          err,
+          dispatch,
+          'Lỗi kết nối, hệ thống đang thử lại!',
+          newToken => handleCreate(dispatch, object, newToken)
+        )
+    );
+  };
+
+  const handleUpdate = async (dispatch, updateObject, objectId, token) => {
+    await apiCall.PUT(
+      `${objectName}/${objectId}`,
+      updateObject,
+      token,
+      () => handleFetchStart(dispatch),
+      result => {
+        makeToast(
+          `Dữ liệu của ${objectNameVI} vừa được cập nhật vào cơ sở dữ liệu!`,
+          toastType.success
+        );
+        updateObject.id = objectId;
+        dispatch(action.updateSuccess(updateObject));
+      },
+      err =>
+        handleFetchError(err, dispatch, null, newToken =>
+          handleUpdate(dispatch, updateObject, objectId, newToken)
+        )
+    );
+  };
+
+  const handleUpdatePartial = async (
+    dispatch,
+    updateProperties,
+    objectId,
+    token
+  ) => {
+    await apiCall.PATCH(
+      `${objectName}/${objectId}`,
+      updateProperties,
+      token,
+      () => handleFetchStart(dispatch),
+      result => {
+        makeToast(
+          `Dữ liệu của ${objectNameVI} vừa được cập nhật vào cơ sở dữ liệu!`,
+          toastType.success
+        );
+        updateProperties.id = objectId;
+        dispatch(action.updateSuccess(updateProperties));
+      },
+      err =>
+        handleFetchError(err, dispatch, null, newToken =>
+          handleUpdatePartial(dispatch, updateProperties, objectId, newToken)
+        )
+    );
+  };
+
+  const handleDelete = async (dispatch, objectId, token) => {
+    await apiCall.DELETE(
+      `${objectName}/${objectId}`,
+      null,
+      token,
+      () => handleFetchStart(dispatch),
+      result => {
+        makeToast('Dữ liệu đã được xóa khỏi hệ thống!', toastType.success);
+        dispatch(action.deleteSuccess(objectId));
+      },
+      err =>
+        handleFetchError(err, dispatch, null, newToken =>
+          handleDelete(dispatch, objectId, newToken)
         )
     );
   };
 
   return {
     getAll: handleGetAll,
-    create: async (dispatch, object, token) => {
-      await apiCall.POST(
-        objectName,
-        object,
-        token,
-        () => handleFetchStart(dispatch),
-        result => {
-          makeToast(
-            `Một ${objectNameVI} vừa được thêm vào cơ sở dữ liệu!`,
-            toastType.success
-          );
-          dispatch(action.createSuccess(result)); // new object
-        },
-        err => handleFetchError(err, dispatch)
-      );
-    },
-    update: async (dispatch, updateObject, objectId, token) => {
-      await apiCall.PUT(
-        `${objectName}/${objectId}`,
-        updateObject,
-        token,
-        () => handleFetchStart(dispatch),
-        result => {
-          makeToast(
-            `Dữ liệu của ${objectNameVI} vừa được cập nhật vào cơ sở dữ liệu!`,
-            toastType.success
-          );
-          updateObject.id = objectId;
-          dispatch(action.updateSuccess(updateObject));
-        },
-        err => handleFetchError(err, dispatch)
-      );
-    },
-    updatePartial: async (dispatch, updateProperties, objectId, token) => {
-      await apiCall.PATCH(
-        `${objectName}/${objectId}`,
-        updateProperties,
-        token,
-        () => handleFetchStart(dispatch),
-        result => {
-          makeToast(
-            `Dữ liệu của ${objectNameVI} vừa được cập nhật vào cơ sở dữ liệu!`,
-            toastType.success
-          );
-          updateProperties.id = objectId;
-          dispatch(action.updateSuccess(updateProperties));
-        },
-        err => handleFetchError(err, dispatch)
-      );
-    },
-    delete: async (dispatch, objectId, token) => {
-      await apiCall.DELETE(
-        `${objectName}/${objectId}`,
-        null,
-        token,
-        () => handleFetchStart(dispatch),
-        result => {
-          makeToast('Dữ liệu đã được xóa khỏi hệ thống!', toastType.success);
-          dispatch(action.deleteSuccess(objectId));
-        },
-        err => handleFetchError(err, dispatch)
-      );
-    }
+    create: handleCreate,
+    update: handleUpdate,
+    updatePartial: handleUpdatePartial,
+    delete: handleDelete
   };
 }
 

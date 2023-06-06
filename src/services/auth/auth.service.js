@@ -59,7 +59,7 @@ const authService = {
         const storage = createLocalStorage('laptech');
         storage.set('accessToken', result.accessToken);
         dispatch(setNewAccessToken(result.accessToken));
-        if (typeof recall === 'function') recall(dispatch, result.accessToken);
+        if (!recall && typeof recall === 'function') recall(result.accessToken);
       },
       err => {
         makeToast('Hết hạn đăng nhập, vui lòng đăng nhập lại!', toastType.info);
