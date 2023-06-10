@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -45,12 +45,11 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
     isFetching,
     error
   } = useSelector(state => state['discounts']);
-  const [refreshKey, setRefreshKey] = useState(0);
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const { data: discountListOfProduct } = useFetch(
-    `/products/${product.id}/discounts?key=${refreshKey}`
+    `/products/${product.id}/discounts`
   );
 
   const {
@@ -76,28 +75,13 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
       return;
     }
 
-    // handle change
-    Promise.all(
-      removeDiscount.map(async discountId => {
-        await productDiscountService.remove(
-          dispatch,
-          { discountId: discountId },
-          product.id,
-          accessToken
-        );
-      })
+    productDiscountService.updateMultiple(
+      dispatch,
+      { addList: addDiscount, removeList: removeDiscount },
+      product.id,
+      accessToken
     );
-    Promise.all(
-      addDiscount.map(async discountId => {
-        await productDiscountService.add(
-          dispatch,
-          { discountId: discountId },
-          product.id,
-          accessToken
-        );
-      })
-    );
-    setRefreshKey(prev => prev + 1);
+    handleBack();
   };
 
   const MainForm = () => {
