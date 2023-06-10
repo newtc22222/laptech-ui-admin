@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import classNames from 'classnames';
 
-import './style.css';
 import TabBar from './TabBar';
 import TabBarDropDown from './TabBarDropDown';
 

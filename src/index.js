@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap'; // use bootstrap animated
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-toastify/dist/ReactToastify.css';
-import './styles/css/laptech.css';
+import './styles/scss/main.scss';
 
 import App from './App';
 
