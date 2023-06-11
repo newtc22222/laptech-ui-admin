@@ -3,9 +3,83 @@ import makeRefreshToken from '../common/makeRefreshToken';
 import { makeToast, toastType } from '../../utils/makeToast';
 import { createLocalStorage } from '../../utils/createStorage';
 import {
+  logout,
   setCredentials,
-  setNewAccessToken
+  setNewAccessToken,
+  setNewUserData
 } from '../../store/slice/auth.slice';
+
+const handleGetCurrentUser = async (dispatch, token) => {
+  let currentUser = {};
+  await apiCall.GET_ALL(
+    'getCurrentUser',
+    null,
+    token,
+    () => {},
+    result => {
+      currentUser = result;
+    },
+    err => {
+      makeRefreshToken(err, dispatch, newToken =>
+        handleGetCurrentUser(dispatch, newToken)
+      );
+    }
+  );
+  return currentUser;
+};
+
+const handleUpdateInformation = async (dispatch, newInfor, token) => {
+  await apiCall.PATCH(
+    `changeMyInformation`,
+    newInfor,
+    token,
+    () => {},
+    result => {
+      const storage = createLocalStorage('laptech');
+      storage.set('user', newInfor);
+      dispatch(setNewUserData(newInfor));
+      makeToast('Cập nhật thông tin thành công!', toastType.success);
+    },
+    err => {
+      makeRefreshToken(err, dispatch, newToken =>
+        handleUpdateInformation(dispatch, newInfor, newToken)
+      );
+    }
+  );
+};
+
+const handleUpdatePassword = async (dispatch, object, token) => {
+  await apiCall.POST(
+    `auth/changePassword`,
+    object,
+    token,
+    () => {},
+    result => {
+      makeToast(
+        'Cập nhật mật khẩu thành công! Ứng dụng sẽ đóng sau vài giây!',
+        toastType.success
+      );
+      const storage = createLocalStorage('laptech');
+      storage.remove('user');
+      storage.remove('accessToken');
+      storage.remove('refreshToken');
+      storage.remove('maxAgeToken');
+      dispatch(logout());
+    },
+    error => {
+      // 401 but wrong password, not token!
+      const storage = createLocalStorage('laptech');
+      if (storage.get('maxAgeToken') > Date.now()) {
+        makeToast('Thông tin chưa chính xác!', toastType.error);
+        return;
+      }
+
+      makeRefreshToken(error, dispatch, newToken =>
+        handleUpdatePassword(dispatch, newPassword, newToken)
+      );
+    }
+  );
+};
 
 const authService = {
   login: async (dispatch, account) => {
@@ -67,48 +141,9 @@ const authService = {
     );
     return auth;
   },
-  getCurrentUser: async (dispatch, token) => {
-    await apiCall.GET_ALL(
-      'getCurrentUser',
-      null,
-      token,
-      () => {},
-      result => {
-        console.log(result);
-      },
-      err => {
-        makeRefreshToken(err, dispatch);
-      }
-    );
-  },
-  updateInformation: async (newInfor, token) => {
-    await apiCall.PUT(
-      `changeMyInformation`,
-      newInfor,
-      token,
-      () => {},
-      result => {},
-      () => {
-        makeToast(
-          'Vui lòng kiểm tra lại dữ liệu cá nhân của bạn!',
-          toastType.error
-        );
-      }
-    );
-  },
-  // { oldPassword, newPassword }
-  updatePassword: async (passwordForm, token) => {
-    await apiCall.PATCH(
-      `changePasswordp`,
-      passwordForm,
-      token,
-      () => {},
-      result => {},
-      () => {
-        makeToast('Vui lòng kiểm tra lại mật khẩu của bạn!', toastType.error);
-      }
-    );
-  }
+  getCurrentUser: handleGetCurrentUser,
+  updateInformation: handleUpdateInformation,
+  updatePassword: handleUpdatePassword
 };
 
 export default authService;

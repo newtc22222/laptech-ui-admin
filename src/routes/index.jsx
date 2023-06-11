@@ -25,6 +25,7 @@ import {
   Pricing,
   ProductPage,
   ProductExperiences,
+  Profile,
   Statistic,
   Setting,
   Role,
@@ -60,6 +61,7 @@ const router = createBrowserRouter(
           <Route path="" element={<ViewPage />} />
         </Route>
         <Route path="setting" element={<Setting />} />
+        <Route path="profile" element={<Profile />} />
         <Route path="statistic">
           <Route path="income" element={<Statistic />} />
           <Route path="product" element={<Statistic />} />

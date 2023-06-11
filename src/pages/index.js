@@ -14,6 +14,7 @@ export { default as Notification } from './Notification';
 export { default as Pricing } from './Pricing';
 export { default as ProductPage } from './Product';
 export { default as ProductExperiences } from './ProductExperiences';
+export { default as Profile } from './Profile';
 export { default as Statistic } from './Statistic';
 export { default as Setting } from './Setting';
 export { default as Role } from './Role';
