@@ -39,8 +39,8 @@ function Table({ data, config, keyFn, ...props }) {
 
   return (
     <>
-      <div>
-        <table className="table table-bordered border-dark table-hover table-sm">
+      <div className="mb-3" style={{ width: '100%', overflowX: 'auto' }}>
+        <table className="table table-bordered border-dark table-hover">
           <thead className="bg-primary text-white">
             <tr className="text-center text-uppercase">{renderedHeaders}</tr>
           </thead>

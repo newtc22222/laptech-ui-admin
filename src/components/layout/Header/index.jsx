@@ -1,9 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { logout, setCredentials } from '../../../store/slice/auth.slice';
-import { createLocalStorage } from '../../../utils/createStorage';
+import { createLocalStorage } from '../../../utils';
 
 import TabHeader from './TabHeader';
 import useAppContext from '../../../hooks/useAppContext';
@@ -35,7 +35,6 @@ const Header = () => {
         accessToken: storage.get('accessToken'),
         refreshToken: storage.get('refreshToken')
       };
-      console.log(payload);
       dispatch(setCredentials(payload));
     }
   }

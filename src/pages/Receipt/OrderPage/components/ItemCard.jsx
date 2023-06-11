@@ -3,7 +3,7 @@ import { Card, Col, Row } from 'react-bootstrap';
 
 import { getCurrencyString } from '../../../../utils';
 
-function ItemCard({ data: item, ...props }) {
+function ItemCard({ data: item, ...rest }) {
   const { price, discountPrice, quantity } = item;
 
   function displayPrice() {
@@ -38,9 +38,9 @@ function ItemCard({ data: item, ...props }) {
     <Card className="h-100">
       <Card.Body>
         <Row>
-          <Col xs={3}>
+          <Col sx={6}>
             <img
-              className="img-fluid"
+              className="img-thumbnail zoom-img"
               src={item.imageRepresent}
               alt={item.id}
             />

@@ -130,7 +130,7 @@ const ProductPage = () => {
   }
 
   return (
-    <div>
+    <>
       <ModalConfirm
         show={showModal}
         setShow={action.showModal}
@@ -175,7 +175,7 @@ const ProductPage = () => {
           action.setUpdateMode(product, specWorkMode)
         }
       />
-    </div>
+    </>
   );
 };
 

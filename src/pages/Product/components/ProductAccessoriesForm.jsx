@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -22,12 +22,11 @@ const ProductAccessoriesForm = ({
     isFetching,
     error
   } = useSelector(state => state['products']);
-  const [refreshKey, setRefreshKey] = useState(0);
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const { data: accessoriesOfProduct } = useFetch(
-    `/products/${product.id}/accessories?key=${refreshKey}`
+    `/products/${product.id}/accessories`
   );
 
   const {
@@ -53,26 +52,12 @@ const ProductAccessoriesForm = ({
       return;
     }
 
-    Promise.all(
-      removeList.map(async accessoryId => {
-        await productAccessoriesService.remove(
-          dispatch,
-          { accessoryId: accessoryId },
-          product.id,
-          accessToken
-        );
-      })
+    productAccessoriesService.updateMultiple(
+      dispatch,
+      { addList: addList, removeList: removeList },
+      product.id,
+      accessToken
     );
-    Promise.all(
-      addList.map(async accessoryId => {
-        await productAccessoriesService.add(
-          dispatch,
-          { accessoryId: accessoryId },
-          product.id,
-          accessToken
-        );
-      })
-    ).then(() => setRefreshKey(refreshKey + 1));
     handleBack();
   };
 

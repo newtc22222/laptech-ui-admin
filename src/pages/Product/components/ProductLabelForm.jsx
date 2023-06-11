@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -28,12 +28,12 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
     isFetching,
     error
   } = useSelector(state => state['labels']);
-  const [refreshKey, setRefreshKey] = useState(0);
+
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const { data: labelListOfProduct } = useFetch(
-    `/products/${product.id}/labels?key=${refreshKey}`
+    `/products/${product.id}/labels`
   );
 
   const {
@@ -59,28 +59,14 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
       return;
     }
 
-    // handle change
-    Promise.all(
-      removeLabel.map(async labelId => {
-        await productLabelService.remove(
-          dispatch,
-          { labelId: labelId },
-          product.id,
-          accessToken
-        );
-      })
+    productLabelService.updateMultiple(
+      dispatch,
+      { addList: addLabel, removeList: removeLabel },
+      product.id,
+      accessToken
     );
-    Promise.all(
-      addLabel.map(async labelId => {
-        await productLabelService.add(
-          dispatch,
-          { labelId: labelId },
-          product.id,
-          accessToken
-        );
-      })
-    );
-    setRefreshKey(prev => prev + 1);
+
+    handleBack();
   };
 
   const MainForm = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -21,16 +21,12 @@ const ProductImageForm = ({ product, handleBack, ...rest }) => {
     control,
     handleSubmit,
     getValues,
-    reset,
     formState: { errors }
   } = useForm({ defaultValues: imageList });
-  const [refreshKey, setRefreshKey] = useState(0);
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const { data: imageList } = useFetch(
-    `/products/${product.id}/images?key=${refreshKey}`
-  );
+  const { data: imageList } = useFetch(`/products/${product.id}/images`);
 
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
@@ -71,16 +67,6 @@ const ProductImageForm = ({ product, handleBack, ...rest }) => {
       img => typeof img.url === 'string'
     );
     const imgRemove = _.differenceWith(oldData, newData_is_string, _.isEqual);
-    Promise.all(
-      imgRemove.map(async img => {
-        await productImageService.remove(
-          dispatch,
-          getUpdateByUserInSystem(),
-          imageList[_.findIndex(oldData, img)].id,
-          accessToken
-        );
-      })
-    );
 
     const imgAdd = newData.filter(img => typeof img.url !== 'string');
     const formData = new FormData();
@@ -91,24 +77,30 @@ const ProductImageForm = ({ product, handleBack, ...rest }) => {
       formData,
       accessToken
     );
-    await Promise.all(
-      result.map(async (url, idx) => {
-        const newImage = {
-          id: crypto.randomUUID().replace(/\s/g, ''),
-          productId: product.id,
-          type: imgAdd[idx].type,
-          url: url,
-          // feedbackId: "",
-          ...getUpdateByUserInSystem()
-        };
-        await productImageService.add(dispatch, newImage, accessToken);
-      })
-    ).catch(err => {
-      makeToast(content.error.upload, toastType.error);
-      return;
-    });  
-    setRefreshKey(prev => prev + 1);
-    reset();
+
+    productImageService
+      .updateMultiple(
+        dispatch,
+        {
+          addList: result.map((url, idx) => {
+            const newImage = {
+              id: crypto.randomUUID().replace(/\s/g, ''),
+              productId: product.id,
+              type: imgAdd[idx].type,
+              url: url,
+              // feedbackId: "",
+              ...getUpdateByUserInSystem()
+            };
+            return newImage;
+          }),
+          removeList: imgRemove.map(img => imageList[_.findIndex(oldData, img)])
+        },
+        product.id,
+        accessToken
+      )
+      .catch(err => makeToast(content.error.upload, toastType.error));
+
+    handleBack();
   };
 
   function getConfigTab(imageList) {

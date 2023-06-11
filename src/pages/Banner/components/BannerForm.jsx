@@ -70,7 +70,11 @@ const BannerForm = ({ banner, handleBack }) => {
         />
         <img
           className="img-fluid img-thumbnail mb-3"
-          src={watch('path') || banner?.path}
+          src={
+            watch('path') ||
+            banner?.path ||
+            'https://placeholder.pics/svg/400x200/1B82FF-95EDFF/000000-FFFFFF/choose%20image'
+          }
           alt="examples"
         />
         <TextInput

@@ -42,6 +42,7 @@ function ModalForm({
   return (
     <Modal
       show
+      centered={props.centered}
       onHide={handleBack}
       backdrop={props.backdrop || 'static'}
       className={classNames('modal-xl', props.className)}

@@ -16,6 +16,7 @@ function makeSlice(objectName) {
     reducers: {
       fetchStart: state => {
         state.isFetching = true;
+        state.error = false;
       },
       fetchFailed: state => {
         state.isFetching = false;
@@ -47,6 +48,38 @@ function makeSlice(objectName) {
         state.data = state.data.filter(object => object.id !== action.payload);
       }
     }
+    // extraReducers: thunk
+    //   ? builder => {
+    //       builder
+    //         .addCase(thunk['pending'], state => {
+    //           state.isFetching = true;
+    //           state.error = false;
+    //         })
+    //         .addCase(thunk['fulfilled'], (state, action) => {
+    //           state.isFetching = false;
+    //           state.data = action.payload;
+    //         })
+    //         .addCase(thunk['rejected'], (state, action) => {
+    //           state.isFetching = false;
+    //           state.error = true;
+    //         })
+    //         .addMatcher(
+    //           action =>
+    //             action.type.endsWith('/rejected') &&
+    //             action.error?.message === '401',
+    //           (state, { dispatch }) => {
+    //             dispatch(refreshAccessToken())
+    //               .then(() => {
+    //                 dispatch(thunk()); // Retry the user data request
+    //               })
+    //               .catch(error => {
+    //                 state.loading = false;
+    //                 state.error = 'Failed to refresh access token.';
+    //               });
+    //           }
+    //         );
+    //     }
+    //   : () => {}
   });
 }
 

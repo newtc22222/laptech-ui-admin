@@ -1,11 +1,11 @@
-import React, { StrictMode } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap';
+import 'bootstrap/dist/js/bootstrap'; // use bootstrap animated
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-toastify/dist/ReactToastify.css';
-import './styles/css/laptech.css';
+import './styles/scss/main.scss';
 
 import App from './App';
 
@@ -15,8 +15,8 @@ import App from './App';
  */
 
 ReactDOM.render(
-  <StrictMode>
+  <React.StrictMode>
     <App />
-  </StrictMode>,
+  </React.StrictMode>,
   document.getElementById('root')
 );

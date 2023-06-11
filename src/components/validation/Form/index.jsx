@@ -5,12 +5,16 @@ const titleBtnCancel = 'Trở lại';
 /**
  * @param {{children: JSX.Element, handleSubmit: Function, submitAction: Function, cancelAction: Function}}
  */
-const Form = ({ children, handleSubmit, submitAction, cancelAction }) => {
-  const handleSubmitData = handleSubmit(data => submitAction(data));
-
+const Form = ({
+  children,
+  handleSubmit,
+  submitAction,
+  cancelAction,
+  ...rest
+}) => {
   return (
     <div className="container p-3">
-      <form onSubmit={handleSubmitData} noValidate>
+      <form noValidate onSubmit={handleSubmit(submitAction)}>
         <div>{children}</div>
         <div className="d-flex justify-content-end gap-2">
           <button className="btn btn-primary" type="submit">
@@ -20,6 +24,7 @@ const Form = ({ children, handleSubmit, submitAction, cancelAction }) => {
             className="btn btn-secondary"
             type="button"
             onClick={cancelAction}
+            disabled={rest?.isSubmitting}
           >
             {titleBtnCancel}
           </button>

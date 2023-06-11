@@ -28,6 +28,18 @@ function makeCollapseService(objectNameMain, objectNameExtra) {
         err => handleFetchError(err, dispatch)
       );
     },
+    updateMultiple: async (dispatch, data, objectMainId, token) => {
+      await apiCall.PUT(
+        `${objectNameMain}/${objectMainId}/${objectNameExtra}`,
+        data,
+        token,
+        () => {},
+        result => {
+          makeToast('Thông tin đã cập nhật thành công!', toastType.success);
+        },
+        err => handleFetchError(err, dispatch)
+      );
+    },
     remove: async (dispatch, data, objectMainId, token) => {
       await apiCall.DELETE(
         `${objectNameMain}/${objectMainId}/${objectNameExtra}`,

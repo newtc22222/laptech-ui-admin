@@ -5,7 +5,6 @@ import {
   Route
 } from 'react-router-dom';
 
-import AppLayout from '../components/layout/AppLayout';
 import AuthRoutes from './AuthRoutes';
 import {
   About,
@@ -25,6 +24,7 @@ import {
   PageNotFound,
   Pricing,
   ProductPage,
+  ProductExperiences,
   Statistic,
   Setting,
   Role,
@@ -48,6 +48,7 @@ const router = createBrowserRouter(
         <Route path="user" element={<User />} />
         <Route path="notification" element={<Notification />} />
         <Route path="product" element={<ProductPage />} />
+        <Route path="product-experiences" element={<ProductExperiences />} />
         <Route path="banner" element={<Banner />} />
         <Route path="brand" element={<BrandPage />} />
         <Route path="category" element={<Category />} />

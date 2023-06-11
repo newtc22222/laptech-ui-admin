@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import classNames from 'classnames';
 
-import './style.css';
 import TabBar from './TabBar';
 import TabBarDropDown from './TabBarDropDown';
 
@@ -83,6 +82,12 @@ const sideBarTab = [
         title: 'Tất cả sản phẩm',
         url: '/product',
         icon: <i className="fs-5 me-2 bi bi-laptop"></i>
+      },
+      {
+        name: 'product-experiences',
+        title: 'Trải nghiệm sản phẩm',
+        url: '/product-experiences',
+        icon: <i className="fs-5 me-2 bi bi-card-checklist"></i>
       }
     ]
   },
@@ -94,19 +99,19 @@ const sideBarTab = [
       {
         name: 'income',
         title: 'Doanh thu',
-        icon: <i className="fs-4 bi bi-bar-chart-fill"></i>,
+        icon: <i className="fs-5 bi bi-graph-up"></i>,
         url: '/statistic/income'
       },
       {
         name: 'product',
         title: 'Sản phẩm',
-        icon: <i className="fs-5 me-2 bi bi-laptop"></i>,
+        icon: <i className="fs-5 bi bi-pie-chart-fill"></i>,
         url: '/statistic/product'
       },
       {
         name: 'user-experiance',
         title: 'Trải nghiệm khách hàng',
-        icon: <i className="fs-4 bi-person-circle"></i>,
+        icon: <i className="fs-5 bi bi-clipboard-data-fill"></i>,
         url: '/statistic/customer'
       }
     ]
@@ -121,12 +126,6 @@ const sideBarTab = [
         title: 'Phân quyền',
         url: '/role',
         icon: <i className="fs-5 me-2 bi bi-person-fill-lock"></i>
-      },
-      {
-        name: 'address',
-        title: 'Địa chỉ',
-        url: '/address',
-        icon: <i className="fs-5 me-2 bi bi-person-vcard"></i>
       },
       {
         name: 'all-user',

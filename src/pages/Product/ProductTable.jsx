@@ -108,7 +108,7 @@ function ProductTable({
       label: content.setting,
       style: { maxWidth: '5vw' },
       render: product => (
-        <div className="d-flex flex-wrap gap-1">
+        <div className="d-flex flex-column gap-1">
           <DropdownMenu className="flex-fill" config={getConfigMenu(product)}>
             {content.btnEdit}
           </DropdownMenu>

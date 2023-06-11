@@ -5,7 +5,12 @@ const content = {
   password: 'Mật khẩu',
   remember: 'Ghi nhớ đăng nhập',
   btnSubmit: 'Xác nhận',
-  forgotPassword: 'Quên mật khẩu?'
+  btnSubmitLoading: 'Đang xác thực',
+  forgotPassword: 'Quên mật khẩu?',
+  error: {
+    phone: 'Vui lòng cung cấp số điện thoại hợp lệ',
+    password: 'Vui lòng cung cấp mật khẩu hệ thống'
+  }
 };
 
 export default content;

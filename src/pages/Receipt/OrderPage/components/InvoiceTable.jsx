@@ -6,6 +6,7 @@ import content from '../content';
 
 function InvoiceTable({
   invoiceList,
+  userList,
   handleSetUpdateMode,
   handleShowDeleteModal,
   ...rest
@@ -21,31 +22,35 @@ function InvoiceTable({
       sortValue: data => data.id
     },
     {
+      label: content.userName,
+      render: data => _.find(userList, { id: data.userId }).name,
+      sortValue: data => _.find(userList, { id: data.userId }).name
+    },
+    {
+      label: content.address,
+      render: data => data.address,
+      sortValue: data => data.address
+    },
+    {
+      label: content.itemQuantity,
+      className: 'text-center',
+      render: data => data.paymentAmount,
+      sortValue: data => data.paymentAmount
+    },
+    {
+      label: content.totalCost,
+      className: 'text-center',
+      render: data => getCurrencyString(data.paymentTotal, 'vi-VN', 'VND'),
+      sortValue: data => data.paymentTotal
+    },
+    {
       label: content.dateCreated,
       render: data => formatDateTime(data.createdDate),
       sortValue: data => data.createdDate
     },
-    // {
-    //   label: content.itemQuantity,
-    //   render: data => <div className="text-center">{data.items.length}</div>,
-    //   sortValue: data => data.items.length
-    // },
-    // {
-    //   label: content.totalCost,
-    //   render: data => {
-    //     const totalCost = data.items
-    //       .map(i => i.discountPrice * i.quantity)
-    //       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-    //     return (
-    //       <div className="text-center">
-    //         {getCurrencyString(totalCost, 'vi-VN', 'VND')}
-    //       </div>
-    //     );
-    //   },
-    //   sortValue: data => data.items.length
-    // },
     {
       label: content.setting,
+      className: 'text-center',
       render: data => {
         return (
           <button
@@ -61,15 +66,13 @@ function InvoiceTable({
     }
   ];
 
-  const keyFn = data => data.id;
-
   return (
     <SortableTable
       data={invoiceList}
       totalRecordData={invoiceList.length}
       config={configData}
       defaultSort={['desc', content.dateCreated]}
-      keyFn={keyFn}
+      keyFn={data => data.id}
     />
   );
 }
