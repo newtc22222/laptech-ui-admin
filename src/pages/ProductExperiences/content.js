@@ -16,7 +16,16 @@ const content = {
     errorMessageForMin: 'Vui lòng nhập nội dung có độ dài tối thiểu là x!'
   },
   view: {
-    product: {},
+    product: {
+      brand: 'Thương hiệu',
+      category: 'Danh mục',
+      label: 'Nhãn thuộc tính',
+      listedPrice: 'Giá niêm yết',
+      currentPrice: 'Giá hiện tại',
+      specifications: 'Thông số kỹ thuật',
+      attribute: 'Tên thuộc tính',
+      value: 'Giá trị'
+    },
     user: {
       id: 'Mã người dùng: ',
       phone: 'Số điện thoại: ',

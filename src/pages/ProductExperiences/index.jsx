@@ -1,66 +1,106 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Container, Tab, Tabs } from 'react-bootstrap';
+import { Tab, Tabs } from 'react-bootstrap';
 
-import {
-  ModalConfirm,
-  PageHeader,
-  Loading,
-  ServerNotResponse
-} from '../../components/common';
+import { PageHeader, Loading } from '../../components/common';
+import FilterProductForm from './FilterProductForm';
+import FeedbackTab from './feedbacks/FeedbackTab';
+import CommentTab from './comments/CommentTab';
 
-import useFetch from '../../hooks/useFetch';
+import { productService, userService } from '../../services';
+import { getUpdateByUserInSystem } from '../../utils';
 import content from './content';
-import { productService } from '../../services';
 
 const ProductExperiences = () => {
-  const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
   const {
     data: productList,
     isFetching,
     error
   } = useSelector(state => state['products']);
+  const {
+    data: userList,
+    isUserFetching,
+    isUserError
+  } = useSelector(state => state['users']);
+  const { accessToken, user: currentUser } = useSelector(state => state.auth);
 
-  const { data: comments } = useFetch('/comments');
-  const { data: feedbacks } = useFetch('/feedbacks');
-
-  const [productOptions, setProductOptions] = useState([
-    { label: 'All', value: 'all' }
-  ]);
-  const [commentList, setCommentList] = useState([]);
-  const [feedbackList, setFeedbackList] = useState([]);
+  const [productOptions, setProductOptions] = useState([]);
 
   useEffect(() => {
     if (!productList || error) {
       productService.getAll(dispatch);
-
-      const comments = productService.getComments();
-      setCommentList(comments);
-      const feedbacks = productService.getFeedbacks();
-      console.log(feedbacks);
-      setFeedbackList(feedbacks);
     }
-  }, [dispatch, productList, error]);
+    if (!userList || isUserError) {
+      userService.getAll(dispatch, accessToken);
+    }
+  }, [dispatch, accessToken]);
 
-  useEffect(() => {
-    productService.getComments().then(res => console.log('res', res));
-    // setCommentList(comments);
-    // setFeedbackList(feedbacks);
-  }, [productOptions]);
+  const handleDisableFeedback = useCallback(
+    id => {
+      productService
+        .disableFeedback(dispatch, id, getUpdateByUserInSystem, accessToken)
+        .then(() => setProductOptions([]));
+    },
+    [accessToken]
+  );
 
-  if (!productList) return <Loading />;
+  const handleReplyComment = useCallback(
+    data => {
+      const newComment = {
+        ...data,
+        username: currentUser.name,
+        phone: currentUser.phone,
+        ...getUpdateByUserInSystem()
+      };
+      productService
+        .replyComment(dispatch, newComment, accessToken)
+        .then(() => setProductOptions([]));
+    },
+    [accessToken, currentUser]
+  );
+
+  const handleDisableComment = useCallback(
+    id => {
+      productService
+        .disableComment(dispatch, id, getUpdateByUserInSystem, accessToken)
+        .then(() => setProductOptions([]));
+    },
+    [accessToken]
+  );
+
+  if (!productList || isFetching || !userList || isUserFetching)
+    return <Loading />;
 
   return (
     <>
       <PageHeader pageName={content.pageName}></PageHeader>
+
       <div className="container-fluid">
-        <Tabs defaultActiveKey="feedback" className="nav-pills nav-fill mb-3">
-          <Tab eventKey="feedback" title="Feedback">
-            Tab content for Loooonger Tab
+        <FilterProductForm
+          productOption={productOptions}
+          setProductOption={setProductOptions}
+          options={productList.map(product => {
+            return { label: product.name, value: product.id };
+          })}
+        />
+        <Tabs defaultActiveKey="feedback" className="nav-pills nav-fill my-3">
+          <Tab eventKey="feedback" title={content.feedback}>
+            <FeedbackTab
+              productData={productList}
+              userData={userList}
+              productIdList={productOptions.map(option => option.value)}
+              handleDisableFeedback={handleDisableFeedback}
+            />
           </Tab>
-          <Tab eventKey="comment" title="Comment">
-            Tab content for Contact
+          <Tab eventKey="comment" title={content.comment}>
+            <CommentTab
+              productData={productList}
+              productIdList={productOptions.map(option => option.value)}
+              handleDisableComment={handleDisableComment}
+              handleReplyComment={handleReplyComment}
+              currentUser={currentUser}
+            />
           </Tab>
         </Tabs>
       </div>

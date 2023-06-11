@@ -40,7 +40,7 @@ function ItemCard({ data: item, ...rest }) {
         <Row>
           <Col sx={6}>
             <img
-              className="img-thumbnail"
+              className="img-thumbnail zoom-img"
               src={item.imageRepresent}
               alt={item.id}
             />
