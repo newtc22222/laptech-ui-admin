@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import AuthRoutes from './AuthRoutes';
+import { PageNotFound } from '../components/common';
 import {
   About,
   Banner,
@@ -21,7 +22,6 @@ import {
   Label,
   Login,
   Notification,
-  PageNotFound,
   Pricing,
   ProductPage,
   ProductExperiences,

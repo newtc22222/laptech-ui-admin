@@ -10,7 +10,6 @@ export { default as Feature } from './Feature';
 export { ImportPage, OrderPage, ViewPage } from './Receipt';
 export { default as Label } from './Label';
 export { default as Login } from './Login';
-export { default as PageNotFound } from './Error/PageNotFound';
 export { default as Notification } from './Notification';
 export { default as Pricing } from './Pricing';
 export { default as ProductPage } from './Product';

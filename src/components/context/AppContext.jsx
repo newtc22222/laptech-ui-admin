@@ -1,7 +1,7 @@
-import React, { useCallback, useState, createContext } from 'react';
+import React, { useCallback, useState, createContext, useContext } from 'react';
 import { createSessionStorage } from '../../utils/createStorage';
 
-export const AppContext = createContext();
+export const AppContext = createContext(null);
 
 function AppProvider({ children }) {
   const activeStorage = createSessionStorage('activeTab');
@@ -30,4 +30,5 @@ function AppProvider({ children }) {
   );
 }
 
+export const useAppContext = () => useContext(AppContext);
 export default AppProvider;
