@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import classNames from 'classnames';
 
-import useAppContext from '../../hooks/useAppContext';
+import { useAppContext } from '../../components/context/AppContext';
 import { authService } from '../../services';
 import { HashString } from '../../utils';
 import content from './content';

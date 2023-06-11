@@ -1,14 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import useAppContext from '../../../../hooks/useAppContext';
+import { useAppContext } from '../../../context/AppContext';
 
 /**
  * @since 2022-12-22
  */
 const titleBackHome = 'Server toang rồi! Về trang chủ đợi tiếp đi!';
 
-const ServerNotResponse = () => {
+const ServerNotResponse = ({
+  pathNavigate = '/',
+  tab = 'home',
+  subTab,
+  ...rest
+}) => {
   const { handleSetActiveTab } = useAppContext();
 
   return (
@@ -21,8 +26,8 @@ const ServerNotResponse = () => {
       <h2 className="text-uppercase mt-3">
         <Link
           className="text-decoration-none"
-          to="/"
-          onClick={() => handleSetActiveTab('home')}
+          to={pathNavigate}
+          onClick={() => handleSetActiveTab(tab, subTab)}
         >
           {titleBackHome}
         </Link>

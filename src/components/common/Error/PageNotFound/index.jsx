@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { useAppContext } from '../../../context/AppContext';
+
 /**
  * @since 2022-12-22
  */
-
-function PageNotFound() {
+const PageNotFound = ({ pathNavigate = '/', ...rest }) => {
+  const { handleSetActiveTab } = useAppContext();
   return (
     <div className="container-fluid text-center">
-      <Link to="/">
+      <Link to={pathNavigate} onClick={() => handleSetActiveTab('home')}>
         <img
           className="img-fluid mt-5"
           alt="Page not found"
@@ -17,6 +19,6 @@ function PageNotFound() {
       </Link>
     </div>
   );
-}
+};
 
 export default PageNotFound;

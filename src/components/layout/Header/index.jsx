@@ -1,12 +1,11 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
+import TabHeader from './TabHeader';
+import { useAppContext } from '../../context/AppContext';
 import { logout, setCredentials } from '../../../store/slice/auth.slice';
 import { createLocalStorage } from '../../../utils';
-
-import TabHeader from './TabHeader';
-import useAppContext from '../../../hooks/useAppContext';
 
 /**
  * @since 2022-12-22

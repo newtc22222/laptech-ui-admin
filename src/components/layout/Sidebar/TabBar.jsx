@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
-import useAppContext from '../../../hooks/useAppContext';
+import { useAppContext } from '../../context/AppContext';
 
 const TabBar = ({ name, title, url, icon, parentName }) => {
   const { activeTab, handleSetActiveTab } = useAppContext();

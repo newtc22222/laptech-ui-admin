@@ -20,3 +20,6 @@ export { default as invoiceService } from './invoice.service';
 export { roleService, userRoleService } from './role.service';
 export { default as uploadService } from './upload.service';
 export { default as userService } from './user.service';
+
+// statistic
+export { dashboardStatisticService } from './statistic';

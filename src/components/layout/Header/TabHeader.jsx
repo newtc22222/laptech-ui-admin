@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
-import useAppContext from '../../../hooks/useAppContext';
+import { useAppContext } from '../../context/AppContext';
 
 const TabHeader = ({ name }) => {
   const { activeTab, handleSetActiveTab } = useAppContext();

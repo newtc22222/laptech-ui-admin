@@ -1,42 +1,68 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 
 import CardInformation from './CardInformation';
+import { dashboardStatisticService } from '../../services';
+import { getCurrencyString } from '../../utils';
+import { format } from 'date-fns';
 
 const CardInformationGroup = () => {
+  const dispatch = useDispatch();
+  const accessToken = useSelector(state => state.auth.accessToken);
+
   const cardList = [
     {
       title: 'Hoá đơn trong ngày',
-      value: '120'
+      key: 'billInDay'
     },
     {
       title: 'Thu nhập trong ngày',
-      value: '2720.00$'
+      key: 'incomeInDay',
+      format: value => getCurrencyString(value, 'vi-VN', 'VND')
     },
     {
       title: 'Truy cập trong ngày',
-      value: '29'
+      key: 'accessInDay'
     },
     {
       title: 'Số sản phẩm đang hết hàng',
-      value: '11'
+      key: 'productOutOfStock',
+      format: data => data.length
     }
   ];
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    dashboardStatisticService
+      .getBoxData(dispatch, accessToken)
+      .then(res => setData(res))
+      .catch(err => console.log(err));
+  }, []);
 
   const color = _.shuffle(['primary', 'success', 'warning', 'info']);
 
   return (
     <div className="row">
-      {cardList.map((card, index) => {
-        return (
-          <CardInformation
-            key={index}
-            title={card.title}
-            value={card.value}
-            className={'text-' + color.pop()}
-          />
-        );
-      })}
+      {cardList
+        .map(item => {
+          let value = data[item.key] || '';
+          if (typeof item.format === 'function') {
+            value = item.format(value);
+          }
+          return { ...item, value: value };
+        })
+        .map((card, index) => {
+          return (
+            <CardInformation
+              key={index}
+              title={card.title}
+              value={card.value}
+              className={'text-' + color.pop()}
+            />
+          );
+        })}
     </div>
   );
 };
