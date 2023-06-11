@@ -38,7 +38,7 @@ const Login = () => {
       remember: rmb_check
     }
   });
-  const { activeTab } = useAppContext();
+  const { activeTab, handleSetActiveTab } = useAppContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -64,6 +64,8 @@ const Login = () => {
 
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
+
+      if (activeTab.tab === 'login') handleSetActiveTab('home');
 
       const urlActive =
         activeTab.tab === 'login'
