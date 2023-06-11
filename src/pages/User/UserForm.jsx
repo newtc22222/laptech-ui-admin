@@ -94,40 +94,45 @@ const UserForm = ({ user, handleBack }) => {
     if (isEqualObject(newData, user) && isEqualObject(removeRole, addRole)) {
       makeToast(content.form.nothingChange, toastType.info);
       return;
-    } else {
-      if (!isEqualObject(newData, user)) {
-        userService.updatePartial(
-          dispatch,
-          { ...newData, ...getUpdateByUserInSystem() },
-          user.id,
-          accessToken
-        );
-      }
-      // role
-      addRole.forEach(r => {
-        userRoleService.add(dispatch, { roleId: r }, user.id, accessToken);
-      });
-      removeRole.forEach(r => {
-        userRoleService.remove(dispatch, { roleId: r }, user.id, accessToken);
-      });
-      // active
-      if (newData.active !== user.active) {
-        newData.active
-          ? userService.activeUser(
-              user.id,
-              getUpdateByUserInSystem(),
-              accessToken
-            )
-          : userService.blockUser(
-              user.id,
-              getUpdateByUserInSystem(),
-              accessToken
-            );
-      }
-
-      reset();
-      handleBack();
     }
+
+    if (!isEqualObject(newData, user)) {
+      userService.updatePartial(
+        dispatch,
+        { ...newData, ...getUpdateByUserInSystem() },
+        user.id,
+        accessToken
+      );
+    }
+
+    // role
+    if (addRole.length > 0 || removeRole.length > 0) {
+      userRoleService.updateMultiple(
+        dispatch,
+        {
+          addList: addRole,
+          removeList: removeRole
+        },
+        user.id,
+        accessToken
+      );
+    }
+
+    // active
+    if (newData.active !== user.active) {
+      newData.active
+        ? userService.activeUser(
+            user.id,
+            getUpdateByUserInSystem(),
+            accessToken
+          )
+        : userService.blockUser(
+            user.id,
+            getUpdateByUserInSystem(),
+            accessToken
+          );
+    }
+    handleBack();
   };
 
   const MainForm = () => {
