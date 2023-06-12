@@ -22,8 +22,7 @@ const BrandForm = ({ brand, handleBack }) => {
     register,
     control,
     handleSubmit,
-    reset,
-    formState: { errors }
+    formState: { errors, isSubmitting, isDirty }
   } = useForm();
 
   useEffect(() => {
@@ -47,16 +46,15 @@ const BrandForm = ({ brand, handleBack }) => {
     };
 
     promise
-      .then(result => {
+      .then(async result => {
         newBrand.logo = result;
-        brandService.create(dispatch, newBrand, accessToken);
-        reset();
+        await brandService.create(dispatch, newBrand, accessToken);
         handleBack();
       })
       .catch(err => makeToast(content.error.upload, toastType.error));
   };
 
-  const handleSaveData = data => {
+  const handleSaveData = async data => {
     const newData = { ...brand, ...data };
     if (isEqualObject(brand, newData)) {
       makeToast(content.form.nothingChange, toastType.info);
@@ -86,68 +84,72 @@ const BrandForm = ({ brand, handleBack }) => {
 
     if (promise) {
       promise
-        .then(result => {
+        .then(async result => {
           updateBrand.logo = result;
-          brandService.update(dispatch, updateBrand, brand.id, accessToken);
+          await brandService.update(
+            dispatch,
+            updateBrand,
+            brand.id,
+            accessToken
+          );
           handleBack();
         })
         .catch(err => makeToast(content.error.upload, toastType.error));
     } else {
-      brandService.update(dispatch, updateBrand, brand.id, accessToken);
+      await brandService.update(dispatch, updateBrand, brand.id, accessToken);
       handleBack();
     }
   };
 
-  const renderForm = (
-    <Form
-      handleSubmit={handleSubmit}
-      submitAction={brand ? handleSaveData : handleCreateData}
-      cancelAction={handleBack}
-    >
-      <TextInput
-        label={content.form.name}
-        register={register}
-        errors={errors}
-        attribute="name"
-        defaultValue={brand?.name}
-        placeholder="ASUS, ACER, DELL, ..."
-        required
-        errorMessage={content.error.name}
-      />
-      <TextInput
-        label={content.form.country}
-        register={register}
-        errors={errors}
-        attribute="country"
-        defaultValue={brand?.country}
-        placeholder="China, USA, ..."
-        required
-        errorMessage={content.error.country}
-      />
-      <TextInput
-        label={content.form.establishDate}
-        register={register}
-        errors={errors}
-        type="date"
-        attribute="establishDate"
-        defaultValue={new Date(brand?.establishDate || '2000-01-01')
-          .toISOString()
-          .slice(0, 10)}
-      />
-      <InputImage
-        label={content.form.logo}
-        control={control}
-        errors={errors}
-        name="logo"
-        defaultValue={brand?.logo}
-        required
-      />
-    </Form>
-  );
-
   return (
     <ModalForm object={brand} disabledFooter>
-      {renderForm}
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={brand ? handleSaveData : handleCreateData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <TextInput
+          label={content.form.name}
+          register={register}
+          errors={errors}
+          attribute="name"
+          defaultValue={brand?.name}
+          placeholder="ASUS, ACER, DELL, ..."
+          required
+          errorMessage={content.error.name}
+        />
+        <TextInput
+          label={content.form.country}
+          register={register}
+          errors={errors}
+          attribute="country"
+          defaultValue={brand?.country}
+          placeholder="China, USA, ..."
+          required
+          errorMessage={content.error.country}
+        />
+        <TextInput
+          label={content.form.establishDate}
+          register={register}
+          errors={errors}
+          type="date"
+          attribute="establishDate"
+          required
+          defaultValue={new Date(brand?.establishDate || '2000-01-01')
+            .toISOString()
+            .slice(0, 10)}
+        />
+        <InputImage
+          label={content.form.logo}
+          control={control}
+          errors={errors}
+          name="logo"
+          defaultValue={brand?.logo}
+          required
+        />
+      </Form>
     </ModalForm>
   );
 };
