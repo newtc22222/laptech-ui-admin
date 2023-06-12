@@ -5,7 +5,6 @@ import _ from 'lodash';
 import CardInformation from './CardInformation';
 import { dashboardStatisticService } from '../../services';
 import { getCurrencyString } from '../../utils';
-import { format } from 'date-fns';
 
 const CardInformationGroup = () => {
   const dispatch = useDispatch();
@@ -47,7 +46,7 @@ const CardInformationGroup = () => {
     <div className="row">
       {cardList
         .map(item => {
-          let value = data[item.key] || '';
+          let value = data[item.key] || '0';
           if (typeof item.format === 'function') {
             value = item.format(value);
           }
