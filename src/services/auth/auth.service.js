@@ -101,7 +101,7 @@ const authService = {
             storage.set('user', result.user);
             storage.set('accessToken', result.accessToken);
             storage.set('refreshToken', result.refreshToken);
-            storage.set('maxAgeToken', maxAgeToken.getTime());
+            storage.set('maxAgeToken', result.maxAgeToken);
 
             dispatch(setCredentials(result)); //auth
             auth = result;
