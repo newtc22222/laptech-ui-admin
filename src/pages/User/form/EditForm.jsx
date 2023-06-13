@@ -21,7 +21,7 @@ const EditForm = ({
   getValues,
   ...rest
 }) => {
-  if (!user || !roleList || !roleOfUser) return <></>;
+  if (!roleOfUser) return <></>;
 
   const configOption = roleList
     ? roleList.map(role => {
@@ -41,7 +41,6 @@ const EditForm = ({
         errors={errors}
         attribute="name"
         defaultValue={user.name}
-        // readOnly={user.name}
         required
         errorMessage={content.error.name}
       />

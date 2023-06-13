@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-
-import { userService } from '../../services';
-
 import {
   ModalConfirm,
   PageHeader,
@@ -13,6 +9,9 @@ import {
 } from '../../components/common';
 import UserTable from './UserTable';
 import UserForm from './UserForm';
+
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+import { userService } from '../../services';
 
 const pageName = 'Người dùng hệ thống';
 const objectName = 'users';
@@ -54,30 +53,18 @@ const User = () => {
     action.showModal(true);
   }, []);
 
-  if (isFetching) {
-    return <Loading />;
-  }
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    category => action.setUpdateMode(category),
+    []
+  );
 
   if (error) {
     return <ServerNotResponse />;
-  }
-
-  function renderFormModal() {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <UserForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-        );
-      case WorkMode.edit:
-        return (
-          <UserForm
-            user={userEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      default:
-        return <></>;
-    }
   }
 
   return (
@@ -87,7 +74,10 @@ const User = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {renderFormModal()}
+      {workMode === WorkMode.create && <UserForm handleBack={handleBack} />}
+      {workMode === WorkMode.edit && (
+        <UserForm user={userEdit} handleBack={handleBack} />
+      )}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
@@ -96,12 +86,15 @@ const User = () => {
           {titleButtonAdd}
         </button>
       </PageHeader>
-      <UserTable
-        userList={userList?.filter(u => u.id !== userInSystem.id)}
-        userTotalRecord={!!userList ? userList.length - 1 : 0}
-        handleSetUpdateMode={user => action.setUpdateMode(user)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      {!userList || isFetching ? (
+        <Loading />
+      ) : (
+        <UserTable
+          userList={userList.filter(u => u.id !== userInSystem.id)}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

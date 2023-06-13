@@ -6,6 +6,8 @@ const content = {
   name: 'tên phân quyền',
   description: 'thông tin chung',
   setting: 'thiết lập',
+  createdDate: 'Ngày tạo',
+  modifiedDate: 'Ngày chỉnh sửa',
   btnEdit: ico_edit,
   btnDel: ico_del,
   form: {

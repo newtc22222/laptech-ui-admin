@@ -1,33 +1,9 @@
 import React from 'react';
 
-import {
-  CheckBox,
-  CheckBoxGroup,
-  SelectedBox,
-  TextInput
-} from '../../../components/validation';
+import { SelectedBox, TextInput } from '../../../components/validation';
 import content from '../content';
 
-const CreateForm = ({
-  roleList,
-  register,
-  control,
-  errors,
-  getValues,
-  ...props
-}) => {
-  if (!roleList) return <></>;
-
-  const configOption = roleList
-    ? roleList.map(role => {
-        return {
-          id: role.id,
-          label: role.name,
-          className: 'mt-1'
-        };
-      })
-    : [];
-
+const CreateForm = ({ register, control, errors, getValues, ...props }) => {
   return (
     <>
       <TextInput

@@ -74,7 +74,8 @@ const BrandTable = ({
           </div>
         );
       },
-      disableFilters: true
+      disableFilters: true,
+      disableSortBy: true
     }
   ];
 

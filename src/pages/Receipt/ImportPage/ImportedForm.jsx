@@ -36,14 +36,8 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
     getValues,
     watch,
     reset,
-    formState: { errors }
+    formState: { errors, isSubmitting, isDirty }
   } = useForm();
-
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      makeToast(content.error.missing, toastType.error);
-    }
-  }, []);
 
   const handleCreateData = data => {
     const newTicket = {
@@ -91,14 +85,16 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
     handleBack();
   };
 
-  const MainForm = () => {
-    if (!productList) return <Loading />;
+  if (!productList) return <></>;
 
-    return (
+  return (
+    <ModalForm object={importTicketEdit} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={importTicketEdit ? handleSaveData : handleCreateData}
         cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
       >
         {importTicketEdit?.id && (
           <TextInput
@@ -170,12 +166,6 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
           }
         />
       </Form>
-    );
-  };
-
-  return (
-    <ModalForm object={importTicketEdit} disabledFooter>
-      <MainForm />
     </ModalForm>
   );
 };

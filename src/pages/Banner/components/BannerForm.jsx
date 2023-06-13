@@ -22,7 +22,7 @@ const BannerForm = ({ banner, handleBack }) => {
     handleSubmit,
     watch,
     reset,
-    formState: { errors }
+    formState: { errors, isDirty, isSubmitting }
   } = useForm();
 
   const handleCreateData = async data => {
@@ -57,6 +57,8 @@ const BannerForm = ({ banner, handleBack }) => {
         handleSubmit={handleSubmit}
         submitAction={banner ? handleSaveData : handleCreateData}
         cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
       >
         <TextInput
           attribute="path"

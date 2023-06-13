@@ -54,30 +54,18 @@ const Role = () => {
     action.showModal(true);
   }, []);
 
-  if (isFetching) {
-    return <Loading />;
-  }
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    category => action.setUpdateMode(category),
+    []
+  );
 
   if (error) {
     return <ServerNotResponse />;
-  }
-
-  function renderFormModal() {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-        );
-      case WorkMode.edit:
-        return (
-          <RoleForm
-            role={roleEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      default:
-        return <></>;
-    }
   }
 
   return (
@@ -87,20 +75,28 @@ const Role = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {renderFormModal()}
+      {workMode === WorkMode.create && <RoleForm handleBack={handleBack} />}
+      {workMode === WorkMode.edit && (
+        <RoleForm role={roleEdit} handleBack={handleBack} />
+      )}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
+          disabled={!roleList || isFetching || error}
         >
           {titleButtonAdd}
         </button>
       </PageHeader>
-      <RoleTable
-        roleList={roleList}
-        handleSetUpdateMode={role => action.setUpdateMode(role)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      {!roleList || isFetching ? (
+        <Loading />
+      ) : (
+        <RoleTable
+          roleList={roleList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

@@ -1,105 +1,105 @@
 import React from 'react';
 
 // TODO: build sortable table
-import { Loading, SortableTable } from '../../components/common';
+import { ReactTable } from '../../components/common';
 import content from './content';
-import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
-
-const fields = [
-  'id',
-  'name',
-  'icon',
-  'title',
-  'description',
-  'createdDate',
-  'modifiedDate'
-];
 
 /**
  * @since 2023-02-13
  */
 const LabelTable = ({
   labelList,
-  labelTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (labelList === null || labelList === undefined) return <Loading />;
-
-  const data = chooseFieldsOfObject(labelList, fields);
-  const config = [
+  const columns = [
     {
-      label: content.id,
-      render: label => label.id,
-      sortValue: label => label.id
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
     },
     {
-      label: content.name,
-      render: label => label.name,
-      sortValue: label => label.name
+      Header: content.name,
+      accessor: 'name'
     },
     {
-      label: content.icon,
-      render: label => label.icon
+      Header: content.icon,
+      accessor: 'icon',
+      disableFilters: true
     },
     {
-      label: content.title,
-      render: label => label.title,
-      sortValue: label => label.title
+      Header: content.title,
+      accessor: 'title'
     },
     {
-      label: content.description,
-      render: label => label.description
+      Header: content.description,
+      accessor: 'description'
     },
     {
-      label: content.sample,
-      render: label => {
+      Header: content.sample,
+      accessor: 'sample',
+      Cell: ({ row }) => {
         return (
           <div
-            title={label.title}
+            title={row.original.title}
             className="d-flex justify-content-center border border-primary rounded-2"
           >
             <div
               className="mx-2"
-              dangerouslySetInnerHTML={{ __html: label.icon }}
+              dangerouslySetInnerHTML={{ __html: row.original.icon }}
             />
-            {label.name}
+            {row.original.name}
           </div>
         );
-      }
+      },
+      disableFilters: true,
+      disableSortBy: true
     },
     {
-      label: content.setting,
-      style: { maxWidth: '5vw' },
-      render: brand => {
+      Header: 'createdDate',
+      accessor: 'createdDate'
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
         return (
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(brand)}
+              onClick={() => handleSetUpdateMode(row.values)}
             >
               {content.btnEdit}
             </button>
             <button
               className="btn btn-danger flex-fill"
-              onClick={() => handleShowDeleteModal(brand.id, brand.name)}
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
             >
               {content.btnDel}
             </button>
           </div>
         );
-      }
+      },
+      disableFilters: true,
+      disableSortBy: true
     }
   ];
 
-  const keyFn = label => label.id;
-
   return (
-    <SortableTable
-      data={data}
-      config={config}
-      keyFn={keyFn}
-      totalRecordData={labelTotalRecord}
+    <ReactTable
+      columns={columns}
+      hiddenColumns={['createdDate', 'modifiedDate']}
+      data={labelList}
+      isSortabled
+      isFiltered
+      hasGlobalFilter
+      isPagination
     />
   );
 };

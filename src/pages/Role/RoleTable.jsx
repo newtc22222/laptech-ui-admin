@@ -1,75 +1,72 @@
 import React from 'react';
 
 // TODO: build sortable table
-import { Loading, SortableTable } from '../../components/common';
-import { chooseFieldsOfObject } from '../../utils';
+import { ReactTable } from '../../components/common';
+import { formatDateTime } from '../../utils';
 import content from './content';
-
-const fields = ['id', 'name', 'description', 'createdDate', 'modifiedDate'];
 
 /**
  * @since 2023-02-13
  */
 const RoleTable = ({
   roleList,
-  roleTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (roleList === null || roleList === undefined) return <Loading />;
-
-  const data = chooseFieldsOfObject(roleList, fields);
-  const config = [
+  const columns = [
     {
-      label: content.id,
-      render: role => role.id,
-      sortValue: role => role.id
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
     },
     {
-      label: content.name,
-      render: role => <div className="fw-bold">{role.name}</div>,
-      sortValue: role => role.name
+      Header: content.name,
+      accessor: 'name',
+      Cell: ({ value }) => <span className="fw-bold">{value}</span>
     },
     {
-      label: content.description,
-      render: role => role.description,
-      sortValue: role => role.description
+      Header: content.description,
+      accessor: 'description'
     },
     {
-      label: content.setting,
-      style: { maxWidth: '5vw' },
-      render: role => {
+      Header: content.createdDate,
+      accessor: 'createdDate',
+      Cell: ({ value }) => formatDateTime(value)
+    },
+    {
+      Header: content.modifiedDate,
+      accessor: 'modifiedDate',
+      Cell: ({ value }) => formatDateTime(value)
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
         return (
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(role)}
+              onClick={() => handleSetUpdateMode(row.values)}
             >
               {content.btnEdit}
             </button>
             <button
               className="btn btn-danger flex-fill"
-              onClick={() => handleShowDeleteModal(role.id, role.name)}
-              disabled={content.fixedRole.includes(role.name)}
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
+              disabled={content.fixedRole.includes(row.values.name)}
             >
               {content.btnDel}
             </button>
           </div>
         );
-      }
+      },
+      disableFilters: true
     }
   ];
 
-  const keyFn = role => role.id;
-
-  return (
-    <SortableTable
-      data={data}
-      config={config}
-      keyFn={keyFn}
-      totalRecordData={roleTotalRecord}
-    />
-  );
+  return <ReactTable columns={columns} data={roleList} isFiltered />;
 };
 
 export default RoleTable;

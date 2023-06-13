@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
@@ -40,44 +40,33 @@ const Category = () => {
     if (!categoryList || error) categoryService.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = (categoryId, categoryName) => {
-    action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
-      () => {
-        categoryService.delete(dispatch, categoryId, accessToken);
-        action.showModal(false);
-      }
-    );
-    action.showModal(true);
-  };
+  const handleShowDeleteModal = useCallback(
+    (categoryId, categoryName) => {
+      action.addModalValue(
+        `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
+        () => {
+          categoryService.delete(dispatch, categoryId, accessToken);
+          action.showModal(false);
+        }
+      );
+      action.showModal(true);
+    },
+    [dispatch, accessToken]
+  );
 
-  if (isFetching) {
-    return <Loading />;
-  }
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    category => action.setUpdateMode(category),
+    []
+  );
 
   if (error) {
     return <ServerNotResponse />;
-  }
-
-  function renderFormModal() {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <CategoryForm
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      case WorkMode.edit:
-        return (
-          <CategoryForm
-            category={categoryEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      default:
-        return <></>;
-    }
   }
 
   return (
@@ -87,21 +76,32 @@ const Category = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {renderFormModal()}
+      {workMode === WorkMode.create && <CategoryForm handleBack={handleBack} />}
+      {workMode === WorkMode.edit && (
+        <CategoryForm
+          category={categoryEdit}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleBack={handleBack}
+        />
+      )}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
+          disabled={!categoryList || isFetching || error}
         >
           {titleButtonAdd}
         </button>
       </PageHeader>
-      <CategoryTable
-        categoryList={categoryList}
-        categoryTotalRecord={categoryList?.length}
-        handleSetUpdateMode={category => action.setUpdateMode(category)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      {!categoryList || isFetching ? (
+        <Loading />
+      ) : (
+        <CategoryTable
+          categoryList={categoryList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

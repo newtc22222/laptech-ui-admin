@@ -11,7 +11,7 @@ const CommentReplyForm = ({ handleBack, ...rest }) => {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting, isDirty }
   } = useForm();
 
   const onSubmit = data => {
@@ -33,6 +33,7 @@ const CommentReplyForm = ({ handleBack, ...rest }) => {
         submitAction={onSubmit}
         cancelAction={handleBack}
         isSubmitting={isSubmitting}
+        isDirty={isDirty}
       >
         <div className="border rounded px-3 py-1 mb-3">
           <figure>

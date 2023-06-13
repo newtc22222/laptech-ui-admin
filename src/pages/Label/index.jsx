@@ -1,9 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-
-import { labelService } from '../../services';
 
 import {
   ModalConfirm,
@@ -13,6 +9,9 @@ import {
 } from '../../components/common';
 import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
+
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+import { labelService } from '../../services';
 
 const pageName = 'Nhãn thuộc tính của sản phẩm';
 const objectName = 'labels';
@@ -42,7 +41,7 @@ const Label = () => {
     if (!labelList || error) labelService.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = (labelId, labelName) => {
+  const handleShowDeleteModal = useCallback((labelId, labelName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${labelName} khỏi hệ thống không?`,
@@ -52,32 +51,20 @@ const Label = () => {
       }
     );
     action.showModal(true);
-  };
+  }, []);
 
-  if (isFetching) {
-    return <Loading />;
-  }
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    category => action.setUpdateMode(category),
+    []
+  );
 
   if (error) {
     return <ServerNotResponse />;
-  }
-
-  function renderFormModal() {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <LabelForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-        );
-      case WorkMode.edit:
-        return (
-          <LabelForm
-            label={labelEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      default:
-        return <></>;
-    }
   }
 
   return (
@@ -87,7 +74,10 @@ const Label = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {renderFormModal()}
+      {workMode === WorkMode.create && <LabelForm handleBack={handleBack} />}
+      {workMode === WorkMode.edit && (
+        <LabelForm label={labelEdit} handleBack={handleBack} />
+      )}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
@@ -96,12 +86,15 @@ const Label = () => {
           {titleButtonAdd}
         </button>
       </PageHeader>
-      <LabelTable
-        labelList={labelList}
-        labelTotalRecord={labelList?.length}
-        handleSetUpdateMode={label => action.setUpdateMode(label)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      {!labelList || isFetching ? (
+        <Loading />
+      ) : (
+        <LabelTable
+          labelList={labelList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

@@ -166,7 +166,7 @@ const ReactTable = ({
         </tbody>
       </table>
       {isPagination && (
-        <div className="d-flex flex-row gap-2">
+        <div className="d-flex flex-row gap-3">
           <div className="d-flex align-items-center">{`Page ${
             Number(pageIndex) + 1
           } of ${pageCount}`}</div>
