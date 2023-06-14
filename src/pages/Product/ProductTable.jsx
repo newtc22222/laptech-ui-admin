@@ -1,10 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { DropdownMenu, Loading, SortableTable } from '../../components/common';
+import { DropdownMenu, ReactTable } from '../../components/common';
 import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
 import { getCurrencyString } from '../../utils/formatCurency';
 import content from './content';
+import SelectMultipleFilter from '../../components/common/filter/ColumnFilter/SearchMultipleFilter';
 
 const fields = [
   'id',
@@ -24,106 +25,111 @@ function ProductTable({
   productList,
   brandList,
   categoryList,
-  productTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal,
   ...props
 }) {
-  if (!productList || !brandList || !categoryList) return <Loading />;
-
-  const data = chooseFieldsOfObject(productList, fields);
-  const config = [
+  const columns = [
     {
-      label: content.id,
-      render: product => <div className="text-wrap">{product.id}</div>,
-      sortValue: product => product.id
+      Header: content.id,
+      accessor: 'id'
     },
     {
-      label: content.name,
-      render: product => <div className="text-wrap">{product.name}</div>,
-      sortValue: product => product.name
+      Header: content.name,
+      accessor: 'name'
     },
     {
-      label: content.brand,
-      render: product => {
-        const brand = brandList.filter(b => b.id === product.brandId)[0];
-        return <div className="fw-bold text-center">{brand?.name || ''}</div>;
-      },
-      sortValue: product => {
-        const brand = brandList.filter(b => b.id === product.brandId)[0];
-        return brand?.name || '';
-      }
-    },
-    {
-      label: content.category,
-      render: product => {
-        const category = categoryList.filter(
-          c => c.id === product.categoryId
-        )[0];
-        return (
-          <div className="fw-bold text-center">{category?.name || ''}</div>
-        );
-      },
-      sortValue: product => {
-        const category = categoryList.filter(
-          c => c.id === product.categoryId
-        )[0];
-        return category?.name || '';
-      }
-    },
-    {
-      label: content.releasedDate,
-      render: product => (
-        <div className="text-center">{product.releasedDate}</div>
+      Header: content.brand,
+      accessor: 'brandId',
+      Cell: ({ value }) => (
+        <span className="fw-bold">
+          {brandList.find(brand => brand.id === value)?.name || ''}
+        </span>
       ),
-      sortValue: product => product.releasedDate
+      Filter: SelectMultipleFilter,
+      filter: 'includes'
     },
     {
-      label: content.quantityInStock,
-      render: product => {
-        const quantity = product.quantityInStock || 0;
+      Header: content.category,
+      accessor: 'categoryId',
+      Cell: ({ value }) => (
+        <span className="fw-bold">
+          {categoryList.find(category => category.id === value)?.name || ''}
+        </span>
+      ),
+      Filter: SelectMultipleFilter,
+      filter: 'includes'
+    },
+    {
+      Header: content.releasedDate,
+      accessor: 'releasedDate'
+    },
+    {
+      Header: content.quantityInStock,
+      accessor: 'quantityInStock',
+      Cell: ({ value }) => {
         return (
           <div
             className={classNames('fw-bold text-center', {
-              'text-primary': quantity > 3,
-              'text-danger': quantity <= 3
+              'text-primary': value > 3,
+              'text-danger': value <= 3
             })}
           >
-            {product.quantityInStock}
+            {value}
+          </div>
+        );
+      }
+    },
+    {
+      Header: content.listedPrice,
+      accessor: 'listedPrice',
+      Cell: ({ value }) => getCurrencyString(value, 'vi-VN', 'VND')
+    },
+    {
+      Header: content.form.specifications,
+      accessor: 'specifications'
+    },
+    {
+      Header: content.form.descriptionDetail,
+      accessor: 'descriptionDetail'
+    },
+    {
+      Header: 'createdDate',
+      accessor: 'createdDate'
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
+        return (
+          <div className="d-flex flex-column gap-1">
+            <DropdownMenu
+              className="flex-fill"
+              config={getConfigMenu(row.values)}
+            >
+              {content.btnEdit}
+            </DropdownMenu>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
+            >
+              {content.btnDel}
+            </button>
           </div>
         );
       },
-      sortValue: product => product.quantityInStock
-    },
-    {
-      label: content.listedPrice,
-      render: product => (
-        <div className="text-center">
-          {getCurrencyString(product.listedPrice, 'vi-VN', 'VND')}
-        </div>
-      ),
-      sortValue: product => product.listedPrice
-    },
-    {
-      label: content.setting,
-      style: { maxWidth: '5vw' },
-      render: product => (
-        <div className="d-flex flex-column gap-1">
-          <DropdownMenu className="flex-fill" config={getConfigMenu(product)}>
-            {content.btnEdit}
-          </DropdownMenu>
-          <button
-            className="btn btn-danger flex-fill"
-            onClick={() => handleShowDeleteModal(product.id, product.name)}
-          >
-            {content.btnDel}
-          </button>
-        </div>
-      )
+      disableFilters: true,
+      disableSortBy: true
     }
   ];
 
-  function getConfigMenu(product) {
+  const getConfigMenu = product => {
     const configMenu = [
       {
         label: content.menu.basicInformation,
@@ -150,16 +156,21 @@ function ProductTable({
       }
     ];
     return configMenu;
-  }
-
-  const keyFn = product => product.id;
+  };
 
   return (
-    <SortableTable
-      data={data}
-      config={config}
-      keyFn={keyFn}
-      totalRecordData={productTotalRecord}
+    <ReactTable
+      columns={columns}
+      hiddenColumns={[
+        'specifications',
+        'descriptionDetail',
+        'createdDate',
+        'modifiedDate'
+      ]}
+      data={productList}
+      isFiltered
+      isSortabled
+      isPagination
     />
   );
 }

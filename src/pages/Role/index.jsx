@@ -60,7 +60,7 @@ const Role = () => {
   );
 
   const handleSetUpdateMode = useCallback(
-    category => action.setUpdateMode(category),
+    role => action.setUpdateMode(role),
     []
   );
 

@@ -60,7 +60,7 @@ const Discount = () => {
   );
 
   const handleSetUpdateMode = useCallback(
-    category => action.setUpdateMode(category),
+    discount => action.setUpdateMode(discount),
     []
   );
 

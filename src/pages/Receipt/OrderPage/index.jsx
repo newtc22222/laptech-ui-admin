@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 
@@ -17,6 +17,8 @@ import useWorkspace, { WorkMode } from '../../../hooks/useWorkspace';
 import { invoiceService, userService } from '../../../services';
 import { getUpdateByUserInSystem, makeToast, toastType } from '../../../utils';
 import content from './content';
+
+const countdownTime = 20 * 1000;
 
 const Invoice = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
@@ -40,44 +42,61 @@ const Invoice = () => {
     isUserError
   } = useSelector(state => state['users']);
 
-  useEffect(() => {
-    invoiceService.getAll(dispatch, accessToken);
+  useEffect(async () => {
+    await invoiceService.getAll(dispatch, accessToken);
     if (!userList || isUserError) userService.getAll(dispatch, accessToken);
   }, [dispatch, accessToken]);
 
-  if (!invoiceList || isFetching || isUserFetching) return <Loading />;
-  if (error || isUserError) return <ServerNotResponse />;
+  const handleGetAllInvoice = useCallback(
+    () => invoiceService.getAll(dispatch, accessToken),
+    [dispatch, accessToken]
+  );
 
-  const handleShowDeleteModal = invoiceId => {
-    action.addModalValue(
-      `Xác nhận xoá ${content.pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} có mã ${invoiceId} khỏi hệ thống không?`,
-      () => {
-        invoiceService.delete(dispatch, invoiceId, accessToken);
-        action.showModal(false);
-      }
-    );
-    action.showModal(true);
-  };
+  const handleShowDeleteModal = useCallback(
+    invoiceId => {
+      action.addModalValue(
+        `Xác nhận xoá ${content.pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} có mã ${invoiceId} khỏi hệ thống không?`,
+        () => {
+          invoiceService.delete(dispatch, invoiceId, accessToken);
+          action.showModal(false);
+        }
+      );
+      action.showModal(true);
+    },
+    [dispatch, accessToken]
+  );
 
-  const configData = Object.keys(content.status).map(tab => {
-    const invoiceListOfTab = invoiceList?.filter(i => i.orderStatus === tab);
-    return {
-      key: tab.toLowerCase(),
-      title: content.status[tab],
-      quantity: invoiceList.filter(i => i.orderStatus === tab).length,
-      body: (
-        <InvoiceTable
-          invoiceList={invoiceListOfTab}
-          userList={userList}
-          handleSetUpdateMode={invoice => action.setUpdateMode(invoice)}
-          handleShowDeleteModal={handleShowDeleteModal}
-        />
-      )
-    };
-  });
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
 
-  function renderOption(item) {
+  const configData = useMemo(
+    () =>
+      Object.keys(content.status).map(tab => {
+        const invoiceListOfTab = invoiceList?.filter(
+          i => i.orderStatus === tab
+        );
+        return {
+          key: tab.toLowerCase(),
+          title: content.status[tab],
+          quantity:
+            invoiceList?.filter(i => i.orderStatus === tab)?.length || 0,
+          body: (
+            <InvoiceTable
+              invoiceList={invoiceListOfTab}
+              userList={userList}
+              handleSetUpdateMode={invoice => action.setUpdateMode(invoice)}
+              handleShowDeleteModal={handleShowDeleteModal}
+            />
+          )
+        };
+      }),
+    [invoiceList]
+  );
+
+  const renderOption = item => {
     const status = item?.orderStatus;
 
     function changeStatus(newStatus) {
@@ -194,7 +213,9 @@ const Invoice = () => {
     };
 
     return <div className="d-flex gap-2">{otherStatus()}</div>;
-  }
+  };
+
+  if (error || isUserError) return <ServerNotResponse />;
 
   return (
     <div>
@@ -208,7 +229,7 @@ const Invoice = () => {
           className="modal-xl"
           title={content.invoice}
           titleCancel="Trở lại"
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
+          handleBack={handleBack}
           renderOption={renderOption(invoiceEdit)}
         >
           <ItemBox
@@ -221,19 +242,31 @@ const Invoice = () => {
         <div className="d-flex gap-2">
           <CountdownRefresh
             isPause
-            countdownTime={1000 * 20}
-            handleChange={() => invoiceService.getAll(dispatch, accessToken)}
+            countdownTime={countdownTime}
+            handleChange={handleGetAllInvoice}
           />
           <button
             type="button"
-            onClick={() => invoiceService.getAll(dispatch, accessToken)}
+            onClick={handleGetAllInvoice}
             className="btn btn-primary"
+            disabled={
+              !invoiceList ||
+              isFetching ||
+              error ||
+              !userList ||
+              isUserFetching ||
+              isUserError
+            }
           >
             {content.titleBtnReload}
           </button>
         </div>
       </PageHeader>
-      <TabList configData={configData} />
+      {!invoiceList || isFetching || isUserFetching || !userList ? (
+        <Loading />
+      ) : (
+        <TabList configData={configData} />
+      )}
     </div>
   );
 };

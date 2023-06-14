@@ -59,7 +59,7 @@ const User = () => {
   );
 
   const handleSetUpdateMode = useCallback(
-    category => action.setUpdateMode(category),
+    user => action.setUpdateMode(user),
     []
   );
 

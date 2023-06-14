@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
@@ -46,47 +46,34 @@ const ImportPage = () => {
     importProductService.getAll(dispatch, accessToken); // refresh when mount
   }, [dispatch, accessToken]);
 
-  const handleShowDeleteModal = importId => {
-    action.addModalValue(
-      `Xác nhận xoá ${content.pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} số ${importId} khỏi hệ thống không?`,
-      () => {
-        importProductService.delete(dispatch, importId, accessToken);
-        action.showModal(false);
-      }
-    );
-    action.showModal(true);
-  };
+  const handleShowDeleteModal = useCallback(
+    importId => {
+      action.addModalValue(
+        `Xác nhận xoá ${content.pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} số ${importId} khỏi hệ thống không?`,
+        () => {
+          importProductService.delete(dispatch, importId, accessToken);
+          action.showModal(false);
+        }
+      );
+      action.showModal(true);
+    },
+    [dispatch, accessToken]
+  );
 
-  if (isFetching || isProductFetching) {
-    return <Loading />;
-  }
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    category => action.setUpdateMode(category),
+    []
+  );
 
   if (error || isProductError) {
     return <ServerNotResponse />;
   }
-
-  const EditFormModal = () => {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <ImportedForm
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-            productList={productList}
-          />
-        );
-      case WorkMode.edit:
-        return (
-          <ImportedForm
-            importTicketEdit={importTickerEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-            productList={productList}
-          />
-        );
-      default:
-        return <></>;
-    }
-  };
 
   return (
     <>
@@ -95,24 +82,43 @@ const ImportPage = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      <EditFormModal />
+      {workMode === WorkMode.create && (
+        <ImportedForm productList={productList} handleBack={handleBack} />
+      )}
+      {workMode === WorkMode.edit && (
+        <ImportedForm
+          importTicketEdit={importTickerEdit}
+          productList={productList}
+          handleBack={handleBack}
+        />
+      )}
       <PageHeader pageName={content.pageName}>
         <button
           type="button"
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
-          disabled={!importList || !productList}
+          disabled={
+            !importList ||
+            !productList ||
+            isFetching ||
+            isProductFetching ||
+            error ||
+            isProductError
+          }
         >
           {content.titleBtnAdd}
         </button>
       </PageHeader>
-      <ImportedTable
-        importTicketList={importList}
-        importTicketTotalRecord={importList?.length || 0}
-        productList={productList}
-        handleSetUpdateMode={importTicket => action.setUpdateMode(importTicket)}
-        handleShowDeleteModal={handleShowDeleteModal}
-      />
+      {isFetching || !importList || isProductFetching || !productList ? (
+        <Loading />
+      ) : (
+        <ImportedTable
+          importTicketList={importList}
+          productList={productList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </>
   );
 };

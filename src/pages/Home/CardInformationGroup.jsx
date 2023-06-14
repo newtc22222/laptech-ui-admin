@@ -42,6 +42,8 @@ const CardInformationGroup = () => {
 
   const color = _.shuffle(['primary', 'success', 'warning', 'info']);
 
+  if (!data) return <></>;
+
   return (
     <div className="row">
       {cardList

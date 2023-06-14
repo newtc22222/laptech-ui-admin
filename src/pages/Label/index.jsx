@@ -59,7 +59,7 @@ const Label = () => {
   );
 
   const handleSetUpdateMode = useCallback(
-    category => action.setUpdateMode(category),
+    label => action.setUpdateMode(label),
     []
   );
 
