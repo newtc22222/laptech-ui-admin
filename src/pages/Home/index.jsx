@@ -27,7 +27,7 @@ function DashBoard() {
           <button
             type="button"
             className="btn btn-sm btn-outline-secondary"
-            onClick={() => exportService.test(accessToken, dispatch)}
+            onClick={() => exportService.csv(accessToken, dispatch, 'brands')}
           >
             Export data
           </button>
