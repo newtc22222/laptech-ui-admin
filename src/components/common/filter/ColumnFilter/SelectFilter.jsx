@@ -19,7 +19,7 @@ const SelectFilter = ({
         value={filterValue}
         onChange={e => setFilter(e.target.value || undefined)}
       >
-        <option value="">{rest.label?.all || 'All'}</option>
+        <option value="">{rest.label?.all || 'ALL'}</option>
         {options.map((option, idx) => (
           <option key={idx} value={option}>
             {option}

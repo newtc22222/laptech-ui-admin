@@ -34,7 +34,8 @@ function CategoryTable({
           style={{ maxWidth: '200px' }}
         />
       ),
-      disableFilters: true
+      disableFilters: true,
+      disableSortBy: true
     },
     {
       Header: 'createdDate',
@@ -52,7 +53,7 @@ function CategoryTable({
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(row.values)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>

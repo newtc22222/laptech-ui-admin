@@ -30,13 +30,13 @@ const RoleTable = ({
     },
     {
       Header: content.createdDate,
-      accessor: 'createdDate',
-      Cell: ({ value }) => formatDateTime(value)
+      id: 'createdDate',
+      accessor: row => formatDateTime(row.createdDate)
     },
     {
       Header: content.modifiedDate,
-      accessor: 'modifiedDate',
-      Cell: ({ value }) => formatDateTime(value)
+      id: 'modifiedDate',
+      accessor: row => formatDateTime(row.modifiedDate)
     },
     {
       Header: content.setting,

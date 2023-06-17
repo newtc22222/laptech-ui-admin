@@ -54,9 +54,7 @@ function InvoiceTable({
       Cell: ({ row }) => (
         <button
           className="btn btn-outline-secondary text-uppercase"
-          onClick={() => {
-            handleSetUpdateMode(row.values);
-          }}
+          onClick={() => handleSetUpdateMode(row.original)}
         >
           {content.btnShow}
         </button>

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { ReactTable } from '../../components/common';
-// import { SelectFilter } from '../../components/common/filter/ColumnFilter';
+import { SelectFilter } from '../../components/common/filter/ColumnFilter';
 import content from './content';
 
 /**
@@ -25,20 +25,15 @@ const UserTable = ({
     },
     {
       Header: content.phone,
-      accessor: 'phone'
+      accessor: 'phone',
+      disableSortBy: true
     },
     {
       Header: content.gender,
-      accessor: 'gender',
-      Cell: ({ value }) => content.genderVietsub[value],
-      sortType: (rowA, rowB) => {
-        return content.genderVietsub[rowA.values.gender].localeCompare(
-          content.genderVietsub[rowB.values.gender]
-        );
-      },
-      disableFilters: true
-      // Filter: SelectFilter,
-      // filter: 'equals'
+      id: 'gender',
+      accessor: row => content.genderVietsub[row.gender],
+      Filter: SelectFilter,
+      filter: 'equals'
     },
     {
       Header: content.form.dob,
@@ -46,20 +41,21 @@ const UserTable = ({
     },
     {
       Header: content.status,
-      accessor: 'active',
-      Cell: ({ value }) => (
+      id: 'active',
+      accessor: row =>
+        (row.active ? content.active : content.inactive).toUpperCase(),
+      Cell: ({ row, value }) => (
         <span
-          className={classNames('badge text-uppercase', {
-            'text-bg-success': value,
-            'text-bg-secondary': !value
-          })}
+          className={classNames(
+            'badge',
+            row.original.active ? 'text-bg-success' : 'text-bg-secondary'
+          )}
         >
-          {value ? content.active : content.inactive}
+          {value}
         </span>
       ),
-      sortType: (rowA, rowB) =>
-        Number(rowA.values.active) - Number(rowB.values.active),
-      disableFilters: true
+      Filter: SelectFilter,
+      filter: 'equals'
     },
     {
       Header: 'createdDate',
@@ -77,7 +73,7 @@ const UserTable = ({
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(row.values)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>

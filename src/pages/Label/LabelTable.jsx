@@ -71,7 +71,7 @@ const LabelTable = ({
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(row.values)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>
@@ -95,7 +95,7 @@ const LabelTable = ({
     <ReactTable
       columns={columns}
       hiddenColumns={['createdDate', 'modifiedDate']}
-      data={labelList}
+      data={_.sortBy(labelList, ['id'])}
       isSortabled
       isFiltered
       hasGlobalFilter

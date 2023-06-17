@@ -5,6 +5,10 @@ import { ReactTable } from '../../../components/common';
 import { formatDateTime, getCurrencyString } from '../../../utils';
 import content from './content';
 import SelectMultipleFilter from '../../../components/common/filter/ColumnFilter/SearchMultipleFilter';
+import {
+  NumberCompareFilter,
+  NumberRangeFilter
+} from '../../../components/common/filter/ColumnFilter';
 
 const ImportedTable = ({
   importTicketList,
@@ -32,27 +36,29 @@ const ImportedTable = ({
     },
     {
       Header: content.quantity,
-      accessor: 'quantity'
+      accessor: 'quantity',
+      Filter: NumberCompareFilter,
+      filter: 'compare'
     },
     {
       Header: content.price,
       accessor: 'importedPrice',
-      Cell: ({ value }) => getCurrencyString(value, 'vi-VN', 'VND')
+      Cell: ({ value }) => getCurrencyString(value, 'vi-VN', 'VND'),
+      Filter: NumberRangeFilter,
+      filter: 'between'
     },
     {
       Header: content.total,
-      accessor: 'total',
-      Cell: ({ row }) =>
-        getCurrencyString(
-          row.values.quantity * row.values.importedPrice,
-          'vi-VN',
-          'VND'
-        )
+      id: 'total',
+      accessor: row => row.quantity * row.importedPrice,
+      Cell: ({ value }) => getCurrencyString(value, 'vi-VN', 'VND'),
+      Filter: NumberRangeFilter,
+      filter: 'between'
     },
     {
       Header: content.date,
-      accessor: 'importedDate',
-      Cell: ({ value }) => formatDateTime(value)
+      id: 'importedDate',
+      accessor: row => formatDateTime(row['importedDate'])
     },
     {
       Header: 'createdDate',
@@ -70,7 +76,7 @@ const ImportedTable = ({
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(row.values)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>

@@ -11,6 +11,8 @@ const Form = ({
   handleSubmit,
   submitAction,
   cancelAction,
+  isSubmitting,
+  isDirty,
   ...rest
 }) => {
   return (
@@ -21,15 +23,15 @@ const Form = ({
           <button
             className="btn btn-primary"
             type="submit"
-            disabled={rest.isSubmitting || !rest.isDirty}
+            disabled={isSubmitting || !isDirty}
           >
-            {rest.isSubmitting ? titleBtnConfỉmIsSubmitting : titleBtnConfirm}
+            {isSubmitting ? titleBtnConfỉmIsSubmitting : titleBtnConfirm}
           </button>
           <button
             className="btn btn-secondary"
             type="button"
             onClick={cancelAction}
-            disabled={rest.isSubmitting}
+            disabled={isSubmitting}
           >
             {titleBtnCancel}
           </button>

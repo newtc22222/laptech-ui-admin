@@ -2,7 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { ReactTable } from '../../components/common';
-import { SelectFilter } from '../../components/common/filter/ColumnFilter';
+import {
+  NumberCompareFilter,
+  SelectFilter
+} from '../../components/common/filter/ColumnFilter';
 import { formatDateTime } from '../../utils';
 import content from './content';
 
@@ -41,33 +44,46 @@ const DiscountTable = ({
     },
     {
       Header: content.rate,
-      accessor: 'rate',
+      id: 'rate',
+      accessor: row => row.rate * 100,
       Cell: ({ value }) => (
         <div
           className={classNames('text-center fw-bold', {
-            'text-info': value > 0.1,
-            'text-warning': value > 0.3,
-            'text-danger': value > 0.5
+            'text-info': value > 10,
+            'text-warning': value > 30,
+            'text-danger': value > 50
           })}
         >
-          {value * 100}
+          {value}
         </div>
-      )
+      ),
+      Filter: NumberCompareFilter,
+      filter: 'compare'
     },
     {
       Header: content.maxAmount,
       accessor: 'maxAmount',
-      Cell: ({ value }) => <div className="text-center">{value}</div>
+      Cell: ({ value }) => <div className="text-center">{value}</div>,
+      Filter: NumberCompareFilter,
+      filter: 'compare'
     },
     {
       Header: content.appliedDate,
-      accessor: 'appliedDate',
-      Cell: ({ value }) => formatDateTime(value)
+      accessor: row => formatDateTime(row['appliedDate']),
+      sortType: (rowA, rowB) => {
+        const dateA = new Date(rowA.original.appliedDate).getTime();
+        const dateB = new Date(rowB.original.appliedDate).getTime();
+        return dateA - dateB;
+      }
     },
     {
       Header: content.endedDate,
-      accessor: 'endedDate',
-      Cell: ({ value }) => formatDateTime(value)
+      accessor: row => formatDateTime(row['endedDate']),
+      sortType: (rowA, rowB) => {
+        const dateA = new Date(rowA.original.endedDate).getTime();
+        const dateB = new Date(rowB.original.endedDate).getTime();
+        return dateA - dateB;
+      }
     },
     {
       Header: 'createdDate',
@@ -85,7 +101,7 @@ const DiscountTable = ({
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(row.values)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>

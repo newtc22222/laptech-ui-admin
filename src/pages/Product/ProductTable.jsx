@@ -2,24 +2,12 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { DropdownMenu, ReactTable } from '../../components/common';
-import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
+import {
+  NumberRangeFilter,
+  SearchMultipleFilter
+} from '../../components/common/filter/ColumnFilter';
 import { getCurrencyString } from '../../utils/formatCurency';
 import content from './content';
-import SelectMultipleFilter from '../../components/common/filter/ColumnFilter/SearchMultipleFilter';
-
-const fields = [
-  'id',
-  'name',
-  'brandId',
-  'categoryId',
-  'releasedDate',
-  'quantityInStock',
-  'listedPrice',
-  'specifications',
-  'descriptionDetail',
-  'createdDate',
-  'modifiedDate'
-];
 
 function ProductTable({
   productList,
@@ -40,24 +28,21 @@ function ProductTable({
     },
     {
       Header: content.brand,
-      accessor: 'brandId',
-      Cell: ({ value }) => (
-        <span className="fw-bold">
-          {brandList.find(brand => brand.id === value)?.name || ''}
-        </span>
-      ),
-      Filter: SelectMultipleFilter,
+      id: 'brandId',
+      accessor: row =>
+        brandList.find(brand => brand.id === row.brandId)?.name || '',
+      Cell: ({ value }) => <span className="fw-bold">{value}</span>,
+      Filter: SearchMultipleFilter,
       filter: 'includes'
     },
     {
       Header: content.category,
-      accessor: 'categoryId',
-      Cell: ({ value }) => (
-        <span className="fw-bold">
-          {categoryList.find(category => category.id === value)?.name || ''}
-        </span>
-      ),
-      Filter: SelectMultipleFilter,
+      id: 'categoryId',
+      accessor: row =>
+        categoryList.find(category => category.id === row.categoryId)?.name ||
+        '',
+      Cell: ({ value }) => <span className="fw-bold">{value}</span>,
+      Filter: SearchMultipleFilter,
       filter: 'includes'
     },
     {
@@ -83,7 +68,9 @@ function ProductTable({
     {
       Header: content.listedPrice,
       accessor: 'listedPrice',
-      Cell: ({ value }) => getCurrencyString(value, 'vi-VN', 'VND')
+      Cell: ({ value }) => getCurrencyString(value, 'vi-VN', 'VND'),
+      Filter: NumberRangeFilter,
+      filter: 'between'
     },
     {
       Header: content.form.specifications,
@@ -109,7 +96,7 @@ function ProductTable({
           <div className="d-flex flex-column gap-1">
             <DropdownMenu
               className="flex-fill"
-              config={getConfigMenu(row.values)}
+              config={getConfigMenu(row.original)}
             >
               {content.btnEdit}
             </DropdownMenu>

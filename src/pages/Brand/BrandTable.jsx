@@ -41,7 +41,8 @@ const BrandTable = ({
       Cell: ({ row, value }) => (
         <img alt={row.values.name} src={value} className="img-thumbnail" />
       ),
-      disableFilters: true
+      disableFilters: true,
+      disableSortBy: true
     },
     {
       Header: 'createdDate',
@@ -59,7 +60,7 @@ const BrandTable = ({
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(row.values)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>

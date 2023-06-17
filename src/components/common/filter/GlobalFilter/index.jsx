@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useAsyncDebounce } from 'react-table';
 
-const GlobalFilter = ({ filter, setFilter, ...rest }) => {
+const GlobalFilter = ({ filter, setFilter, debounce, ...rest }) => {
   const [currentValue, setCurrentValue] = useState(filter);
 
   const handleChange = useAsyncDebounce(value => {
     setFilter(value || undefined);
-  }, 1500);
+  }, debounce);
 
   return (
     <div className="input-group">

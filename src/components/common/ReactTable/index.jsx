@@ -20,6 +20,7 @@ const ReactTable = ({
   isSortabled = false,
   isFiltered = false,
   hasGlobalFilter = false,
+  delayGlobalFilter = 2000,
   isPagination = false,
   ...rest
 }) => {
@@ -34,6 +35,30 @@ const ReactTable = ({
 
   const filterTypes = useMemo(
     () => ({
+      between: (rows, id, filterValue) => {
+        if (filterValue.length === 0 || (!filterValue[0] && !filterValue[1]))
+          return rows;
+        return rows.filter(row => {
+          const rowValue = row.values[id];
+          const start = filterValue[0] || rowValue;
+          const end = filterValue[1] || rowValue;
+          return start <= rowValue && rowValue <= end;
+        });
+      },
+      compare: (rows, id, filterValue) => {
+        if (filterValue.length === 0 || !filterValue[0] || !filterValue[1])
+          return rows;
+        if (filterValue[0] === '>=')
+          return rows.filter(row => row.values[id] >= filterValue[1]);
+        if (filterValue[0] === '==')
+          return rows.filter(row => row.values[id] === filterValue[1]);
+        if (filterValue[0] === '<=')
+          return rows.filter(row => row.values[id] <= filterValue[1]);
+      },
+      equals: (rows, id, filterValue) => {
+        if (filterValue.length === 0) return rows;
+        return rows.filter(row => row.values[id] === filterValue);
+      },
       includes: (rows, id, filterValue) => {
         if (filterValue.length === 0) return rows;
         return rows.filter(row => {
@@ -41,14 +66,21 @@ const ReactTable = ({
           return filterValue.includes(rowValue);
         });
       },
-      between: (rows, id, filterValue) => {
-        if (!filterValue) return rows;
-        if (filterValue.length === 0 || (!filterValue[0] && !filterValue[1]))
-          return rows;
+      textStart: (rows, id, filterValue) => {
+        return rows.filter(row =>
+          row.values[id]
+            .toLowerCase()
+            .startsWith(String(filterValue).toLowerCase())
+        );
+      },
+      datetime: (rows, id, filterValue) => {
+        if (!filterValue[0] && !filterValue[1]) return rows;
+        const start = filterValue[0] ? new Date(filterValue[0]).getTime() : 0;
+        const end = filterValue[1]
+          ? new Date(filterValue[1]).getTime()
+          : Number.MAX_VALUE;
         return rows.filter(row => {
-          const rowValue = row.value[id];
-          const start = filterValue[0] || rowValue;
-          const end = filterValue[1] || rowValue;
+          const rowValue = new Date(row.values[id]).getTime();
           return start <= rowValue && rowValue <= end;
         });
       }
@@ -117,13 +149,17 @@ const ReactTable = ({
     <>
       {hasGlobalFilter && (
         <div className="mb-3">
-          <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+          <GlobalFilter
+            filter={globalFilter}
+            setFilter={setGlobalFilter}
+            debounce={delayGlobalFilter}
+          />
         </div>
       )}
       <table
         {...getTableProps()}
         className={classNames(
-          'table table-bordered table-hover',
+          'table table-bordered table-hover table-striped',
           rest.className
         )}
       >
