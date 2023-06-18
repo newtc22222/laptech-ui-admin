@@ -136,7 +136,17 @@ const authService = {
         if (!recall && typeof recall === 'function') recall(result.accessToken);
       },
       err => {
-        makeToast('Hết hạn đăng nhập, vui lòng đăng nhập lại!', toastType.info);
+        if (err.message === 'Failed to fetch') {
+          makeToast(
+            'Không thể kết nối với Server, vui lòng kiểm tra lại hệ thống!',
+            toastType.info
+          );
+        } else {
+          makeToast(
+            'Hết hạn đăng nhập, vui lòng đăng nhập lại!',
+            toastType.info
+          );
+        }
       }
     );
     return auth;
