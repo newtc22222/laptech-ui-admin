@@ -1,10 +1,37 @@
-.add-scroll {
-  height: calc(100vh - 58px);
-  overflow-y: auto;
+.sidebar {  
+  &.add-scroll {
+    height: calc(100vh - 58px);
+    overflow-y: auto;
+  }
+  &.sticky-menu {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+  &.toggleOpen {
+    width: 300px;
+    animation-name: openSidebar;
+    animation-duration: 1.5s;
+  }
+  &.toggleClose {
+    animation-name: closeSidebar;
+    animation-duration: 1.5s;
+  }
 }
 
-.sticky-menu {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 58px;
+@keyframes closeSidebar {
+  from {
+    width: 300px
+  }
+  to {
+    width: 80px;
+  }
+}
+
+@keyframes openSidebar {
+  from {
+    width: 80px
+  }
+  to {
+    width: 300px;
+  }
 }

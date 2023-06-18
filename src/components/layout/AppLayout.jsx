@@ -10,18 +10,16 @@ import Sidebar from './Sidebar';
  */
 function AppLayout() {
   return (
-    <>
+    <div className="d-flex flex-column">
       <Header />
       <ToastContainer />
-      <div className="container-fluid">
-        <div className="row">
-          <Sidebar sidebarClass={'col-auto col-lg-2 px-0'} />
-          <main className="col-auto col-sm-10 col-lg-10 container-md">
-            <Outlet />
-          </main>
-        </div>
+      <div className="d-flex">
+        <Sidebar />
+        <main className="container-fluid">
+          <Outlet />
+        </main>
       </div>
-    </>
+    </div>
   );
 }
 

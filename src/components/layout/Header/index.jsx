@@ -49,7 +49,10 @@ const Header = () => {
   };
 
   return (
-    <header className="navbar navbar-dark bg-dark navbar-expand-sm sticky-top">
+    <header
+      className="navbar navbar-dark bg-dark navbar-expand-sm sticky-top"
+      style={{ height: '58px' }}
+    >
       <div className="container-fluid d-flex flex-wrap">
         <Link
           to="/"

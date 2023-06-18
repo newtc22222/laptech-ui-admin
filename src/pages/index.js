@@ -7,7 +7,7 @@ export { default as Discount } from './Discount';
 export { default as DashBoard } from './Home';
 export { default as FAQ } from './FAQs';
 export { default as Feature } from './Feature';
-export { ImportPage, OrderPage, ViewPage } from './Receipt';
+export { ImportPage, OrderPage } from './Receipt';
 export { default as Label } from './Label';
 export { default as Login } from './Login';
 export { default as Notification } from './Notification';
