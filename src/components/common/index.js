@@ -13,6 +13,7 @@ export { default as SearchBar } from './SearchBar';
 export { default as Tabbed } from './Tabbed';
 export { default as TabList } from './TabList';
 export { default as TextEditor } from './TextEditor';
+export { default as TransferList } from './TransferList';
 
 // Error
 export { PageNotFound, ServerNotResponse, Unauthorization } from './Error';

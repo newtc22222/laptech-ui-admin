@@ -3,9 +3,7 @@ import React from 'react';
 const titleBtnConfỉmIsSubmitting = 'Đang thực thi ...';
 const titleBtnConfirm = 'Lưu thông tin';
 const titleBtnCancel = 'Trở lại';
-/**
- * @param {{children: JSX.Element, handleSubmit: Function, submitAction: Function, cancelAction: Function}}
- */
+
 const Form = ({
   children,
   handleSubmit,

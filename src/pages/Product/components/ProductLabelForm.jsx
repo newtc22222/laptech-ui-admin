@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ModalForm, Loading } from '../../../components/common';
-import { Form, CheckBoxGroup } from '../../../components/validation';
+import { ModalForm, TransferList } from '../../../components/common';
+import { Form } from '../../../components/validation';
 
 import useFetch from '../../../hooks/useFetch';
 import { labelService, productLabelService } from '../../../services';
@@ -13,6 +13,7 @@ import content from '../content';
 const renderOption = label => {
   return (
     <div
+      key={label.id}
       title={label.title}
       className="d-flex justify-content-center border border-primary rounded-2 px-3 py-1"
     >
@@ -23,14 +24,14 @@ const renderOption = label => {
 };
 
 const ProductLabelForm = ({ product, handleBack, ...props }) => {
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const dispatch = useDispatch();
+
   const {
     data: labelList,
     isFetching,
     error
   } = useSelector(state => state['labels']);
-
-  const accessToken = useSelector(state => state.auth.accessToken);
-  const dispatch = useDispatch();
 
   const { data: labelListOfProduct } = useFetch(
     `/products/${product.id}/labels`
@@ -39,16 +40,31 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors }
-  } = useForm();
+    reset,
+    formState: { isDirty, isSubmitting }
+  } = useForm({
+    defaultValues: {
+      labelList: labelListOfProduct || []
+    }
+  });
 
   useEffect(() => {
     if (!labelList || error) labelService.getAll(dispatch);
   }, []);
 
-  if (!labelListOfProduct) return <></>;
+  useEffect(() => {
+    if (labelListOfProduct) {
+      reset({
+        labelList: labelListOfProduct.map(label => ({
+          id: label.id,
+          value: label.name,
+          render: renderOption(label)
+        }))
+      });
+    }
+  }, [labelListOfProduct]);
 
-  const handleSaveData = data => {
+  const handleSaveData = async data => {
     const oldData = labelListOfProduct.map(d => d.id);
     const newData = data.labelList.map(d => d.id);
     const removeLabel = _.differenceWith(oldData, newData, _.isEqual);
@@ -59,7 +75,7 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
       return;
     }
 
-    productLabelService.updateMultiple(
+    await productLabelService.updateMultiple(
       dispatch,
       { addList: addLabel, removeList: removeLabel },
       product.id,
@@ -69,49 +85,42 @@ const ProductLabelForm = ({ product, handleBack, ...props }) => {
     handleBack();
   };
 
-  const MainForm = () => {
-    if (isFetching) return <Loading />;
+  if (!labelListOfProduct || isFetching) return <></>;
 
-    const configOption = labelList
-      ? labelList.map(l => {
-          return {
-            id: l.id,
-            label: l.name + ' ' + l.title,
-            className: 'my-1',
-            render: renderOption(l)
-          };
-        })
-      : [];
-
-    return (
+  return (
+    <ModalForm object={product} title={content.form_label.title} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={handleSaveData}
         cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
       >
-        <CheckBoxGroup
+        <h4 className="mb-3">{product.name}</h4>
+        <Controller
           control={control}
-          errors={errors}
-          className="d-flex flex-column gap-1"
           name="labelList"
-          options={configOption}
-          defaultValue={labelListOfProduct.map(l => {
-            return {
-              id: l.id,
-              label: l.name + ' ' + l.title,
-              className: 'my-1',
-              render: renderOption(l)
-            };
-          })}
-          searchBar
+          // rules={{
+          //   validate: {
+          //     length: options => options.length > 1 || 'fail'
+          //   }
+          // }}
+          render={({ field: { value, onChange } }) => {
+            const optionConfig = labelList.map(label => ({
+              id: label.id,
+              value: label.name,
+              render: renderOption(label)
+            }));
+            return (
+              <TransferList
+                options={optionConfig}
+                choiceList={value}
+                setChoiceList={onChange}
+              />
+            );
+          }}
         />
       </Form>
-    );
-  };
-
-  return (
-    <ModalForm object={product} title={content.form_label.title} disabledFooter>
-      <MainForm />
     </ModalForm>
   );
 };

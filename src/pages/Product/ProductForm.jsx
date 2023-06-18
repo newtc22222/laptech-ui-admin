@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -31,17 +31,20 @@ const ProductForm = ({
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const brandOptions = chooseFieldsOfObject(brandList, ['id', 'name']).map(
-    i => {
-      return { id: i.id, label: i.name };
-    }
+  const brandOptions = useMemo(
+    () =>
+      brandList.map(brand => {
+        return { id: brand.id, label: brand.name };
+      }),
+    []
   );
-  const categoryOptions = chooseFieldsOfObject(categoryList, [
-    'id',
-    'name'
-  ]).map(i => {
-    return { id: i.id, label: i.name };
-  });
+  const categoryOptions = useMemo(
+    () =>
+      categoryList.map(i => {
+        return { id: i.id, label: i.name };
+      }),
+    []
+  );
 
   const {
     control,
@@ -91,125 +94,122 @@ const ProductForm = ({
     handleBack();
   };
 
-  const configContent = useMemo(
-    () => [
-      {
-        header: content.form.basicInformation,
-        body: (
-          <>
-            <div className="row border rounded-2 mx-1 mb-3">
-              <div className="col-6">
-                <SeletedInputBox
-                  name="brand"
-                  control={control}
-                  errors={errors}
-                  label={content.form.brandChoice}
-                  placeholder="Choose brand..."
-                  required
-                  getValues={getValues}
-                  errorMessage=""
-                  defaultValue={
-                    product?.brandId &&
-                    brandOptions.filter(b => b.id === product.brandId)[0]
-                  }
-                  options={brandOptions}
-                />
-              </div>
-              <div className="col-6">
-                <SeletedInputBox
-                  name="category"
-                  control={control}
-                  errors={errors}
-                  label={content.form.categoryChoice}
-                  placeholder="Choose category..."
-                  required
-                  getValues={getValues}
-                  errorMessage=""
-                  defaultValue={
-                    product?.categoryId &&
-                    categoryOptions.filter(b => b.id === product.categoryId)[0]
-                  }
-                  options={categoryOptions}
-                />
-              </div>
+  const configContent = [
+    {
+      header: content.form.basicInformation,
+      body: (
+        <>
+          <div className="row border rounded-2 mx-1 mb-3">
+            <div className="col-6">
+              <SeletedInputBox
+                name="brand"
+                control={control}
+                errors={errors}
+                label={content.form.brandChoice}
+                placeholder="Choose brand..."
+                required
+                getValues={getValues}
+                errorMessage=""
+                defaultValue={
+                  product?.brandId &&
+                  brandOptions.filter(b => b.id === product.brandId)[0]
+                }
+                options={brandOptions}
+              />
             </div>
-            <TextInput
-              attribute="id"
-              label={content.form.id}
-              register={register}
-              errors={errors}
-              defaultValue={product?.id}
-              placeholder="laptop-abc-core-i3-8560U-..."
-              readOnly={product}
-            />
-            <TextInput
-              attribute="name"
-              label={content.form.name}
-              register={register}
-              errors={errors}
-              defaultValue={product?.name}
-              placeholder="Laptop ABC Core i3-8560U/..."
-              required
-              errorMessage={content.error.name}
-            />
-            <TextInput
-              attribute="releasedDate"
-              label={content.form.releasedDate}
-              register={register}
-              errors={errors}
-              getValues={getValues}
-              type="date"
-              className="mt-3"
-              defaultValue={product?.releasedDate}
-              required
-              errorMessage={content.error.releasedDate}
-            />
-            <TextInput
-              attribute="listedPrice"
-              label={content.form.listedPrice}
-              register={register}
-              errors={errors}
-              getValues={getValues}
-              type="number"
-              className="mt-3"
-              defaultValue={product?.listedPrice}
-              min={'0'}
-              required
-              errorMessage={content.error.listedPrice}
-            />
-          </>
-        ),
-        isActive: true
-      },
-      {
-        header: content.form.specifications,
-        body: (
-          <SpecificationTable
-            control={control}
+            <div className="col-6">
+              <SeletedInputBox
+                name="category"
+                control={control}
+                errors={errors}
+                label={content.form.categoryChoice}
+                placeholder="Choose category..."
+                required
+                getValues={getValues}
+                errorMessage=""
+                defaultValue={
+                  product?.categoryId &&
+                  categoryOptions.filter(b => b.id === product.categoryId)[0]
+                }
+                options={categoryOptions}
+              />
+            </div>
+          </div>
+          <TextInput
+            attribute="id"
+            label={content.form.id}
+            register={register}
+            errors={errors}
+            defaultValue={product?.id}
+            placeholder="laptop-abc-core-i3-8560U-..."
+            readOnly={product}
+          />
+          <TextInput
+            attribute="name"
+            label={content.form.name}
+            register={register}
+            errors={errors}
+            defaultValue={product?.name}
+            placeholder="Laptop ABC Core i3-8560U/..."
+            required
+            errorMessage={content.error.name}
+          />
+          <TextInput
+            attribute="releasedDate"
+            label={content.form.releasedDate}
+            register={register}
             errors={errors}
             getValues={getValues}
-            name="specifications"
-            defaultValue={product?.specifications}
+            type="date"
+            className="mt-3"
+            defaultValue={product?.releasedDate}
+            required
+            errorMessage={content.error.releasedDate}
           />
-        ),
-        isActive: !!product?.specifications
-      },
-      {
-        header: content.form.descriptionDetail,
-        body: (
-          <DescriptionBox
-            control={control}
+          <TextInput
+            attribute="listedPrice"
+            label={content.form.listedPrice}
+            register={register}
             errors={errors}
             getValues={getValues}
-            name="descriptionDetail"
-            defaultValue={product?.descriptionDetail}
+            type="number"
+            className="mt-3"
+            defaultValue={product?.listedPrice}
+            min={'0'}
+            required
+            errorMessage={content.error.listedPrice}
           />
-        ),
-        isActive: true
-      }
-    ],
-    [product]
-  );
+        </>
+      ),
+      isActive: true
+    },
+    {
+      header: content.form.specifications,
+      body: (
+        <SpecificationTable
+          control={control}
+          errors={errors}
+          getValues={getValues}
+          name="specifications"
+          defaultValue={product?.specifications}
+        />
+      ),
+      isActive: !!product?.specifications
+    },
+    {
+      header: content.form.descriptionDetail,
+      body: (
+        <DescriptionBox
+          control={control}
+          errors={errors}
+          getValues={getValues}
+          name="descriptionDetail"
+          defaultValue={product?.descriptionDetail}
+        />
+      ),
+      isActive: true
+    }
+  ];
 
   return (
     <ModalForm object={product} disabledFooter>
