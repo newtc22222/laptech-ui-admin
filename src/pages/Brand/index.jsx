@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
@@ -40,42 +40,33 @@ const BrandPage = () => {
   }, []);
 
   // Show delete modal
-  const handleShowDeleteModal = (brandId, brandName) => {
-    action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
-      () => {
-        brandService.delete(dispatch, brandId, accessToken);
-        action.showModal(false);
-      }
-    );
-    action.showModal(true);
-  };
+  const handleShowDeleteModal = useCallback(
+    (brandId, brandName) => {
+      action.addModalValue(
+        `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
+        () => {
+          brandService.delete(dispatch, brandId, accessToken);
+          action.showModal(false);
+        }
+      );
+      action.showModal(true);
+    },
+    [dispatch, accessToken]
+  );
 
-  if (isFetching) {
-    return <Loading />;
-  }
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    brand => action.setUpdateMode(brand),
+    []
+  );
 
   if (error) {
     return <ServerNotResponse />;
-  }
-
-  function renderFormModal() {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-        );
-      case WorkMode.edit:
-        return (
-          <BrandForm
-            brand={brandEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      default:
-        return <></>;
-    }
   }
 
   return (
@@ -85,21 +76,28 @@ const BrandPage = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {renderFormModal()}
+      {workMode === WorkMode.edit && (
+        <BrandForm brand={brandEdit} handleBack={handleBack} />
+      )}
+      {workMode === WorkMode.create && <BrandForm handleBack={handleBack} />}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
+          disabled={!brandList || isFetching || error}
         >
           {titleButtonAdd}
         </button>
       </PageHeader>
-      <BrandTable
-        brandList={brandList}
-        brandTotalRecord={brandList?.length}
-        handleSetUpdateMode={brand => action.setUpdateMode(brand)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      {!brandList || isFetching ? (
+        <Loading />
+      ) : (
+        <BrandTable
+          brandList={brandList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

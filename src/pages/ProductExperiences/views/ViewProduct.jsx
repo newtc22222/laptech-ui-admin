@@ -29,8 +29,6 @@ const ViewProduct = ({ product, handleChangeViewMode, ...rest }) => {
     }
   }, [product]);
 
-  console.log(productDetails);
-
   return (
     <Modal show onHide={handleChangeViewMode} className="modal-xl">
       {productDetails.imageList ? (

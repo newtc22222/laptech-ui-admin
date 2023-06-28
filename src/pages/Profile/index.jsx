@@ -6,11 +6,17 @@ import ChangePasswordForm from './ChangePasswordForm';
 
 const Profile = () => {
   return (
-    <div>
+    <>
       <PageHeader pageName={content.pageName} />
-      <InformationForm />
-      <ChangePasswordForm />
-    </div>
+      <div className="row">
+        <div className="col-6">
+          <InformationForm />
+        </div>
+        <div className="col-5">
+          <ChangePasswordForm />
+        </div>
+      </div>
+    </>
   );
 };
 

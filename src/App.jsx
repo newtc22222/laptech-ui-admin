@@ -1,9 +1,9 @@
 import React from 'react';
-import { RouterProvider } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import { store } from './store';
-import router from './routes';
+import AppRoute from './routes';
 
 import AppProvider from './components/context/AppContext';
 
@@ -14,9 +14,11 @@ import AppProvider from './components/context/AppContext';
 const App = () => {
   return (
     <Provider store={store}>
-      <AppProvider>
-        <RouterProvider router={router} />
-      </AppProvider>
+      <Router>
+        <AppProvider>
+          <AppRoute />
+        </AppProvider>
+      </Router>
     </Provider>
   );
 };

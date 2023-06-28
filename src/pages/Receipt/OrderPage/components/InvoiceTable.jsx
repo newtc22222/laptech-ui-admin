@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SortableTable } from '../../../../components/common';
+import { ReactTable } from '../../../../components/common';
 import { getCurrencyString, formatDateTime } from '../../../../utils';
 import content from '../content';
 
@@ -11,70 +11,69 @@ function InvoiceTable({
   handleShowDeleteModal,
   ...rest
 }) {
-  const configData = [
+  const columns = [
     {
-      label: content.id,
-      render: data => (
-        <div className="text-truncate" style={{ maxWidth: '10vw' }}>
-          {data.id}
-        </div>
+      Header: content.id,
+      accessor: 'id'
+    },
+    {
+      Header: content.userName,
+      accessor: 'userId',
+      Cell: ({ value }) => _.find(userList, { id: value })?.name || ''
+    },
+    {
+      Header: content.address,
+      accessor: 'address'
+    },
+    {
+      Header: content.itemQuantity,
+      accessor: 'paymentAmount',
+      disableFilters: true
+    },
+    {
+      Header: content.totalCost,
+      accessor: 'paymentTotal',
+      Cell: ({ value }) => getCurrencyString(value, 'vi-VN', 'VND')
+    },
+    {
+      Header: 'orderStatus',
+      accessor: 'orderStatus'
+    },
+    {
+      Header: content.dateCreated,
+      accessor: 'createdDate',
+      Cell: ({ value }) => formatDateTime(value)
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: 'setting',
+      accessor: 'setting',
+      Cell: ({ row }) => (
+        <button
+          className="btn btn-outline-secondary text-uppercase"
+          onClick={() => handleSetUpdateMode(row.original)}
+        >
+          {content.btnShow}
+        </button>
       ),
-      sortValue: data => data.id
-    },
-    {
-      label: content.userName,
-      render: data => _.find(userList, { id: data.userId }).name,
-      sortValue: data => _.find(userList, { id: data.userId }).name
-    },
-    {
-      label: content.address,
-      render: data => data.address,
-      sortValue: data => data.address
-    },
-    {
-      label: content.itemQuantity,
-      className: 'text-center',
-      render: data => data.paymentAmount,
-      sortValue: data => data.paymentAmount
-    },
-    {
-      label: content.totalCost,
-      className: 'text-center',
-      render: data => getCurrencyString(data.paymentTotal, 'vi-VN', 'VND'),
-      sortValue: data => data.paymentTotal
-    },
-    {
-      label: content.dateCreated,
-      render: data => formatDateTime(data.createdDate),
-      sortValue: data => data.createdDate
-    },
-    {
-      label: content.setting,
-      className: 'text-center',
-      render: data => {
-        return (
-          <button
-            className="btn btn-outline-secondary text-uppercase"
-            onClick={() => {
-              handleSetUpdateMode(data);
-            }}
-          >
-            {content.btnShow}
-          </button>
-        );
-      }
+      disableFilters: true,
+      disableSortBy: true
     }
   ];
 
   return (
-    <SortableTable
-      data={invoiceList}
-      totalRecordData={invoiceList.length}
-      config={configData}
-      defaultSort={['desc', content.dateCreated]}
-      keyFn={data => data.id}
+    <ReactTable
+      columns={columns}
+      hiddenColumns={['orderStatus', 'modifiedDate']}
+      data={_.sortBy(invoiceList, ['createdDate']).reverse()}
+      isFiltered
+      isSortabled
+      isPagination
     />
   );
 }
 
-export default InvoiceTable;
+export default React.memo(InvoiceTable);

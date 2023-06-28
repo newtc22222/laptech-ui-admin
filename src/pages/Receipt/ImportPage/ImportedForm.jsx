@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import { Loading, ModalForm } from '../../../components/common';
+import { ModalForm } from '../../../components/common';
 import { Form, TextInput } from '../../../components/validation';
 
 import { importProductService } from '../../../services';
@@ -35,17 +35,10 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
     handleSubmit,
     getValues,
     watch,
-    reset,
-    formState: { errors }
+    formState: { errors, isSubmitting, isDirty }
   } = useForm();
 
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      makeToast(content.error.missing, toastType.error);
-    }
-  }, []);
-
-  const handleCreateData = data => {
+  const handleCreateData = async data => {
     const newTicket = {
       productId: data.product[0].id,
       quantity: data.quantity,
@@ -54,12 +47,11 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
       ...getUpdateByUserInSystem()
     };
 
-    importProductService.create(dispatch, newTicket, accessToken);
-    reset();
+    await importProductService.create(dispatch, newTicket, accessToken);
     handleBack();
   };
 
-  const handleSaveData = data => {
+  const handleSaveData = async data => {
     const isNotChange =
       Date.now() - Date.parse(importTicketEdit.importedDate) >
       1000 * 60 * 60 * 24 * 7;
@@ -82,7 +74,7 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
       return;
     }
 
-    importProductService.update(
+    await importProductService.update(
       dispatch,
       { ...newData, ...getUpdateByUserInSystem() },
       importTicketEdit.id,
@@ -91,14 +83,16 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
     handleBack();
   };
 
-  const MainForm = () => {
-    if (!productList) return <Loading />;
+  if (!productList) return <></>;
 
-    return (
+  return (
+    <ModalForm object={importTicketEdit} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={importTicketEdit ? handleSaveData : handleCreateData}
         cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
       >
         {importTicketEdit?.id && (
           <TextInput
@@ -170,12 +164,6 @@ const ImportedForm = ({ importTicketEdit, productList, handleBack }) => {
           }
         />
       </Form>
-    );
-  };
-
-  return (
-    <ModalForm object={importTicketEdit} disabledFooter>
-      <MainForm />
     </ModalForm>
   );
 };

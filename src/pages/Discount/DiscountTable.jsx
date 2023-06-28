@@ -1,122 +1,134 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { Loading, SortableTable } from '../../components/common';
-import { chooseFieldsOfObject, formatDateTime } from '../../utils';
+import { ReactTable } from '../../components/common';
+import {
+  NumberCompareFilter,
+  SelectFilter
+} from '../../components/common/filter/ColumnFilter';
+import { formatDateTime } from '../../utils';
 import content from './content';
-
-const fields = [
-  'id',
-  'code',
-  'appliedType',
-  'rate',
-  'maxAmount',
-  'appliedDate',
-  'endedDate',
-  'createdDate',
-  'modifiedDate'
-];
 
 /**
  * @since 2023-02-13
  */
 const DiscountTable = ({
   discountList,
-  discountTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (discountList === null || discountList === undefined) return <Loading />;
-
-  const data = chooseFieldsOfObject(discountList, fields);
-  const config = [
+  const columns = [
     {
-      label: content.id,
-      render: discount => discount.id,
-      sortValue: discount => discount.id
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
     },
     {
-      label: content.code,
-      render: discount => discount.code,
-      sortValue: discount => discount.code
+      Header: content.code,
+      accessor: 'code'
     },
     {
-      label: content.appliedType,
-      render: discount => (
+      Header: content.appliedType,
+      accessor: 'appliedType',
+      Cell: ({ value }) => (
         <div
           className={classNames('text-center fw-bold', {
-            'text-primary': discount.appliedType === 'PURCHASE'
+            'text-primary': value === 'PURCHASE'
           })}
         >
-          {discount.appliedType}
+          {value}
         </div>
       ),
-      sortValue: discount => discount.appliedType
+      Filter: SelectFilter,
+      filter: 'includes'
     },
     {
-      label: content.rate,
-      render: discount => (
+      Header: content.rate,
+      id: 'rate',
+      accessor: row => row.rate * 100,
+      Cell: ({ value }) => (
         <div
           className={classNames('text-center fw-bold', {
-            'text-info': discount.rate > 0.1,
-            'text-warning': discount.rate > 0.3,
-            'text-danger': discount.rate > 0.5
+            'text-info': value > 10,
+            'text-warning': value > 30,
+            'text-danger': value > 50
           })}
         >
-          {discount.rate * 100}
+          {value}
         </div>
       ),
-      sortValue: discount => discount.rate
+      Filter: NumberCompareFilter,
+      filter: 'compare'
     },
     {
-      label: content.maxAmount,
-      render: discount => (
-        <div className="text-center">{discount.maxAmount}</div>
-      ),
-      sortValue: discount => discount.maxAmount
+      Header: content.maxAmount,
+      accessor: 'maxAmount',
+      Cell: ({ value }) => <div className="text-center">{value}</div>,
+      Filter: NumberCompareFilter,
+      filter: 'compare'
     },
     {
-      label: content.appliedDate,
-      render: discount => formatDateTime(discount.appliedDate),
-      sortValue: discount => discount.appliedDate
+      Header: content.appliedDate,
+      accessor: row => formatDateTime(row['appliedDate']),
+      sortType: (rowA, rowB) => {
+        const dateA = new Date(rowA.original.appliedDate).getTime();
+        const dateB = new Date(rowB.original.appliedDate).getTime();
+        return dateA - dateB;
+      }
     },
     {
-      label: content.endedDate,
-      render: discount => formatDateTime(discount.endedDate),
-      sortValue: discount => discount.endedDate
+      Header: content.endedDate,
+      accessor: row => formatDateTime(row['endedDate']),
+      sortType: (rowA, rowB) => {
+        const dateA = new Date(rowA.original.endedDate).getTime();
+        const dateB = new Date(rowB.original.endedDate).getTime();
+        return dateA - dateB;
+      }
     },
     {
-      label: content.setting,
-      style: { maxWidth: '5vw' },
-      render: discount => {
+      Header: 'createdDate',
+      accessor: 'createdDate'
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
         return (
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(discount)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>
             <button
               className="btn btn-danger flex-fill"
-              onClick={() => handleShowDeleteModal(discount.id, discount.code)}
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.code)
+              }
             >
               {content.btnDel}
             </button>
           </div>
         );
-      }
+      },
+      disableFilters: true,
+      disableSortBy: true
     }
   ];
 
-  const keyFn = discount => discount.id;
-
   return (
-    <SortableTable
-      data={data}
-      config={config}
-      keyFn={keyFn}
-      totalRecordData={discountTotalRecord}
+    <ReactTable
+      columns={columns}
+      hiddenColumns={['createdDate', 'modifiedDate']}
+      data={discountList}
+      isSortabled
+      isFiltered
+      isPagination
     />
   );
 };

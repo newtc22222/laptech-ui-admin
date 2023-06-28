@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -65,10 +65,10 @@ const Login = () => {
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
 
-      if (activeTab.tab === 'login') handleSetActiveTab('home');
+      if (activeTab.subTab === 'login') handleSetActiveTab('home');
 
       const urlActive =
-        activeTab.tab === 'login'
+        activeTab.subTab === 'login'
           ? '/'
           : '/'
               .concat(activeTab.tab)

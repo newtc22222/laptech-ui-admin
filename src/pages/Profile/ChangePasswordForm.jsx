@@ -55,7 +55,7 @@ const ChangePasswordForm = () => {
   };
 
   return (
-    <div className="card w-75 mt-3">
+    <div className="card">
       <div className="card-header text-uppercase fw-bold">
         {content.changePassword}
       </div>

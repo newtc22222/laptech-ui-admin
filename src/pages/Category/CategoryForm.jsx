@@ -22,8 +22,7 @@ const CategoryForm = ({ category, handleBack }) => {
     register,
     control,
     handleSubmit,
-    reset,
-    formState: { errors }
+    formState: { errors, isDirty, isSubmitting }
   } = useForm();
 
   useEffect(() => {
@@ -47,16 +46,15 @@ const CategoryForm = ({ category, handleBack }) => {
     };
 
     promise
-      .then(result => {
+      .then(async result => {
         newCategory.image = result;
-        categoryService.create(dispatch, newCategory, accessToken);
-        reset();
+        await categoryService.create(dispatch, newCategory, accessToken);
         handleBack();
       })
       .catch(err => makeToast(content.error.upload, toastType.error));
   };
 
-  const handleSaveData = data => {
+  const handleSaveData = async data => {
     const newData = { ...category, ...data };
     if (isEqualObject(category, newData)) {
       makeToast(content.form.nothingChange, toastType.info);
@@ -85,9 +83,9 @@ const CategoryForm = ({ category, handleBack }) => {
 
     if (promise) {
       promise
-        .then(result => {
+        .then(async result => {
           updateCategory.image = result;
-          categoryService.update(
+          await categoryService.update(
             dispatch,
             updateCategory,
             category.id,
@@ -97,7 +95,7 @@ const CategoryForm = ({ category, handleBack }) => {
         })
         .catch(err => makeToast(content.error.upload, toastType.error));
     } else {
-      categoryService.update(
+      await categoryService.update(
         dispatch,
         updateCategory,
         category.id,
@@ -107,44 +105,42 @@ const CategoryForm = ({ category, handleBack }) => {
     }
   };
 
-  const renderForm = (
-    <Form
-      handleSubmit={handleSubmit}
-      submitAction={category ? handleSaveData : handleCreateData}
-      cancelAction={handleBack}
-    >
-      <TextInput
-        label={content.form.name}
-        register={register}
-        errors={errors}
-        attribute="name"
-        defaultValue={category?.name}
-        placeholder="Laptop, Screen, Speaker, Keyboard, ..."
-        required
-        errorMessage={content.error.name}
-      />
-      <TextInput
-        label={content.form.description}
-        register={register}
-        errors={errors}
-        attribute="description"
-        defaultValue={category?.description}
-        placeholder="Properties, Status, Base model ?"
-      />
-      <InputImage
-        label={content.form.image}
-        control={control}
-        errors={errors}
-        name="image"
-        defaultValue={category?.image}
-        required
-      />
-    </Form>
-  );
-
   return (
     <ModalForm object={category} disabledFooter>
-      {renderForm}
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={category ? handleSaveData : handleCreateData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <TextInput
+          label={content.form.name}
+          register={register}
+          errors={errors}
+          attribute="name"
+          defaultValue={category?.name}
+          placeholder="Laptop, Screen, Speaker, Keyboard, ..."
+          required
+          errorMessage={content.error.name}
+        />
+        <TextInput
+          label={content.form.description}
+          register={register}
+          errors={errors}
+          attribute="description"
+          defaultValue={category?.description}
+          placeholder="Properties, Status, Base model ?"
+        />
+        <InputImage
+          label={content.form.image}
+          control={control}
+          errors={errors}
+          name="image"
+          defaultValue={category?.image}
+          required
+        />
+      </Form>
     </ModalForm>
   );
 };

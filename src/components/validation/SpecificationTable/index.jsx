@@ -32,7 +32,7 @@ const SpecificationTable = ({
           .filter(row => {
             return !row.attribute || !row.value;
           })
-          .map(row => _.findIndex(rows, row));
+          .map(row => _.findIndex(rows, row) + 1);
         return (
           emptyContent.length < 1 ||
           `${content.error} ${emptyContent.join(',')}`

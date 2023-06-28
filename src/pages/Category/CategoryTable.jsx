@@ -1,91 +1,87 @@
 import React from 'react';
 
 // TODO: build sortable table
-import { Loading, SortableTable } from '../../components/common';
+import { ReactTable } from '../../components/common';
 import content from './content';
-
-import chooseFieldsOfObject from '../../utils/chooseFieldsOfObject';
-
-const fields = [
-  'id',
-  'name',
-  'description',
-  'image',
-  'createdDate',
-  'modifiedDate'
-];
 
 function CategoryTable({
   categoryList,
-  categoryTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) {
-  if (categoryList === null || categoryList === undefined) return <Loading />;
-
-  const data = chooseFieldsOfObject(categoryList, fields);
-  const config = [
+  const columns = [
     {
-      label: content.id,
-      render: category => category.id,
-      sortValue: category => category.id
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
     },
     {
-      label: content.name,
-      render: category => category.name,
-      sortValue: category => category.name
+      Header: content.name,
+      accessor: 'name'
     },
     {
-      label: content.description,
-      render: category => category.description,
-      sortValue: category => category.description
+      Header: content.description,
+      accessor: 'description'
     },
     {
-      label: content.image,
-      style: { maxWidth: '8vw' },
-      className: 'text-center',
-      render: category => (
+      Header: content.image,
+      accessor: 'image',
+      Cell: ({ row, value }) => (
         <img
-          alt={category.name}
-          src={category.image}
+          alt={row.values.name}
+          src={value}
           className="img-thumbnail"
+          style={{ maxWidth: '200px' }}
         />
-      )
+      ),
+      disableFilters: true,
+      disableSortBy: true
     },
     {
-      label: content.setting,
-      style: { maxWidth: '5vw' },
-      render: category => {
+      Header: 'createdDate',
+      accessor: 'createdDate'
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
         return (
           <div className="d-flex flex-wrap gap-2">
             <button
               className="btn btn-secondary flex-fill"
-              onClick={() => handleSetUpdateMode(category)}
+              onClick={() => handleSetUpdateMode(row.original)}
             >
               {content.btnEdit}
             </button>
             <button
               className="btn btn-danger flex-fill"
-              onClick={() => handleShowDeleteModal(category.id, category.name)}
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
             >
               {content.btnDel}
             </button>
           </div>
         );
-      }
+      },
+      disableFilters: true,
+      disableSortBy: true
     }
   ];
 
-  const keyFn = category => category.id;
-
   return (
-    <SortableTable
-      data={data}
-      config={config}
-      keyFn={keyFn}
-      totalRecordData={categoryTotalRecord}
+    <ReactTable
+      columns={columns}
+      hiddenColumns={['createdDate', 'modifiedDate']}
+      data={categoryList}
+      isSortabled
+      isFiltered
     />
   );
 }
 
-export default CategoryTable;
+export default React.memo(CategoryTable);

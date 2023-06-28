@@ -9,12 +9,12 @@ import { useAppContext } from '../../../context/AppContext';
 const PageNotFound = ({ pathNavigate = '/', ...rest }) => {
   const { handleSetActiveTab } = useAppContext();
   return (
-    <div className="container-fluid text-center">
+    <div className="container-fluid h-100 position-relative">
       <Link to={pathNavigate} onClick={() => handleSetActiveTab('home')}>
         <img
-          className="img-fluid mt-5"
+          className="img-fluid position-absolute top-50 start-50 translate-middle"
           alt="Page not found"
-          src={require('./page-not-found.png')}
+          src={require('../../../../assets/images/404_not_found.jpg')}
         />
       </Link>
     </div>

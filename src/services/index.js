@@ -22,4 +22,5 @@ export { default as uploadService } from './upload.service';
 export { default as userService } from './user.service';
 
 // statistic
-export { dashboardStatisticService } from './statistic';
+export { default as dashboardStatisticService } from './statistic/dashboard.service';
+export { default as statisticService } from './statistic/statistic.service';

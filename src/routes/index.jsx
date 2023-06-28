@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route
-} from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import AuthRoutes from './AuthRoutes';
 import { PageNotFound } from '../components/common';
@@ -18,7 +14,6 @@ import {
   Feature,
   ImportPage,
   OrderPage,
-  ViewPage,
   Label,
   Login,
   Notification,
@@ -26,15 +21,16 @@ import {
   ProductPage,
   ProductExperiences,
   Profile,
-  Statistic,
+  ProductStatistic,
+  ProfitStatistic,
   Setting,
   Role,
   User
 } from '../pages';
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="">
+const AppRoute = () => {
+  return (
+    <Routes>
       <Route path="auth/login" element={<Login />} />
       <Route element={<AuthRoutes />}>
         <Route path="about" element={<About />} />
@@ -45,31 +41,34 @@ const router = createBrowserRouter(
         {/* MAIN */}
         <Route path="" element={<DashBoard />} />
         <Route path="home" element={<DashBoard />} />
-        <Route path="role" element={<Role />} />
-        <Route path="user" element={<User />} />
         <Route path="notification" element={<Notification />} />
-        <Route path="product" element={<ProductPage />} />
-        <Route path="product-experiences" element={<ProductExperiences />} />
         <Route path="banner" element={<Banner />} />
-        <Route path="brand" element={<BrandPage />} />
-        <Route path="category" element={<Category />} />
-        <Route path="discount" element={<Discount />} />
-        <Route path="label" element={<Label />} />
         <Route path="invoice">
           <Route path="import" element={<ImportPage />} />
           <Route path="order" element={<OrderPage />} />
-          <Route path="" element={<ViewPage />} />
+        </Route>
+        <Route path="product">
+          <Route path="brand" element={<BrandPage />} />
+          <Route path="category" element={<Category />} />
+          <Route path="discount" element={<Discount />} />
+          <Route path="label" element={<Label />} />
+          <Route path="all" element={<ProductPage />} />
+          <Route path="product-experiences" element={<ProductExperiences />} />
+        </Route>
+        <Route path="user">
+          <Route path="role" element={<Role />} />
+          <Route path="all" element={<User />} />
         </Route>
         <Route path="setting" element={<Setting />} />
         <Route path="profile" element={<Profile />} />
         <Route path="statistic">
-          <Route path="income" element={<Statistic />} />
-          <Route path="product" element={<Statistic />} />
-          <Route path="customer" element={<Statistic />} />
+          <Route path="products" element={<ProductStatistic />} />
+          <Route path="profits" element={<ProfitStatistic />} />
+          <Route path="system" element={<>Hmm</>} />
         </Route>
       </Route>
-    </Route>
-  )
-);
+    </Routes>
+  );
+};
 
-export default router;
+export default AppRoute;

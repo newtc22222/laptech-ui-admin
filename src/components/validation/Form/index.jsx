@@ -1,15 +1,16 @@
 import React from 'react';
 
-const titleBtnConfirm = 'Xác nhận';
+const titleBtnConfỉmIsSubmitting = 'Đang thực thi ...';
+const titleBtnConfirm = 'Lưu thông tin';
 const titleBtnCancel = 'Trở lại';
-/**
- * @param {{children: JSX.Element, handleSubmit: Function, submitAction: Function, cancelAction: Function}}
- */
+
 const Form = ({
   children,
   handleSubmit,
   submitAction,
   cancelAction,
+  isSubmitting,
+  isDirty,
   ...rest
 }) => {
   return (
@@ -17,14 +18,18 @@ const Form = ({
       <form noValidate onSubmit={handleSubmit(submitAction)}>
         <div>{children}</div>
         <div className="d-flex justify-content-end gap-2">
-          <button className="btn btn-primary" type="submit">
-            {titleBtnConfirm}
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={isSubmitting || !isDirty}
+          >
+            {isSubmitting ? titleBtnConfỉmIsSubmitting : titleBtnConfirm}
           </button>
           <button
             className="btn btn-secondary"
             type="button"
             onClick={cancelAction}
-            disabled={rest?.isSubmitting}
+            disabled={isSubmitting}
           >
             {titleBtnCancel}
           </button>

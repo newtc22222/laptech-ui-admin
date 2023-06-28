@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
@@ -55,7 +55,7 @@ const ProductPage = () => {
     if (!categoryList || errorCategory) categoryService.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = (productId, productName) => {
+  const handleShowDeleteModal = useCallback((productId, productName) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${productName} khỏi hệ thống không?`,
@@ -65,11 +65,22 @@ const ProductPage = () => {
       }
     );
     action.showModal(true);
-  };
+  }, []);
 
-  if (isFetching || isBrandFetching || isCategoryFetching) {
-    return <Loading />;
-  }
+  const handleSetUpdateMode = useCallback(
+    (product, specWorkMode) => action.setUpdateMode(product, specWorkMode),
+    []
+  );
+
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleFetchProduct = useCallback(
+    () => productService.getAll(dispatch),
+    [dispatch]
+  );
 
   if (error || errorBrand || errorCategory) {
     return <ServerNotResponse />;
@@ -82,7 +93,7 @@ const ProductPage = () => {
           <ProductForm
             brandList={brandList}
             categoryList={categoryList}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
+            handleBack={handleBack}
           />
         );
       case WorkMode.edit:
@@ -91,22 +102,16 @@ const ProductPage = () => {
             brandList={brandList}
             categoryList={categoryList}
             product={productEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
+            handleBack={handleBack}
           />
         );
       case 'edit_image':
         return (
-          <ProductImageForm
-            product={productEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
+          <ProductImageForm product={productEdit} handleBack={handleBack} />
         );
       case 'edit_label':
         return (
-          <ProductLabelForm
-            product={productEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
+          <ProductLabelForm product={productEdit} handleBack={handleBack} />
         );
       case 'edit_accessories':
         return (
@@ -114,15 +119,12 @@ const ProductPage = () => {
             product={productEdit}
             brandList={brandList}
             categoryList={categoryList}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
+            handleBack={handleBack}
           />
         );
       case 'edit_discount':
         return (
-          <ProductDiscountForm
-            product={productEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
+          <ProductDiscountForm product={productEdit} handleBack={handleBack} />
         );
       default:
         return <></>;
@@ -142,7 +144,7 @@ const ProductPage = () => {
           <button
             type="button"
             className="btn btn-success fw-bold"
-            onClick={() => productService.getAll(dispatch)}
+            onClick={handleFetchProduct}
           >
             {content.titleBtnReload}
           </button>
@@ -150,31 +152,43 @@ const ProductPage = () => {
             type="button"
             className="btn btn-primary fw-bold"
             onClick={action.setCreateMode}
+            disabled={
+              isFetching ||
+              isBrandFetching ||
+              isCategoryFetching ||
+              !productList ||
+              !brandList ||
+              !categoryList ||
+              error ||
+              errorBrand ||
+              errorCategory
+            }
           >
             {content.titleBtnAdd}
           </button>
         </div>
       </PageHeader>
-      <ProductTable
-        brandList={brandList}
-        categoryList={categoryList}
-        productList={productList}
-        productTotalRecord={productList?.length || 0}
-        handleSetUpdateMode={product => action.setUpdateMode(product)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-        handleSetUpdateImageMode={(product, specWorkMode) =>
-          action.setUpdateMode(product, specWorkMode)
-        }
-        handleSetUpdateLabelMode={(product, specWorkMode) =>
-          action.setUpdateMode(product, specWorkMode)
-        }
-        handleSetUpdateAccessoriesMode={(product, specWorkMode) =>
-          action.setUpdateMode(product, specWorkMode)
-        }
-        handleSetUpdateDiscountMode={(product, specWorkMode) =>
-          action.setUpdateMode(product, specWorkMode)
-        }
-      />
+      {isFetching ||
+      isBrandFetching ||
+      isCategoryFetching ||
+      !productList ||
+      !brandList ||
+      !categoryList ? (
+        <Loading />
+      ) : (
+        <ProductTable
+          brandList={brandList}
+          categoryList={categoryList}
+          productList={productList}
+          productTotalRecord={productList?.length || 0}
+          handleShowDeleteModal={handleShowDeleteModal}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleSetUpdateImageMode={handleSetUpdateMode}
+          handleSetUpdateLabelMode={handleSetUpdateMode}
+          handleSetUpdateAccessoriesMode={handleSetUpdateMode}
+          handleSetUpdateDiscountMode={handleSetUpdateMode}
+        />
+      )}
     </>
   );
 };

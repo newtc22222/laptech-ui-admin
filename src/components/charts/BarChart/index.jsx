@@ -22,36 +22,45 @@ ChartJS.register(
   Legend
 );
 
-const BarChart = ({ labels, datasets, ...props }) => {
+const BarChart = ({
+  labels,
+  datasets,
+  horizontal = false,
+  interaction = false,
+  legendPosition = 'top',
+  title,
+  stacked = false,
+  ...rest
+}) => {
   const listColor = _.shuffle(ListColorRGB);
 
   const options = {
-    indexAxis: props.horizontal && 'y',
+    indexAxis: horizontal && 'y',
     elements: {
       bar: {
         borderWidth: 2
       }
     },
-    interaction: props.interaction && {
+    interaction: interaction && {
       mode: 'index',
       intersect: false
     },
     responsive: true,
     plugins: {
       legend: {
-        position: props.legendPosition || 'top'
+        position: legendPosition
       },
       title: {
         display: true,
-        text: props.title || ''
+        text: title
       }
     },
     scales: {
       x: {
-        stacked: props.stacked || false
+        stacked: stacked
       },
       y: {
-        stacked: props.stacked || false
+        stacked: stacked
       }
     }
   };
@@ -68,7 +77,7 @@ const BarChart = ({ labels, datasets, ...props }) => {
     })
   };
 
-  return <Bar options={options} data={dataConfig} />;
+  return <Bar options={options} data={dataConfig} className={rest.className} />;
 };
 
 export default BarChart;

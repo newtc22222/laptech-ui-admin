@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -15,9 +15,7 @@ import { productService } from '../../services';
 import {
   chooseFieldsOfObject,
   createSlug,
-  getUpdateByUserInSystem,
-  makeToast,
-  toastType
+  getUpdateByUserInSystem
 } from '../../utils';
 import content from './content';
 
@@ -33,34 +31,30 @@ const ProductForm = ({
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const brandOptions = chooseFieldsOfObject(brandList, ['id', 'name']).map(
-    i => {
-      return { id: i.id, label: i.name };
-    }
+  const brandOptions = useMemo(
+    () =>
+      brandList.map(brand => {
+        return { id: brand.id, label: brand.name };
+      }),
+    []
   );
-  const categoryOptions = chooseFieldsOfObject(categoryList, [
-    'id',
-    'name'
-  ]).map(i => {
-    return { id: i.id, label: i.name };
-  });
+  const categoryOptions = useMemo(
+    () =>
+      categoryList.map(i => {
+        return { id: i.id, label: i.name };
+      }),
+    []
+  );
 
   const {
     control,
     register,
     handleSubmit,
     getValues,
-    reset,
-    formState: { errors }
+    formState: { errors, isDirty, isSubmitting }
   } = useForm();
 
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      makeToast(content.error.missing, toastType.error);
-    }
-  }, [errors]);
-
-  const handleCreateData = data => {
+  const handleCreateData = async data => {
     const newProduct = {
       id: createSlug(data.name.slice(0, data.name.indexOf('/'))),
       brandId: data.brand[0].id,
@@ -76,12 +70,11 @@ const ProductForm = ({
       descriptionDetail: JSON.stringify(data.descriptionDetail),
       ...getUpdateByUserInSystem()
     };
-    productService.create(dispatch, newProduct, accessToken);
-    reset();
+    await productService.create(dispatch, newProduct, accessToken);
     handleBack();
   };
 
-  const handleSaveData = data => {
+  const handleSaveData = async data => {
     const newProduct = {
       id: data.id,
       brandId: data.brand[0].id,
@@ -97,8 +90,7 @@ const ProductForm = ({
       descriptionDetail: JSON.stringify(data.descriptionDetail),
       ...getUpdateByUserInSystem()
     };
-    productService.update(dispatch, newProduct, product.id, accessToken);
-    reset();
+    await productService.update(dispatch, newProduct, product.id, accessToken);
     handleBack();
   };
 
@@ -219,22 +211,17 @@ const ProductForm = ({
     }
   ];
 
-  const MainForm = () => {
-    if (!brandList || !categoryList) return <Loading />;
-    return (
+  return (
+    <ModalForm object={product} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={product ? handleSaveData : handleCreateData}
         cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
       >
         <Accordion configContent={configContent} />
       </Form>
-    );
-  };
-
-  return (
-    <ModalForm object={product} disabledFooter>
-      <MainForm />
     </ModalForm>
   );
 };

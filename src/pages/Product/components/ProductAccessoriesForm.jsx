@@ -1,14 +1,38 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ModalForm, Loading } from '../../../components/common';
-import { Form, CheckBoxGroup } from '../../../components/validation';
+import { ModalForm, TransferList } from '../../../components/common';
+import { Form } from '../../../components/validation';
 
 import useFetch from '../../../hooks/useFetch';
 import { productService, productAccessoriesService } from '../../../services';
-import { makeToast, toastType } from '../../../utils';
+import { makeToast, toastType, getCurrencyString } from '../../../utils';
 import content from '../content';
+
+const renderOption = (brandList, categoryList, accessory) => {
+  return (
+    <div>
+      <div className="fw-bold">
+        {content.form_accessory.name + accessory.name}
+      </div>
+      <div>
+        {content.form_accessory.brand +
+          brandList.filter(b => b.id === accessory.brandId)[0]?.name ||
+          'default'}
+      </div>
+      <div>
+        {content.form_accessory.category +
+          categoryList.filter(c => c.id === accessory.categoryId)[0]?.name ||
+          'default'}
+      </div>
+      <div>
+        {content.form_accessory.price +
+          getCurrencyString(accessory.listedPrice, 'vi-VN', 'VND')}
+      </div>
+    </div>
+  );
+};
 
 const ProductAccessoriesForm = ({
   product,
@@ -17,13 +41,14 @@ const ProductAccessoriesForm = ({
   categoryList,
   ...rest
 }) => {
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const dispatch = useDispatch();
+
   const {
     data: productList,
     isFetching,
     error
   } = useSelector(state => state['products']);
-  const accessToken = useSelector(state => state.auth.accessToken);
-  const dispatch = useDispatch();
 
   const { data: accessoriesOfProduct } = useFetch(
     `/products/${product.id}/accessories`
@@ -32,16 +57,31 @@ const ProductAccessoriesForm = ({
   const {
     control,
     handleSubmit,
-    formState: { errors }
-  } = useForm();
+    reset,
+    formState: { errors, isDirty, isSubmitting }
+  } = useForm({
+    defaultValues: {
+      accessoryList: accessoriesOfProduct || []
+    }
+  });
 
   useEffect(() => {
     if (!productList || error) productService.getAll(dispatch);
   }, [productList, error, dispatch]);
 
-  if (!accessoriesOfProduct || !brandList || !categoryList) return <></>;
+  useEffect(() => {
+    if (accessoriesOfProduct) {
+      reset({
+        accessoryList: accessoriesOfProduct.map(product => ({
+          id: product.id,
+          value: product.name,
+          render: renderOption(brandList, categoryList, product)
+        }))
+      });
+    }
+  }, [accessoriesOfProduct]);
 
-  const handleSaveData = data => {
+  const handleSaveData = async data => {
     const oldData = accessoriesOfProduct.map(p => p.id);
     const newData = data.accessoryList.map(p => p.id);
     const removeList = _.differenceWith(oldData, newData, _.isEqual);
@@ -52,7 +92,7 @@ const ProductAccessoriesForm = ({
       return;
     }
 
-    productAccessoriesService.updateMultiple(
+    await productAccessoriesService.updateMultiple(
       dispatch,
       { addList: addList, removeList: removeList },
       product.id,
@@ -61,68 +101,7 @@ const ProductAccessoriesForm = ({
     handleBack();
   };
 
-  const renderOption = accessory => {
-    return (
-      <div>
-        <div>{content.form_accessory.name + accessory.name}</div>
-        <div>
-          {content.form_accessory.brand +
-            brandList.filter(b => b.id === accessory.brandId)[0]?.name ||
-            'default'}
-        </div>
-        <div>
-          {content.form_accessory.category +
-            categoryList.filter(c => c.id === accessory.categoryId)[0]?.name ||
-            'default'}
-        </div>
-        <div>{content.form_accessory.price + accessory.listedPrice}</div>
-      </div>
-    );
-  };
-
-  const MainForm = () => {
-    if (isFetching) return <Loading />;
-
-    const mainProductList = productList || [];
-
-    const configOption = mainProductList
-      .filter(p => p.id !== product.id) // except this
-      // .filter(p => p.categoryId !== product.categoryId) // except this type
-      .filter(p => p.brandId === product.brandId) // same brand?
-      .map(p => {
-        return {
-          id: p.id,
-          name: p.name,
-          className: 'my-1',
-          render: renderOption(p)
-        };
-      });
-
-    return (
-      <Form
-        handleSubmit={handleSubmit}
-        submitAction={handleSaveData}
-        cancelAction={handleBack}
-      >
-        <CheckBoxGroup
-          control={control}
-          errors={errors}
-          className="d-flex flex-column gap-1"
-          name="accessoryList"
-          options={configOption}
-          defaultValue={accessoriesOfProduct.map(p => {
-            return {
-              id: p.id,
-              name: p.name,
-              className: 'my-1',
-              render: renderOption(p)
-            };
-          })}
-          searchBar
-        />
-      </Form>
-    );
-  };
+  if (!accessoriesOfProduct || isFetching) return <></>;
 
   return (
     <ModalForm
@@ -130,7 +109,35 @@ const ProductAccessoriesForm = ({
       title={content.form_accessory.title}
       disabledFooter
     >
-      <MainForm />
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={handleSaveData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <h4 className="mb-3">{product.name}</h4>
+        <Controller
+          control={control}
+          name="accessoryList"
+          render={({ field: { value, onChange } }) => {
+            const optionConfig = productList
+              .filter(p => p.brandId === product.brandId)
+              .map(p => ({
+                id: p.id,
+                value: p.name,
+                render: renderOption(brandList, categoryList, p)
+              }));
+            return (
+              <TransferList
+                options={optionConfig}
+                choiceList={value}
+                setChoiceList={onChange}
+              />
+            );
+          }}
+        />
+      </Form>
     </ModalForm>
   );
 };

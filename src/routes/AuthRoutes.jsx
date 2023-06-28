@@ -15,6 +15,12 @@ function AuthRoutes() {
   const user = storage.get('user');
   const timeout = Number(storage.get('maxAgeToken'));
 
+  // network error
+  if (!navigator.onLine) {
+    console.error('Network error');
+    return <AppLayout />;
+  }
+
   // user not exist or refresh token out of date
   // check and auto logout, then navigate to login
   if (!user || timeout < Date.now()) {

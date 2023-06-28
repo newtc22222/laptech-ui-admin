@@ -23,29 +23,19 @@ function getPieCSS(piece) {
   return pieCSS;
 }
 
-const PieChart = ({ labels, data, ...props }) => {
+const PieChart = ({ labels = [], data = [], ...rest }) => {
   const dataConfig = {
-    labels: labels,
+    labels,
     datasets: [
       {
-        label: props.label || 'Value',
+        label: rest.label || 'Value',
         data: data,
         ...getPieCSS(labels.length)
       }
-      // {
-      //   label: props.label || "Quantity",
-      //   data: _.shuffle(data),
-      //   ...getPieCSS(labels.length)
-      // }, // put chart inside
-      // {
-      //   label: props.label || "Quantity",
-      //   data: _.shuffle(data),
-      //   ...getPieCSS(labels.length)
-      // },
     ]
   };
 
-  return <Pie data={dataConfig} className={classNames(props.className)} />;
+  return <Pie data={dataConfig} className={classNames(rest.className)} />;
 };
 
 export default PieChart;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
@@ -42,7 +42,7 @@ const Discount = () => {
     if (!discountList || error) discountService.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = (discountId, discountCode) => {
+  const handleShowDeleteModal = useCallback((discountId, discountCode) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountCode} khỏi hệ thống không?`,
@@ -52,34 +52,20 @@ const Discount = () => {
       }
     );
     action.showModal(true);
-  };
+  }, []);
 
-  if (isFetching) {
-    return <Loading />;
-  }
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    discount => action.setUpdateMode(discount),
+    []
+  );
 
   if (error) {
     return <ServerNotResponse />;
-  }
-
-  function renderFormModal() {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <DiscountForm
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      case WorkMode.edit:
-        return (
-          <DiscountForm
-            discount={discountEdit}
-            handleBack={() => action.changeWorkMode(WorkMode.view)}
-          />
-        );
-      default:
-        return <></>;
-    }
   }
 
   return (
@@ -89,7 +75,10 @@ const Discount = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {renderFormModal()}
+      {workMode === WorkMode.create && <DiscountForm handleBack={handleBack} />}
+      {workMode === WorkMode.edit && (
+        <DiscountForm discount={discountEdit} handleBack={handleBack} />
+      )}
       <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
@@ -98,12 +87,15 @@ const Discount = () => {
           {titleButtonAdd}
         </button>
       </PageHeader>
-      <DiscountTable
-        discountList={discountList}
-        discountTotalRecord={discountList?.length}
-        handleSetUpdateMode={discount => action.setUpdateMode(discount)}
-        handleShowDeleteModal={(id, code) => handleShowDeleteModal(id, code)}
-      />
+      {!discountList || isFetching ? (
+        <Loading />
+      ) : (
+        <DiscountTable
+          discountList={discountList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

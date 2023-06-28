@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ModalForm, Loading } from '../../../components/common';
-import { Form, CheckBoxGroup } from '../../../components/validation';
+import { ModalForm, TransferList } from '../../../components/common';
+import { Form } from '../../../components/validation';
 
 import useFetch from '../../../hooks/useFetch';
 import { discountService, productDiscountService } from '../../../services';
@@ -17,36 +17,39 @@ import content from '../content';
 
 const renderOption = discount => {
   return (
-    <nav aria-label="breadcrumb">
-      <ol className="breadcrumb ps-2">
-        <li className="breadcrumb-item">{discount.code}</li>
-        <li className="breadcrumb-item">
-          <span className="fw-bold text-success">
-            {discount.rate * 100 + '%'}
-          </span>
-          {' - '}
-          <span className="text-danger">
-            {getCurrencyString(discount.maxAmount, 'vi-VN', 'VND')}
-          </span>
-        </li>
-        <li className="breadcrumb-item fw-bold">
-          {formatDateTime(discount.appliedDate) +
-            ' - ' +
-            formatDateTime(discount.endedDate)}
-        </li>
-      </ol>
-    </nav>
+    <div className="mb-2">
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb mb-1">
+          <li className="breadcrumb-item">{discount.code}</li>
+          <li className="breadcrumb-item">
+            <span className="fw-bold text-success">
+              {discount.rate * 100 + '%'}
+            </span>
+            {' - '}
+            <span className="text-danger">
+              {getCurrencyString(discount.maxAmount, 'vi-VN', 'VND')}
+            </span>
+          </li>
+        </ol>
+      </nav>
+      <div className="fw-bold">
+        {formatDateTime(discount.appliedDate) +
+          ' - ' +
+          formatDateTime(discount.endedDate)}
+      </div>
+    </div>
   );
 };
 
 const ProductDiscountForm = ({ product, handleBack, ...props }) => {
+  const accessToken = useSelector(state => state.auth.accessToken);
+  const dispatch = useDispatch();
+
   const {
     data: discountList,
     isFetching,
     error
   } = useSelector(state => state['discounts']);
-  const accessToken = useSelector(state => state.auth.accessToken);
-  const dispatch = useDispatch();
 
   const { data: discountListOfProduct } = useFetch(
     `/products/${product.id}/discounts`
@@ -55,14 +58,29 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors }
-  } = useForm();
+    reset,
+    formState: { isDirty, isSubmitting }
+  } = useForm({
+    defaultValues: {
+      discountList: discountListOfProduct || []
+    }
+  });
 
   useEffect(() => {
     if (!discountList || error) discountService.getAll(dispatch);
   }, []);
 
-  if (!discountListOfProduct) return <></>;
+  useEffect(() => {
+    if (discountListOfProduct) {
+      reset({
+        discountList: discountListOfProduct.map(discount => ({
+          id: discount.id,
+          value: discount.code,
+          render: renderOption(discount)
+        }))
+      });
+    }
+  }, [discountListOfProduct]);
 
   const handleSaveData = data => {
     const oldData = discountListOfProduct.map(d => d.id);
@@ -84,49 +102,7 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
     handleBack();
   };
 
-  const MainForm = () => {
-    if (isFetching) return <Loading />;
-
-    const configOption = discountList
-      ? discountList
-          .filter(d => d.appliedType === 'PRODUCT')
-          .filter(d => new Date(d.endedDate) > Date.now())
-          .map(d => {
-            return {
-              id: d.id,
-              label: d.code,
-              className: 'my-1',
-              render: renderOption(d)
-            };
-          })
-      : [];
-
-    return (
-      <Form
-        handleSubmit={handleSubmit}
-        submitAction={handleSaveData}
-        cancelAction={handleBack}
-      >
-        <CheckBoxGroup
-          control={control}
-          errors={errors}
-          className="d-flex flex-column gap-1"
-          name="discountList"
-          options={configOption}
-          defaultValue={discountListOfProduct.map(d => {
-            return {
-              id: d.id,
-              label: d.code,
-              className: 'my-1',
-              render: renderOption(d)
-            };
-          })}
-          searchBar
-          useSwitch
-        />
-      </Form>
-    );
-  };
+  if (!discountListOfProduct || isFetching) return <></>;
 
   return (
     <ModalForm
@@ -134,7 +110,34 @@ const ProductDiscountForm = ({ product, handleBack, ...props }) => {
       title={content.form_discount.title}
       disabledFooter
     >
-      <MainForm />
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={handleSaveData}
+        cancelAction={handleBack}
+        isDirty={isDirty}
+        isSubmitting={isSubmitting}
+      >
+        <Controller
+          control={control}
+          name="discountList"
+          render={({ field: { value, onChange } }) => {
+            const optionConfig = discountList
+              .filter(d => new Date(d.endedDate).getTime() > Date.now())
+              .map(d => ({
+                id: d.id,
+                value: d.code,
+                render: renderOption(d)
+              }));
+            return (
+              <TransferList
+                options={optionConfig}
+                choiceList={value}
+                setChoiceList={onChange}
+              />
+            );
+          }}
+        />
+      </Form>
     </ModalForm>
   );
 };

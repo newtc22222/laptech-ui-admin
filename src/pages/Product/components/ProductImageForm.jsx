@@ -21,7 +21,7 @@ const ProductImageForm = ({ product, handleBack, ...rest }) => {
     control,
     handleSubmit,
     getValues,
-    formState: { errors }
+    formState: { errors, isSubmitting, isDirty }
   } = useForm({ defaultValues: imageList });
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
@@ -175,6 +175,8 @@ const ProductImageForm = ({ product, handleBack, ...rest }) => {
         handleSubmit={handleSubmit}
         submitAction={handleSaveData}
         cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
       >
         <Tabbed config={getConfigTab(imageList)} fill />
       </Form>

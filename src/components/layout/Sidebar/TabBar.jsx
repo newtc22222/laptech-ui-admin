@@ -4,12 +4,12 @@ import classNames from 'classnames';
 
 import { useAppContext } from '../../context/AppContext';
 
-const TabBar = ({ name, title, url, icon, parentName }) => {
-  const { activeTab, handleSetActiveTab } = useAppContext();
+const TabBar = ({ name, title, url, icon, parentName, toggle }) => {
+  const { activeTab } = useAppContext();
 
   const getBackground = () => {
     if (parentName) {
-      return { backgroundColor: '#1e7fff' };
+      return { backgroundColor: '#3988ef' };
     }
     if (activeTab.tab === name) {
       return { backgroundColor: '#0e4893' };
@@ -20,16 +20,19 @@ const TabBar = ({ name, title, url, icon, parentName }) => {
     <li className="nav-item">
       <Link
         to={url}
-        className={classNames('nav-link align-middle ps-3 pe-3 link-light', {
-          'link-dark fw-bold': activeTab.subTab === name
+        className={classNames('nav-link px-3 link-light', {
+          'link-dark fw-bold': activeTab.subTab === name,
+          'd-flex align-items-center': toggle,
+          'text-center': !toggle
         })}
         style={getBackground()}
-        onClick={() =>
-          handleSetActiveTab(parentName || name, parentName && name)
-        }
       >
         {icon}
-        <span className="ms-3 text-uppercase d-none d-lg-inline">{title}</span>
+        {toggle && (
+          <span className="ms-3 text-uppercase d-none d-lg-inline">
+            {title}
+          </span>
+        )}
       </Link>
     </li>
   );

@@ -22,8 +22,7 @@ import content from './content';
  * @since 2023-02-14
  */
 const UserForm = ({ user, handleBack }) => {
-  const accessToken = useSelector(state => state.auth.accessToken);
-  const userInSystem = useSelector(state => state.auth.user);
+  const { accessToken, user: userInSystem } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   const { data: roleOfUser } = useFetch(
@@ -45,21 +44,14 @@ const UserForm = ({ user, handleBack }) => {
     control,
     handleSubmit,
     getValues,
-    reset,
-    formState: { errors }
+    formState: { errors, isSubmitting, isDirty }
   } = useForm();
-
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      makeToast(content.error.missing, toastType.error);
-    }
-  }, [errors]);
 
   useEffect(() => {
     if (!roleList || isRoleError) roleService.getAll(dispatch, accessToken);
   }, []);
 
-  const handleCreateData = data => {
+  const handleCreateData = async data => {
     const userData = {
       name: data.name,
       gender: data.gender.value,
@@ -70,8 +62,7 @@ const UserForm = ({ user, handleBack }) => {
       ...getUpdateByUserInSystem()
     };
 
-    userService.create(dispatch, userData, accessToken);
-    reset();
+    await userService.create(dispatch, userData, accessToken);
     handleBack();
   };
 
@@ -132,44 +123,42 @@ const UserForm = ({ user, handleBack }) => {
             accessToken
           );
     }
+
     handleBack();
-  };
-
-  const MainForm = () => {
-    if (!roleList || isRoleFetching) return <Loading />;
-
-    return (
-      <Form
-        handleSubmit={handleSubmit}
-        submitAction={user ? handleSaveData : handleCreateData}
-        cancelAction={handleBack}
-      >
-        {user ? (
-          <EditForm
-            user={user}
-            roleList={roleList}
-            roleOfUser={roleOfUser}
-            register={register}
-            control={control}
-            errors={errors}
-            getValues={getValues}
-          />
-        ) : (
-          <CreateForm
-            roleList={roleList}
-            register={register}
-            control={control}
-            errors={errors}
-            getValues={getValues}
-          />
-        )}
-      </Form>
-    );
   };
 
   return (
     <ModalForm object={user} disabledFooter>
-      <MainForm />
+      {!roleList || isRoleFetching ? (
+        <Loading />
+      ) : (
+        <Form
+          handleSubmit={handleSubmit}
+          submitAction={user ? handleSaveData : handleCreateData}
+          cancelAction={handleBack}
+          isSubmitting={isSubmitting}
+          isDirty={isDirty}
+        >
+          {user ? (
+            <EditForm
+              user={user}
+              roleList={roleList}
+              roleOfUser={roleOfUser}
+              register={register}
+              control={control}
+              errors={errors}
+              getValues={getValues}
+            />
+          ) : (
+            <CreateForm
+              register={register}
+              control={control}
+              errors={errors}
+              getValues={getValues}
+            />
+          )}
+        </Form>
+      )}
     </ModalForm>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -27,17 +27,10 @@ const DiscountForm = ({ discount, handleBack }) => {
     register,
     control,
     handleSubmit,
-    reset,
-    formState: { errors }
+    formState: { errors, isDirty, isSubmitting }
   } = useForm();
 
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      makeToast(content.error.missing, toastType.error);
-    }
-  }, [errors]);
-
-  const handleCreateData = data => {
+  const handleCreateData = async data => {
     if (data.appliedDate >= data.endedDate) {
       makeToast(content.error.dateConflict, toastType.error);
       return;
@@ -49,12 +42,11 @@ const DiscountForm = ({ discount, handleBack }) => {
       ...data,
       ...getUpdateByUserInSystem()
     };
-    discountService.create(dispatch, newDiscount, accessToken);
-    reset();
+    await discountService.create(dispatch, newDiscount, accessToken);
     handleBack();
   };
 
-  const handleSaveData = data => {
+  const handleSaveData = async data => {
     if (data.appliedDate >= data.endedDate) {
       makeToast(content.error.dateConflict, toastType.error);
       return;
@@ -74,119 +66,123 @@ const DiscountForm = ({ discount, handleBack }) => {
       ...data,
       ...getUpdateByUserInSystem()
     };
-    discountService.update(dispatch, newDiscount, discount.id, accessToken);
-    reset();
+    await discountService.update(
+      dispatch,
+      newDiscount,
+      discount.id,
+      accessToken
+    );
     handleBack();
   };
 
-  const renderForm = (
-    <Form
-      handleSubmit={handleSubmit}
-      submitAction={discount ? handleSaveData : handleCreateData}
-      cancelAction={handleBack}
-    >
-      <TextInput
-        label={content.form.code}
-        register={register}
-        errors={errors}
-        attribute="code"
-        defaultValue={discount?.code}
-        placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
-        required
-        errorMessage={content.error.code}
-      />
-      <RadioBox
-        className="border rounded-2 mb-2"
-        title={content.form.appliedTypeTitle}
-        control={control}
-        name="appliedType"
-        defaultValue={discount?.appliedType}
-        options={appliedTypes}
-      />
-      <fieldset>
-        <legend className="text-uppercase">{content.form.discountRange}</legend>
-        <div className="row">
-          <div className="col-4 mb-3">
-            <TextInput
-              label={content.form.rate}
-              register={register}
-              errors={errors}
-              attribute="rate"
-              defaultValue={discount?.rate * 100 || 5}
-              type="number"
-              min="0"
-              max="80"
-              required
-              errorMessage={content.error.rate}
-              errorMessageForMin={content.error.minRate}
-              errorMessageForMax={content.error.maxRate}
-            />
-          </div>
-          <div className="col-8 mb-3">
-            <TextInput
-              label={content.form.maxAmount}
-              register={register}
-              errors={errors}
-              attribute="maxAmount"
-              defaultValue={discount?.maxAmount || 50_000}
-              type="number"
-              min="0"
-              max={100_000_000}
-              required
-              errorMessage={content.error.maxAmount}
-            />
-          </div>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend className="text-uppercase">{content.form.time}</legend>
-        <div className="row">
-          <div className="col mb-3">
-            <TextInput
-              label={content.form.appliedDate}
-              register={register}
-              errors={errors}
-              attribute="appliedDate"
-              defaultValue={
-                discount?.appliedDate ||
-                new Date().toJSON().slice(0, 11) + '00:00'
-              }
-              type="datetime-local"
-              min={new Date().toJSON().slice(0, 11) + '00:00'}
-              required
-              errorMessage={content.error.appliedDate}
-            />
-          </div>
-          <div className="col mb-3">
-            <TextInput
-              label={content.form.endedDate}
-              register={register}
-              errors={errors}
-              attribute="endedDate"
-              defaultValue={
-                discount?.endedDate ||
-                new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
-                  .toJSON()
-                  .slice(0, 11) + '00:00'
-              }
-              type="datetime-local"
-              min={
-                new Date(Date.now() + 1000 * 60 * 60 * 24) // 24 hours
-                  .toJSON()
-                  .slice(0, 11) + '00:00'
-              }
-              required
-              errorMessage={content.error.endedDate}
-            />
-          </div>
-        </div>
-      </fieldset>
-    </Form>
-  );
-
   return (
     <ModalForm object={discount} disabledFooter>
-      {renderForm}
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={discount ? handleSaveData : handleCreateData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <TextInput
+          label={content.form.code}
+          register={register}
+          errors={errors}
+          attribute="code"
+          defaultValue={discount?.code}
+          placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
+          required
+          errorMessage={content.error.code}
+        />
+        <RadioBox
+          className="border rounded-2 mb-2"
+          title={content.form.appliedTypeTitle}
+          control={control}
+          name="appliedType"
+          defaultValue={discount?.appliedType}
+          options={appliedTypes}
+        />
+        <fieldset>
+          <legend className="text-uppercase">
+            {content.form.discountRange}
+          </legend>
+          <div className="row">
+            <div className="col-4 mb-3">
+              <TextInput
+                label={content.form.rate}
+                register={register}
+                errors={errors}
+                attribute="rate"
+                defaultValue={discount?.rate * 100 || 5}
+                type="number"
+                min="0"
+                max="80"
+                required
+                errorMessage={content.error.rate}
+                errorMessageForMin={content.error.minRate}
+                errorMessageForMax={content.error.maxRate}
+              />
+            </div>
+            <div className="col-8 mb-3">
+              <TextInput
+                label={content.form.maxAmount}
+                register={register}
+                errors={errors}
+                attribute="maxAmount"
+                defaultValue={discount?.maxAmount || 50_000}
+                type="number"
+                min="0"
+                max={100_000_000}
+                required
+                errorMessage={content.error.maxAmount}
+              />
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend className="text-uppercase">{content.form.time}</legend>
+          <div className="row">
+            <div className="col mb-3">
+              <TextInput
+                label={content.form.appliedDate}
+                register={register}
+                errors={errors}
+                attribute="appliedDate"
+                defaultValue={
+                  discount?.appliedDate ||
+                  new Date().toJSON().slice(0, 11) + '00:00'
+                }
+                type="datetime-local"
+                min={new Date().toJSON().slice(0, 11) + '00:00'}
+                required
+                errorMessage={content.error.appliedDate}
+              />
+            </div>
+            <div className="col mb-3">
+              <TextInput
+                label={content.form.endedDate}
+                register={register}
+                errors={errors}
+                attribute="endedDate"
+                defaultValue={
+                  discount?.endedDate ||
+                  new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
+                    .toJSON()
+                    .slice(0, 11) + '00:00'
+                }
+                type="datetime-local"
+                min={
+                  new Date(Date.now() + 1000 * 60 * 60 * 24) // 24 hours
+                    .toJSON()
+                    .slice(0, 11) + '00:00'
+                }
+                required
+                errorMessage={content.error.endedDate}
+              />
+            </div>
+          </div>
+        </fieldset>
+      </Form>
     </ModalForm>
   );
 };

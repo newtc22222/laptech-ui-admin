@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,10 +8,10 @@ import {
   LineElement,
   Title,
   Tooltip,
+  Filler,
   Legend
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import _ from 'lodash';
 
 import { ListColorRGB } from '../colors';
 
@@ -21,25 +22,34 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
+  Filler,
   Legend
 );
 
-const LineChart = ({ labels, datasets, ...props }) => {
+const LineChart = ({
+  labels,
+  datasets,
+  hasAreaFilter = false,
+  interaction = false,
+  legendPosition = 'top',
+  title,
+  ...rest
+}) => {
   const listColor = _.shuffle(ListColorRGB);
 
   const options = {
     responsive: true,
-    interaction: props.interaction && {
+    interaction: interaction && {
       mode: 'index',
       intersect: false
     },
     plugins: {
       legend: {
-        position: props.legendPosition || 'top'
+        position: legendPosition
       },
       title: {
         display: true,
-        text: props.title
+        text: title
       }
     }
     // scales: {
@@ -65,6 +75,7 @@ const LineChart = ({ labels, datasets, ...props }) => {
       const color = listColor.shift();
       return {
         ...set,
+        fill: hasAreaFilter,
         backgroundColor: `rgba(${color}, 0.2)`,
         borderColor: `rgba(${color}, 1)`
       };
@@ -72,7 +83,7 @@ const LineChart = ({ labels, datasets, ...props }) => {
   };
 
   return (
-    <Line options={options} data={dataConfig} className={props.className} />
+    <Line options={options} data={dataConfig} className={rest.className} />
   );
 };
 

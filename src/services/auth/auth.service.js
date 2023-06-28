@@ -101,7 +101,7 @@ const authService = {
             storage.set('user', result.user);
             storage.set('accessToken', result.accessToken);
             storage.set('refreshToken', result.refreshToken);
-            storage.set('maxAgeToken', maxAgeToken.getTime());
+            storage.set('maxAgeToken', result.maxAgeToken);
 
             dispatch(setCredentials(result)); //auth
             auth = result;
@@ -136,14 +136,52 @@ const authService = {
         if (!recall && typeof recall === 'function') recall(result.accessToken);
       },
       err => {
-        makeToast('Hết hạn đăng nhập, vui lòng đăng nhập lại!', toastType.info);
+        if (err.message === 'Failed to fetch') {
+          makeToast(
+            'Không thể kết nối với Server, vui lòng kiểm tra lại hệ thống!',
+            toastType.info
+          );
+        } else {
+          makeToast(
+            'Hết hạn đăng nhập, vui lòng đăng nhập lại!',
+            toastType.info
+          );
+        }
       }
     );
     return auth;
   },
   getCurrentUser: handleGetCurrentUser,
   updateInformation: handleUpdateInformation,
-  updatePassword: handleUpdatePassword
+  updatePassword: handleUpdatePassword,
+  forgotPassword: async (phone, email, username, accountCreatedDate) => {
+    let response;
+    await apiCall.POST(
+      'auth/forgotPassword',
+      { phone, email, username, accountCreatedDate },
+      () => {},
+      res => (response = res),
+      err => {
+        makeToast('Thông tin chưa chính xác!', toastType.error);
+        console.log(err);
+      }
+    );
+    return response;
+  },
+  resetPassword: async (token, newPassword) => {
+    let response;
+    await apiCall.POST(
+      'auth/updatePassword?token=' + token,
+      { newPassword },
+      () => {},
+      res => (response = res),
+      err => {
+        makeToast('Thông tin chưa chính xác!', toastType.error);
+        console.log(err);
+      }
+    );
+    return response;
+  }
 };
 
 export default authService;
