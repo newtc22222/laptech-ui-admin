@@ -153,7 +153,35 @@ const authService = {
   },
   getCurrentUser: handleGetCurrentUser,
   updateInformation: handleUpdateInformation,
-  updatePassword: handleUpdatePassword
+  updatePassword: handleUpdatePassword,
+  forgotPassword: async (phone, email, username, accountCreatedDate) => {
+    let response;
+    await apiCall.POST(
+      'auth/forgotPassword',
+      { phone, email, username, accountCreatedDate },
+      () => {},
+      res => (response = res),
+      err => {
+        makeToast('Thông tin chưa chính xác!', toastType.error);
+        console.log(err);
+      }
+    );
+    return response;
+  },
+  resetPassword: async (token, newPassword) => {
+    let response;
+    await apiCall.POST(
+      'auth/updatePassword?token=' + token,
+      { newPassword },
+      () => {},
+      res => (response = res),
+      err => {
+        makeToast('Thông tin chưa chính xác!', toastType.error);
+        console.log(err);
+      }
+    );
+    return response;
+  }
 };
 
 export default authService;

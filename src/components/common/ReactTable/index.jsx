@@ -22,6 +22,7 @@ const ReactTable = ({
   hasGlobalFilter = false,
   delayGlobalFilter = 2000,
   isPagination = false,
+  variant = 'primary',
   ...rest
 }) => {
   const columnsConfig = useMemo(() => columns, [columns]);
@@ -163,7 +164,7 @@ const ReactTable = ({
           rest.className
         )}
       >
-        <thead className="table-primary align-middle">
+        <thead className={`table-${variant} align-middle`}>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (

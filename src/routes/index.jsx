@@ -21,7 +21,8 @@ import {
   ProductPage,
   ProductExperiences,
   Profile,
-  Statistic,
+  ProductStatistic,
+  ProfitStatistic,
   Setting,
   Role,
   User
@@ -61,9 +62,9 @@ const AppRoute = () => {
         <Route path="setting" element={<Setting />} />
         <Route path="profile" element={<Profile />} />
         <Route path="statistic">
-          <Route path="income" element={<Statistic />} />
-          <Route path="product" element={<Statistic />} />
-          <Route path="user-experiance" element={<Statistic />} />
+          <Route path="products" element={<ProductStatistic />} />
+          <Route path="profits" element={<ProfitStatistic />} />
+          <Route path="system" element={<>Hmm</>} />
         </Route>
       </Route>
     </Routes>

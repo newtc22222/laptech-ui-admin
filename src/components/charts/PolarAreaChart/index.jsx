@@ -28,19 +28,19 @@ function getPieCSS(piece) {
   return pieCSS;
 }
 
-const PolarAreaChart = ({ labels, data, ...props }) => {
+const PolarAreaChart = ({ labels, data, ...rest }) => {
   const dataConfig = {
     labels: labels,
     datasets: [
       {
-        label: props.label || 'Value',
+        label: rest.label || 'Value',
         data: data,
         ...getPieCSS(labels.length)
       }
     ]
   };
 
-  return <PolarArea data={dataConfig} />;
+  return <PolarArea data={dataConfig} className={rest.className} />;
 };
 
 export default PolarAreaChart;

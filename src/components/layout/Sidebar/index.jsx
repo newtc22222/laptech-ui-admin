@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -112,30 +112,24 @@ const sideBarTab = [
     icon: <i className="fs-4 bi bi-bar-chart-fill"></i>,
     subTab: [
       {
-        name: 'income',
-        title: 'Doanh thu',
-        icon: <i className="fs-5 bi bi-graph-up"></i>,
-        url: '/statistic/income'
-      },
-      {
-        name: 'product',
+        name: 'products',
         title: 'Sản phẩm',
         icon: <i className="fs-5 bi bi-pie-chart-fill"></i>,
-        url: '/statistic/product'
+        url: '/statistic/products'
       },
       {
-        name: 'user-experiance',
+        name: 'profits',
+        title: 'Doanh thu',
+        icon: <i className="fs-5 bi bi-graph-up"></i>,
+        url: '/statistic/profits'
+      },
+      {
+        name: 'system',
         title: 'Trải nghiệm khách hàng',
         icon: <i className="fs-5 bi bi-clipboard-data-fill"></i>,
-        url: '/statistic/user-experiance'
+        url: '/statistic/system'
       }
     ]
-  },
-  {
-    name: 'setting',
-    title: 'Thiết lập ứng dụng',
-    url: '/setting',
-    icon: <i className="fs-4 bi bi-wrench-adjustable"></i>
   }
 ];
 
@@ -168,20 +162,15 @@ const Sidebar = () => {
     <div
       className={classNames(
         'sidebar bg-primary add-scroll flex-shrink-0 sticky-menu',
+        'd-flex flex-column',
         toggle ? 'toggleOpen' : 'toggleClose'
       )}
     >
-      <ul className="nav d-flex flex-column flex-fill" id="menu">
+      <ul className="nav mb-auto d-flex flex-column flex-fill" id="menu">
         <li className="nav-item px-3 py-2">
           <div className="d-flex gap-2">
             {toggle && (
               <div className="flex-fill">
-                {/* <Select
-                  options={searchOption}
-                  onChange={tab => {
-                    navigate(tab.value);
-                  }}
-                /> */}
                 <Typeahead
                   id="search-sidebar"
                   options={searchOption}
@@ -210,7 +199,6 @@ const Sidebar = () => {
               title={tab.title}
               url={tab.url}
               icon={tab.icon}
-              subTab={tab.subTab}
               toggle={toggle}
             />
           );

@@ -45,7 +45,7 @@ const InformationForm = () => {
   };
 
   return (
-    <div className="card w-75">
+    <div className="card">
       <div className="card-header text-uppercase fw-bold">
         {content.changeInformation}
       </div>

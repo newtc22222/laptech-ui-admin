@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 
 import CardInformation from './CardInformation';
-import { dashboardStatisticService } from '../../services';
-import { getCurrencyString } from '../../utils';
+import { dashboardStatisticService } from '../../../services';
+import { getCurrencyString } from '../../../utils';
 
 const CardInformationGroup = () => {
+  const color = _.shuffle(['primary', 'success', 'warning', 'info']);
   const dispatch = useDispatch();
   const accessToken = useSelector(state => state.auth.accessToken);
 
@@ -27,11 +28,11 @@ const CardInformationGroup = () => {
     {
       title: 'Số sản phẩm đang hết hàng',
       key: 'productOutOfStock',
-      format: data => data.length
+      format: data => (data ? data.length : 0)
     }
   ];
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
 
   useEffect(() => {
     dashboardStatisticService
@@ -40,15 +41,11 @@ const CardInformationGroup = () => {
       .catch(err => console.log(err));
   }, []);
 
-  const color = _.shuffle(['primary', 'success', 'warning', 'info']);
-
-  if (!data) return <></>;
-
   return (
     <div className="row">
       {cardList
         .map(item => {
-          let value = data[item.key] || '0';
+          let value = data ? data[item.key] : '0';
           if (typeof item.format === 'function') {
             value = item.format(value);
           }

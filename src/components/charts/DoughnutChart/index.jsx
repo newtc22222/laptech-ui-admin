@@ -1,7 +1,6 @@
 import React from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-import classNames from 'classnames';
 
 import { ListColorRGB } from '../colors';
 
@@ -23,19 +22,19 @@ function getPieCSS(piece) {
   return pieCSS;
 }
 
-const DoughnutChart = ({ labels, data, ...props }) => {
+const DoughnutChart = ({ labels = [], data = [], ...rest }) => {
   const dataConfig = {
     labels: labels,
     datasets: [
       {
-        label: props.label || 'Value',
+        label: rest.label || 'Value',
         data: data,
         ...getPieCSS(labels.length)
       }
     ]
   };
 
-  return <Doughnut data={dataConfig} className={classNames(props.className)} />;
+  return <Doughnut data={dataConfig} className={rest.className} />;
 };
 
 export default DoughnutChart;

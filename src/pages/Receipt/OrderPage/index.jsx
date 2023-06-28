@@ -42,9 +42,9 @@ const Invoice = () => {
     isUserError
   } = useSelector(state => state['users']);
 
-  useEffect(async () => {
-    await invoiceService.getAll(dispatch, accessToken);
+  useEffect(() => {
     if (!userList || isUserError) userService.getAll(dispatch, accessToken);
+    invoiceService.getAll(dispatch, accessToken);
   }, [dispatch, accessToken]);
 
   const handleGetAllInvoice = useCallback(
@@ -211,7 +211,6 @@ const Invoice = () => {
           return <></>;
       }
     };
-
     return <div className="d-flex gap-2">{otherStatus()}</div>;
   };
 

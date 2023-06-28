@@ -21,7 +21,7 @@ const ServerNotResponse = ({
       <img
         className="img-fluid img-thumbnail"
         alt="Server not response"
-        src={require('./server-not-response.jpg')}
+        src={require('../../../../assets/images/server_not_response.jpg')}
       />
       <h2 className="text-uppercase mt-3">
         <Link
