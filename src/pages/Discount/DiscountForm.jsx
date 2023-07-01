@@ -1,212 +1,189 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+
 import ModalForm from '../../components/common/ModalForm';
+import { Form, TextInput, RadioBox } from '../../components/validation';
 
-import apiDiscounts from '../../apis/product/discount.api';
+import { discountService } from '../../services';
+import {
+  makeToast,
+  toastType,
+  isEqualObject,
+  getUpdateByUserInSystem
+} from '../../utils';
+import content from './content';
 
-import { addToast } from '../../redux-feature/toast_notify';
-import { getUpdateByUserInSystem } from '../../helper/getUser';
-
-const titleCode = 'Mã được sử dụng';
-const titleAppliedType = 'Kiểu giảm giá';
-const titleDiscount = 'Mức giảm giá';
-const titleRate = 'Tỉ lệ (0 - 80)%';
-const titleMaxAmount = 'Mức giá tối đa';
-const titleTime = 'Thời gian áp dụng';
-const titleAppliedDate = 'Bắt đầu';
-const titleEndedDate = 'Kết thúc';
-
-const appliedTypeCombobox = ['PRODUCT', 'PURCHASE'];
+const appliedTypes = [
+  { label: 'Sản phẩm', value: 'PRODUCT' },
+  { label: 'Đơn hàng', value: 'PURCHASE' }
+];
 
 const DiscountForm = ({ discount, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const codeRef = useRef();
-  const rateRef = useRef();
-  const [appliedType, setAppliedType] = useState(
-    discount?.appliedType || appliedTypeCombobox[0]
-  );
-  const maxAmountRef = useRef();
-  const appliedDateRef = useRef();
-  const endedDateRef = useRef();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isDirty, isSubmitting }
+  } = useForm();
 
-  const handleCreateData = async () => {
-    try {
-      const newDiscount = {
-        code: codeRef.current.value,
-        rate: rateRef.current.value / 100,
-        appliedType: appliedType,
-        maxAmount: maxAmountRef.current.value,
-        appliedDate: appliedDateRef.current.value,
-        endedDate: endedDateRef.current.value,
-        ...getUpdateByUserInSystem()
-      };
-      await apiDiscounts.createNewDiscount(dispatch, newDiscount, accessToken);
-      handleBack();
-    } catch (err) {
-      console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể tạo thông tin mã chiết khấu mới!'
-        })
-      );
+  const handleCreateData = async data => {
+    if (data.appliedDate >= data.endedDate) {
+      makeToast(content.error.dateConflict, toastType.error);
+      return;
     }
+
+    data.rate /= 100;
+    data.maxAmount = +data.maxAmount;
+    const newDiscount = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
+    await discountService.create(dispatch, newDiscount, accessToken);
+    handleBack();
   };
 
-  const handleSaveData = async () => {
-    try {
-      const newDiscount = {
-        code: codeRef.current.value,
-        rate: rateRef.current.value / 100,
-        appliedType: appliedType,
-        maxAmount: maxAmountRef.current.value,
-        appliedDate: appliedDateRef.current.value,
-        endedDate: endedDateRef.current.value,
-        modifiedDate: new Date().toISOString(),
-        ...getUpdateByUserInSystem()
-      };
-      await apiDiscounts.updateDiscount(
-        dispatch,
-        newDiscount,
-        discount.id,
-        accessToken
-      );
-      handleBack();
-    } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể cập nhật thông tin mã chiết khấu!'
-        })
-      );
+  const handleSaveData = async data => {
+    if (data.appliedDate >= data.endedDate) {
+      makeToast(content.error.dateConflict, toastType.error);
+      return;
     }
+
+    // special data
+    data.rate /= 100;
+    data.maxAmount = +data.maxAmount;
+
+    const newData = { ...discount, ...data };
+    if (isEqualObject(discount, newData)) {
+      makeToast(content.form.nothingChange, toastType.info);
+      return;
+    }
+
+    const newDiscount = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
+    await discountService.update(
+      dispatch,
+      newDiscount,
+      discount.id,
+      accessToken
+    );
+    handleBack();
   };
 
   return (
-    <ModalForm
-      object={discount}
-      handleBack={handleBack}
-      action={() => {
-        discount ? handleSaveData() : handleCreateData();
-      }}
-      FormContent={() => (
-        <>
-          <div className="mb-3">
-            <label htmlFor="discount-code" className="form-discount">
-              {titleCode}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="discount-code"
-              defaultValue={discount?.code}
-              ref={codeRef}
-              placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="discount-applied-type" className="form-discount">
-              {titleAppliedType}
-            </label>
-            <select
-              className="form-control"
-              id="discount-applied-type"
-              defaultValue={discount?.appliedType || appliedType}
-              onChange={e => setAppliedType(e.target.value)}
-              placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
-            >
-              {appliedTypeCombobox.map((type, idx) => (
-                <option key={idx} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-          <fieldset>
-            <legend className="fw-bold">{titleDiscount}</legend>
-            <div className="row">
-              <div className="col-4 mb-3">
-                <label htmlFor="discount-rate" className="form-discount">
-                  {titleRate}
-                </label>
-                <input
-                  id="discount-rate"
-                  type="number"
-                  min="0"
-                  max="80"
-                  className="form-control"
-                  onChange={e => {
-                    if (e.target.value < 0) e.target.value = 0;
-                    if (e.target.value > 80) e.target.value = 80;
-                  }}
-                  defaultValue={discount?.rate * 100 || 5}
-                  ref={rateRef}
-                />
-              </div>
-              <div className="col-8 mb-3">
-                <label htmlFor="discount-max-amount" className="form-discount">
-                  {titleMaxAmount}
-                </label>
-                <input
-                  id="discount-max-amount"
-                  type="number"
-                  min="0"
-                  className="form-control"
-                  onChange={e => {
-                    if (e.target.value < 0) e.target.value = 0;
-                  }}
-                  defaultValue={discount?.maxAmount || 50000}
-                  ref={maxAmountRef}
-                />
-              </div>
+    <ModalForm object={discount} disabledFooter>
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={discount ? handleSaveData : handleCreateData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <TextInput
+          label={content.form.code}
+          register={register}
+          errors={errors}
+          attribute="code"
+          defaultValue={discount?.code}
+          placeholder="BANOIDUNGNGAI, LUONGDAVE, ..."
+          required
+          errorMessage={content.error.code}
+        />
+        <RadioBox
+          className="border rounded-2 mb-2"
+          title={content.form.appliedTypeTitle}
+          control={control}
+          name="appliedType"
+          defaultValue={discount?.appliedType}
+          options={appliedTypes}
+        />
+        <fieldset>
+          <legend className="text-uppercase">
+            {content.form.discountRange}
+          </legend>
+          <div className="row">
+            <div className="col-4 mb-3">
+              <TextInput
+                label={content.form.rate}
+                register={register}
+                errors={errors}
+                attribute="rate"
+                defaultValue={discount?.rate * 100 || 5}
+                type="number"
+                min="0"
+                max="80"
+                required
+                errorMessage={content.error.rate}
+                errorMessageForMin={content.error.minRate}
+                errorMessageForMax={content.error.maxRate}
+              />
             </div>
-          </fieldset>
-          <fieldset>
-            <legend className="fw-bold">{titleTime}</legend>
-            <div className="row">
-              <div className="col mb-3">
-                <label
-                  htmlFor="discount-applied-date"
-                  className="form-discount"
-                >
-                  {titleAppliedDate}
-                </label>
-                <input
-                  id="discount-applied-date"
-                  type="datetime-local"
-                  className="form-control"
-                  defaultValue={
-                    discount?.appliedDate || new Date().toJSON().slice(0, 19)
-                  }
-                  ref={appliedDateRef}
-                />
-              </div>
-              <div className="col mb-3">
-                <label htmlFor="discount-ended-date" className="form-discount">
-                  {titleEndedDate}
-                </label>
-                <input
-                  id="discount-ended-date"
-                  type="datetime-local"
-                  className="form-control"
-                  defaultValue={
-                    discount?.endedDate ||
-                    new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
-                      .toJSON()
-                      .slice(0, 19)
-                  }
-                  ref={endedDateRef}
-                />
-              </div>
+            <div className="col-8 mb-3">
+              <TextInput
+                label={content.form.maxAmount}
+                register={register}
+                errors={errors}
+                attribute="maxAmount"
+                defaultValue={discount?.maxAmount || 50_000}
+                type="number"
+                min="0"
+                max={100_000_000}
+                required
+                errorMessage={content.error.maxAmount}
+              />
             </div>
-          </fieldset>
-        </>
-      )}
-    />
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend className="text-uppercase">{content.form.time}</legend>
+          <div className="row">
+            <div className="col mb-3">
+              <TextInput
+                label={content.form.appliedDate}
+                register={register}
+                errors={errors}
+                attribute="appliedDate"
+                defaultValue={
+                  discount?.appliedDate ||
+                  new Date().toJSON().slice(0, 11) + '00:00'
+                }
+                type="datetime-local"
+                min={new Date().toJSON().slice(0, 11) + '00:00'}
+                required
+                errorMessage={content.error.appliedDate}
+              />
+            </div>
+            <div className="col mb-3">
+              <TextInput
+                label={content.form.endedDate}
+                register={register}
+                errors={errors}
+                attribute="endedDate"
+                defaultValue={
+                  discount?.endedDate ||
+                  new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 1 week
+                    .toJSON()
+                    .slice(0, 11) + '00:00'
+                }
+                type="datetime-local"
+                min={
+                  new Date(Date.now() + 1000 * 60 * 60 * 24) // 24 hours
+                    .toJSON()
+                    .slice(0, 11) + '00:00'
+                }
+                required
+                errorMessage={content.error.endedDate}
+              />
+            </div>
+          </div>
+        </fieldset>
+      </Form>
+    </ModalForm>
   );
 };
 

@@ -1,14 +1,18 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
-import apiDiscount from '../../apis/product/discount.api';
 
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+
+import { discountService } from '../../services';
+
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import DiscountTable from './DiscountTable';
 import DiscountForm from './DiscountForm';
-
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
 
 const pageName = 'Mã chiết khấu sản phẩm';
 const objectName = 'discounts';
@@ -19,76 +23,79 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Discount = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    Navigate,
     workMode,
     showModal,
-    discountEdit,
+    objectEdit: discountEdit,
     modalValue,
     action
-  ] = useWorkspace();
+  } = useWorkspace();
 
-  const { discountList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
-
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
+  const {
+    data: discountList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!discountList) apiDiscount.getAllDiscounts(dispatch);
+    if (!discountList || error) discountService.getAll(dispatch);
   }, []);
 
-  const handleShowDeleteModal = useCallback((discountId, discountName) => {
+  const handleShowDeleteModal = useCallback((discountId, discountCode) => {
     action.addModalValue(
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountName} khỏi hệ thống không?`,
+      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountCode} khỏi hệ thống không?`,
       () => {
-        apiDiscount.deleteDiscount(dispatch, discountId, accessToken);
+        discountService.delete(dispatch, discountId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
   }, []);
 
-  if (isFetching) {
-    return <Loading />;
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    discount => action.setUpdateMode(discount),
+    []
+  );
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
-      {workMode === WorkMode.create && (
-        <DiscountForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
+      {workMode === WorkMode.create && <DiscountForm handleBack={handleBack} />}
       {workMode === WorkMode.edit && (
-        <DiscountForm
-          discount={discountEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
+        <DiscountForm discount={discountEdit} handleBack={handleBack} />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
         >
           {titleButtonAdd}
         </button>
-      </div>
-      <DiscountTable
-        discountList={discountList}
-        discountTotalRecord={discountList?.length}
-        handleSetUpdateMode={discount => action.setUpdateMode(discount)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      </PageHeader>
+      {!discountList || isFetching ? (
+        <Loading />
+      ) : (
+        <DiscountTable
+          discountList={discountList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

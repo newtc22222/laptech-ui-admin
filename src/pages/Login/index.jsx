@@ -1,21 +1,20 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import apiAuth from '../../apis/auth';
-import HashString from '../../utils/HandleStoreLocal';
+import { ToastContainer } from 'react-toastify';
+import classNames from 'classnames';
+
+import { useAppContext } from '../../components/context/AppContext';
+import { authService } from '../../services';
+import { HashString } from '../../utils';
+import content from './content';
 // import Captcha from './Captcha';
 
 /**
  * @link: https://startbootstrap.com/previews/sb-admin-2
  * @since 2022-12-31
  */
-
-const titleWelcome = 'Welcome back!';
-const titlePhone = 'Số điện thoại';
-const titlePassword = 'Mật khẩu';
-const titleBtnSubmit = 'Xác nhận';
-const titleForgotPassword = 'Quên mật khẩu?';
-
 const Login = () => {
   const storeDataHash = localStorage.getItem('storeData');
   let rmb_phone = '',
@@ -27,123 +26,159 @@ const Login = () => {
     [rmb_phone, rmb_password, rmb_check] = storeData.split(';');
   }
 
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    defaultValues: {
+      phone: rmb_phone,
+      password: HashString.decrypt(rmb_password),
+      remember: rmb_check
+    }
+  });
+  const { activeTab, handleSetActiveTab } = useAppContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [phone, setPhone] = useState(rmb_phone);
-  const passwordRef = useRef();
-  // const captchaRef = useRef(); // features
-  const [remember, setRemember] = useState(Boolean(rmb_check));
 
   const handleChangePhone = e => {
     e.preventDefault();
-    const re = /^[0-9/b]{1,14}$/;
-    const str = e.target.value;
-    if (re.test(str) || str === '') {
-      setPhone(str);
-    }
+    const value = e.target.value.trim();
+    const valueSet = value.replace(/\D/g, '');
+    setValue('phone', valueSet);
   };
 
-  const handleLogin = async () => {
+  const onSubmit = async data => {
     const account = {
-      phone: phone,
-      password: passwordRef.current.value
+      phone: data.phone,
+      password: data.password
       // captcha: captchaRef.current.value // will update later
     };
-    const data = await apiAuth.login(dispatch, account);
-
-    if (data) {
-      if (remember) {
-        const storeData = `${phone};${HashString.encrypt(
-          passwordRef.current.value
-        )};${remember}`;
+    const res = await authService.login(dispatch, account);
+    if (res) {
+      if (data.remember) {
+        const storeData = `${data.phone};${HashString.encrypt(data.password)};${
+          data.remember
+        }`;
 
         localStorage.setItem('storeData', HashString.encrypt(storeData));
       }
-      navigate('/');
+
+      if (activeTab.subTab === 'login') handleSetActiveTab('home');
+
+      const urlActive =
+        activeTab.subTab === 'login'
+          ? '/'
+          : '/'
+              .concat(activeTab.tab)
+              .concat(activeTab.subTab ? '/' + activeTab.subTab : '');
+      navigate(urlActive);
     }
   };
 
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-xl-10 col-lg-12 col-md-9">
-          <div className="card o-hidden border-0 shadow-lg my-5">
-            <div className="card-body p-0">
-              <div className="row">
-                <div className="col-lg-6 d-none d-lg-block bg-login-image">
-                  <img
-                    src={require('./work.png')}
-                    alt="Login image"
-                    className="h-100 w-100"
-                  />
-                </div>
-                <div className="col-lg-6">
-                  <div className="p-5">
-                    <div className="text-center">
-                      <h1 className="h4 text-primary mb-4">{titleWelcome}</h1>
-                    </div>
-                    <div>
-                      <div className="mb-3">
-                        <label htmlFor="inputPhone" className="form-label">
-                          {titlePhone}
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="inputPhone"
-                          aria-describedby="phoneHelp"
-                          value={phone}
-                          onChange={handleChangePhone}
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="inputPassword" className="form-label">
-                          {titlePassword}
-                        </label>
-                        <input
-                          type="password"
-                          className="form-control"
-                          id="inputPassword"
-                          defaultValue={HashString.decrypt(rmb_password)}
-                          ref={passwordRef}
-                        />
-                      </div>
-                      {/* <Captcha captchaRef={captchaRef} /> */}
-                      <div className="mb-3 form-check">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          id="exampleCheck1"
-                          checked={remember}
-                          onChange={() => setRemember(!remember)}
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="exampleCheck1"
+    <>
+      <ToastContainer />
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-xl-10 col-lg-12 col-md-9">
+            <div className="card o-hidden border-0 shadow-lg my-5">
+              <div className="card-body p-0">
+                <div className="row">
+                  <div className="col-lg-6 d-none d-lg-block bg-login-image">
+                    <img
+                      src={require('./work.png')}
+                      alt="Login image"
+                      className="h-100 w-100"
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="p-5">
+                      <form noValidate onSubmit={handleSubmit(onSubmit)}>
+                        <div className="text-center">
+                          <h3 className="text-primary mb-3">
+                            {content.welcome}
+                          </h3>
+                        </div>
+                        <div>
+                          <div className="form-floating mb-3">
+                            <input
+                              {...register('phone', {
+                                onChange: handleChangePhone,
+                                required: true && content.error.phone
+                              })}
+                              className={classNames('form-control', {
+                                'is-invalid': errors['phone']
+                              })}
+                              maxLength={15}
+                              id="inputPhone"
+                              placeholder="0123 456 xxx"
+                            />
+                            <label htmlFor="inputPhone">{content.phone}</label>
+                            {errors['phone'] && (
+                              <span className="text-danger small">
+                                {errors['phone'].message}
+                              </span>
+                            )}
+                          </div>
+                          <div className="form-floating mb-3">
+                            <input
+                              {...register('password', {
+                                required: true && content.error.password
+                              })}
+                              type="password"
+                              className={classNames('form-control', {
+                                'is-invalid': errors['password']
+                              })}
+                              id="inputPassword"
+                              placeholder="13579ASDFGH"
+                            />
+                            <label htmlFor="inputPassword">
+                              {content.password}
+                            </label>
+                            {errors['password'] && (
+                              <span className="text-danger small">
+                                {errors['password'].message}
+                              </span>
+                            )}
+                          </div>
+                          {/* <Captcha captchaRef={captchaRef} /> */}
+                          <div className="mb-3 form-check">
+                            <input
+                              {...register('remember')}
+                              type="checkbox"
+                              className="form-check-input"
+                              id="exampleCheck1"
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="exampleCheck1"
+                            >
+                              {content.remember}
+                            </label>
+                          </div>
+                          <button
+                            className="btn btn-primary w-100"
+                            type="submit"
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting
+                              ? content.btnSubmitLoading
+                              : content.btnSubmit}
+                          </button>
+                        </div>
+                        <hr />
+                      </form>
+                      <div className="text-center">
+                        <a
+                          className="small"
+                          href="forgot-password.html"
+                          target="_blank"
                         >
-                          Ghi nhớ đăng nhập
-                        </label>
+                          {content.forgotPassword}
+                        </a>
                       </div>
-                      <button
-                        className="btn btn-primary w-100"
-                        type="button"
-                        onClick={e => {
-                          e.preventDefault();
-                          handleLogin();
-                        }}
-                      >
-                        {titleBtnSubmit}
-                      </button>
-                    </div>
-                    <hr />
-                    <div className="text-center">
-                      <a
-                        className="small"
-                        href="forgot-password.html"
-                        target="_blank"
-                      >
-                        {titleForgotPassword}
-                      </a>
                     </div>
                   </div>
                 </div>
@@ -152,7 +187,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

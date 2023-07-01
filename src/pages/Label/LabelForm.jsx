@@ -1,18 +1,18 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+
 import ModalForm from '../../components/common/ModalForm';
+import { Form, TextInput } from '../../components/validation';
 
-import apiLabels from '../../apis/product/label.api';
-
-import { addToast } from '../../redux-feature/toast_notify';
-import { getUpdateByUserInSystem } from '../../helper/getUser';
-
-const titleName = 'Tiêu đề (hiển thị trực tiếp)';
-const titleIcon = 'Biểu tượng đại diện';
-const titleTitle = 'Thông tin mô tả khi người dùng trỏ chuột vào';
-const titleDescription = 'Thông tin chi tiết về nhãn sản phẩm';
-const linkToChooseIcon = 'https://icons.getbootstrap.com/';
-const hintToChooseIcon = `Truy cập vào link ${linkToChooseIcon} sau đó chọn 1 icon và copy thẻ icon được để sẵn.`;
+import { labelService } from '../../services';
+import {
+  makeToast,
+  toastType,
+  isEqualObject,
+  getUpdateByUserInSystem
+} from '../../utils';
+import content from './content';
 
 /**
  * @since 2023-02-13
@@ -21,128 +21,96 @@ const LabelForm = ({ label, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const nameRef = useRef();
-  const iconRef = useRef();
-  const titleRef = useRef();
-  const descriptionRef = useRef();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isSubmitting }
+  } = useForm();
 
-  const handleCreateData = async () => {
-    try {
-      const newLabel = {
-        name: nameRef.current.value,
-        icon: iconRef.current.value,
-        title: titleRef.current.value,
-        description: descriptionRef.current.value,
-        ...getUpdateByUserInSystem()
-      };
+  const handleCreateData = async data => {
+    const newLabel = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
 
-      await apiLabels.createNewLabel(dispatch, newLabel, accessToken);
-      handleBack();
-    } catch (err) {
-      console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể tạo thông tin nhãn sản phẩm mới!'
-        })
-      );
-    }
+    await labelService.create(dispatch, newLabel, accessToken);
+    handleBack();
   };
 
-  const handleSaveData = async () => {
-    try {
-      const newLabel = {
-        name: nameRef.current.value,
-        icon: iconRef.current.value,
-        title: titleRef.current.value,
-        description: descriptionRef.current.value,
-        modifiedDate: new Date().toISOString(),
-        ...getUpdateByUserInSystem()
-      };
-      await apiLabels.updateLabel(dispatch, newLabel, label.id, accessToken);
-      handleBack();
-    } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể cập nhật thông tin nhãn sản phẩm!'
-        })
-      );
+  const handleSaveData = async data => {
+    const newData = { ...label, ...data };
+    if (isEqualObject(label, newData)) {
+      makeToast(content.form.nothingChange, toastType.info);
+      return;
     }
+
+    const newLabel = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
+    await labelService.update(dispatch, newLabel, label.id, accessToken);
+    handleBack();
   };
 
   return (
-    <ModalForm
-      object={label}
-      handleBack={handleBack}
-      action={() => {
-        label ? handleSaveData() : handleCreateData();
-      }}
-      FormContent={() => (
-        <>
-          <div className="mb-3">
-            <label htmlFor="label-icon" className="form-label fw-bold">
-              {titleIcon}
-            </label>
-            <a
-              className="ms-3 text-primary text-decoration-none"
-              href={linkToChooseIcon}
-              target="_blank"
-            >
-              {hintToChooseIcon}
-            </a>
-            <input
-              type="text"
-              className="form-control"
-              id="label-icon"
-              defaultValue={label?.icon}
-              ref={iconRef}
-              placeholder="<i class='bi bi-house'></i>"
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="label-name" className="form-label">
-              {titleName}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="label-name"
-              defaultValue={label?.name}
-              ref={nameRef}
-              placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="label-title" className="form-label">
-              {titleTitle}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="label-title"
-              defaultValue={label?.title}
-              ref={titleRef}
-              placeholder="Core i3 8560U ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="label-description" className="form-label">
-              {titleDescription}
-            </label>
-            <textarea
-              className="form-control"
-              id="label-description"
-              defaultValue={label?.description}
-              ref={descriptionRef}
-              placeholder="New Core i3 8th generation with safe battery mode ..."
-            />
-          </div>
-        </>
-      )}
-    />
+    <ModalForm object={label} disabledFooter>
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={label ? handleSaveData : handleCreateData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <div>
+          <a
+            className="mx-2 mb-3 text-primary text-decoration-none"
+            href={content.form.linkChooseIcon}
+            target="_blank"
+          >
+            {content.form.hintChooseIcon}
+          </a>
+          <TextInput
+            label={content.form.icon}
+            register={register}
+            errors={errors}
+            attribute="icon"
+            defaultValue={label?.icon}
+            placeholder="<i class='bi bi-house'></i>"
+            required
+            errorMessage={content.error.icon}
+          />
+        </div>
+        <TextInput
+          label={content.form.name}
+          register={register}
+          errors={errors}
+          attribute="name"
+          defaultValue={label?.name}
+          placeholder="Core i3, Core i5, NVIDIA, Led RGB, ..."
+          required
+          errorMessage={content.error.name}
+        />
+        <TextInput
+          label={content.form.title}
+          register={register}
+          errors={errors}
+          attribute="title"
+          defaultValue={label?.title}
+          placeholder="Core i3 8560U ..."
+          required
+          errorMessage={content.error.title}
+        />
+        <TextInput
+          label={content.form.description}
+          register={register}
+          errors={errors}
+          attribute="description"
+          defaultValue={label?.description}
+          placeholder="New Core i3 8th generation with safe battery mode ..."
+          errorMessage={content.error.title}
+        />
+      </Form>
+    </ModalForm>
   );
 };
 

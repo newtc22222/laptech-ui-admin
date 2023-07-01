@@ -1,75 +1,105 @@
 import React from 'react';
-import SoftTable from '../../components/common/SoftTable';
-import Loading from '../../components/common/Loading';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const headerList = [
-  'ID',
-  'Tiêu đề',
-  'Ảnh mô tả',
-  'Nội dung gợi ý',
-  'Mô tả chi tiết',
-  'Mẫu hiển thị',
-  'Thiết lập'
-];
+// TODO: build sortable table
+import { ReactTable } from '../../components/common';
+import content from './content';
 
 /**
  * @since 2023-02-13
  */
 const LabelTable = ({
   labelList,
-  labelTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (labelList === null || labelList === undefined) return <Loading />;
+  const columns = [
+    {
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
+    },
+    {
+      Header: content.name,
+      accessor: 'name'
+    },
+    {
+      Header: content.icon,
+      accessor: 'icon',
+      disableFilters: true
+    },
+    {
+      Header: content.title,
+      accessor: 'title'
+    },
+    {
+      Header: content.description,
+      accessor: 'description'
+    },
+    {
+      Header: content.sample,
+      accessor: 'sample',
+      Cell: ({ row }) => {
+        return (
+          <div
+            title={row.original.title}
+            className="d-flex justify-content-center border border-primary rounded-2"
+          >
+            <div
+              className="mx-2"
+              dangerouslySetInnerHTML={{ __html: row.original.icon }}
+            />
+            {row.original.name}
+          </div>
+        );
+      },
+      disableFilters: true,
+      disableSortBy: true
+    },
+    {
+      Header: 'createdDate',
+      accessor: 'createdDate'
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
+        return (
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-secondary flex-fill"
+              onClick={() => handleSetUpdateMode(row.original)}
+            >
+              {content.btnEdit}
+            </button>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
+            >
+              {content.btnDel}
+            </button>
+          </div>
+        );
+      },
+      disableFilters: true,
+      disableSortBy: true
+    }
+  ];
 
   return (
-    <SoftTable
-      headerList={headerList}
-      dataList={labelList}
-      totalRecordData={labelTotalRecord}
-      cb_handleRow={(idx_start, idx_end) =>
-        labelList.slice(idx_start, idx_end).map(label => (
-          <tr key={label.id} className="text-center">
-            <td>{label.id}</td>
-            <td className="fw-bolder">{label.name}</td>
-            <td>
-              <div dangerouslySetInnerHTML={{ __html: label.icon }} />
-            </td>
-            <td className="fw-bold text-secondary">{label.title}</td>
-            <td style={{ maxWidth: '15vw' }}>{label.description}</td>
-            <td>
-              <div
-                title={label.title}
-                className="d-flex justify-content-center border border-primary rounded-2"
-              >
-                <div
-                  className="me-2"
-                  dangerouslySetInnerHTML={{ __html: label.icon }}
-                />
-                {label.name}
-              </div>
-            </td>
-            <td style={{ width: '10%' }}>
-              <button
-                className="btn btn-secondary w-100 mb-2"
-                onClick={() => handleSetUpdateMode(label)}
-              >
-                {titleButtonUpdate}
-              </button>{' '}
-              <br />
-              <button
-                className="btn btn-danger w-100"
-                onClick={() => handleShowDeleteModal(label.id, label.name)}
-              >
-                {titleButtonDelete}
-              </button>
-            </td>
-          </tr>
-        ))
-      }
+    <ReactTable
+      columns={columns}
+      hiddenColumns={['createdDate', 'modifiedDate']}
+      data={_.sortBy(labelList, ['id'])}
+      isSortabled
+      isFiltered
+      hasGlobalFilter
+      isPagination
     />
   );
 };

@@ -1,53 +1,72 @@
 import React from 'react';
-import SoftTable from '../../components/common/SoftTable';
-import Loading from '../../components/common/Loading';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const headerList = ['ID', 'Tên phân quyền', 'Mô tả', 'Thiết lập'];
+// TODO: build sortable table
+import { ReactTable } from '../../components/common';
+import { formatDateTime } from '../../utils';
+import content from './content';
 
 /**
  * @since 2023-02-13
  */
 const RoleTable = ({
   roleList,
-  roleTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (roleList === null || roleList === undefined) return <Loading />;
+  const columns = [
+    {
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
+    },
+    {
+      Header: content.name,
+      accessor: 'name',
+      Cell: ({ value }) => <span className="fw-bold">{value}</span>
+    },
+    {
+      Header: content.description,
+      accessor: 'description'
+    },
+    {
+      Header: content.createdDate,
+      id: 'createdDate',
+      accessor: row => formatDateTime(row.createdDate)
+    },
+    {
+      Header: content.modifiedDate,
+      id: 'modifiedDate',
+      accessor: row => formatDateTime(row.modifiedDate)
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
+        return (
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-secondary flex-fill"
+              onClick={() => handleSetUpdateMode(row.values)}
+            >
+              {content.btnEdit}
+            </button>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
+              disabled={content.fixedRole.includes(row.values.name)}
+            >
+              {content.btnDel}
+            </button>
+          </div>
+        );
+      },
+      disableFilters: true
+    }
+  ];
 
-  return (
-    <SoftTable
-      headerList={headerList}
-      dataList={roleList}
-      totalRecordData={roleTotalRecord}
-      cb_handleRow={(idx_start, idx_end) =>
-        roleList.slice(idx_start, idx_end).map(role => (
-          <tr key={role.id} className="text-center">
-            <td>{role.id}</td>
-            <td className="fw-bolder">{role.name}</td>
-            <td className="fw-bold text-secondary">{role.description}</td>
-            <td style={{ width: '10%' }}>
-              <button
-                className="btn btn-secondary w-100 mb-2"
-                onClick={() => handleSetUpdateMode(role)}
-              >
-                {titleButtonUpdate}
-              </button>{' '}
-              <br />
-              <button
-                className="btn btn-danger w-100"
-                onClick={() => handleShowDeleteModal(role.id, role.name)}
-              >
-                {titleButtonDelete}
-              </button>
-            </td>
-          </tr>
-        ))
-      }
-    />
-  );
+  return <ReactTable columns={columns} data={roleList} isFiltered />;
 };
 
 export default RoleTable;

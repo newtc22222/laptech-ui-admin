@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
-import apiBrands from '../../apis/product/brand.api';
 
-import BrandTable from './BrandTable';
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import BrandForm from './BrandForm';
+import BrandTable from './BrandTable';
 
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+import { brandService } from '../../services';
 
 const pageName = 'Thương hiệu';
 const objectName = 'brands';
@@ -16,78 +19,85 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const BrandPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    Navigate,
     workMode,
     showModal,
-    brandEdit,
+    objectEdit: brandEdit,
     modalValue,
     action
-  ] = useWorkspace();
+  } = useWorkspace();
 
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
-
-  const { brandList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: brandList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   // Loading
   useEffect(() => {
-    if (!brandList) apiBrands.getAllBrands(dispatch);
+    if (!brandList || error) brandService.getAll(dispatch);
   }, []);
 
   // Show delete modal
-  const handleShowDeleteModal = (brandId, brandName) => {
-    action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
-      () => {
-        apiBrands.deleteBrand(dispatch, brandId, accessToken);
-        action.showModal(false);
-      }
-    );
-    action.showModal(true);
-  };
+  const handleShowDeleteModal = useCallback(
+    (brandId, brandName) => {
+      action.addModalValue(
+        `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
+        () => {
+          brandService.delete(dispatch, brandId, accessToken);
+          action.showModal(false);
+        }
+      );
+      action.showModal(true);
+    },
+    [dispatch, accessToken]
+  );
 
-  if (isFetching) {
-    return <Loading />;
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    brand => action.setUpdateMode(brand),
+    []
+  );
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
-      {workMode === WorkMode.create && (
-        <BrandForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
       {workMode === WorkMode.edit && (
-        <BrandForm
-          brand={brandEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
+        <BrandForm brand={brandEdit} handleBack={handleBack} />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      {workMode === WorkMode.create && <BrandForm handleBack={handleBack} />}
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
+          disabled={!brandList || isFetching || error}
         >
           {titleButtonAdd}
         </button>
-      </div>
-      <BrandTable
-        brandList={brandList}
-        brandTotalRecord={brandList?.length}
-        handleSetUpdateMode={brand => action.setUpdateMode(brand)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      </PageHeader>
+      {!brandList || isFetching ? (
+        <Loading />
+      ) : (
+        <BrandTable
+          brandList={brandList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

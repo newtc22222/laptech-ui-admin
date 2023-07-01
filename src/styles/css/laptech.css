@@ -1,0 +1,25 @@
+img:hover {
+  opacity: 0.8;
+  cursor: url('https://img.icons8.com/fluency/256/delete-trash.png'), auto;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(31, 74, 190);
+  /* border-radius: 2px; */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(30, 61, 160);
+}

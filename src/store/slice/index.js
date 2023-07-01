@@ -1,0 +1,10 @@
+export { default as authReducer } from './auth.slice';
+export { default as brandReducer } from './brand.slice';
+export { default as categoryReducer } from './category.slice';
+export { default as discountReducer } from './discount.slice';
+export { default as labelReducer } from './label.slice';
+export { default as importReducer } from './importProduct.slice';
+export { default as invoiceReducer } from './invoice.slice';
+export { default as productReducer } from './product.slice';
+export { default as roleReducer } from './role.slice';
+export { default as userReducer } from './user.slice';

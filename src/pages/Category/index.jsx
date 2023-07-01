@@ -1,11 +1,17 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
-import apiCategories from '../../apis/product/category.api';
 
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+
+import { categoryService } from '../../services';
+
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
+
 import CategoryTable from './CategoryTable';
 import CategoryForm from './CategoryForm';
 
@@ -15,25 +21,23 @@ const titleButtonAdd = 'Thêm thông tin';
 
 const Category = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    Navigate,
     workMode,
     showModal,
-    categoryEdit,
+    objectEdit: categoryEdit,
     modalValue,
     action
-  ] = useWorkspace();
+  } = useWorkspace();
 
-  if (accessToken === null || accessToken === undefined)
-    return <Navigate to="/auth/login" />;
-
-  const { categoryList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: categoryList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!categoryList) apiCategories.getAllCategories(dispatch);
+    if (!categoryList || error) categoryService.getAll(dispatch);
   }, []);
 
   const handleShowDeleteModal = useCallback(
@@ -42,52 +46,62 @@ const Category = () => {
         `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
         `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
         () => {
-          apiCategories.deleteCategory(dispatch, categoryId, accessToken);
+          categoryService.delete(dispatch, categoryId, accessToken);
           action.showModal(false);
         }
       );
       action.showModal(true);
     },
-    [accessToken]
+    [dispatch, accessToken]
   );
 
-  if (isFetching) {
-    return <Loading />;
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    category => action.setUpdateMode(category),
+    []
+  );
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
-      {workMode === WorkMode.create && (
-        <CategoryForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
+      {workMode === WorkMode.create && <CategoryForm handleBack={handleBack} />}
       {workMode === WorkMode.edit && (
         <CategoryForm
           category={categoryEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleBack={handleBack}
         />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
+          disabled={!categoryList || isFetching || error}
         >
           {titleButtonAdd}
         </button>
-      </div>
-      <CategoryTable
-        categoryList={categoryList}
-        categoryTotalRecord={categoryList?.length}
-        handleSetUpdateMode={category => action.setUpdateMode(category)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      </PageHeader>
+      {!categoryList || isFetching ? (
+        <Loading />
+      ) : (
+        <CategoryTable
+          categoryList={categoryList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

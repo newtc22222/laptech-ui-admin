@@ -20,7 +20,6 @@ function handleOption(token, httpMethod, object) {
     fetchOption.headers['Authorization'] = `Bearer ${token}`;
   }
   // fetchOption.credentials = 'include'; // for http-only cookies
-  console.log(fetchOption);
   return fetchOption;
 }
 

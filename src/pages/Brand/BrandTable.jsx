@@ -1,70 +1,95 @@
 import React from 'react';
-import Loading from '../../components/common/Loading';
-import SoftTable from '../../components/common/SoftTable';
 
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const headerList = [
-  'ID',
-  'Tên thương hiệu',
-  'Quốc gia',
-  'Ngày thành lập',
-  'Logo',
-  'Số sản phẩm trong kho',
-  'Thiết lập'
-];
+import { ReactTable } from '../../components/common';
+import { SearchMultipleFilter } from '../../components/common/filter/ColumnFilter';
+
+import content from './content';
 
 const BrandTable = ({
   brandList,
-  brandTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (brandList === null || brandList === undefined) return <Loading />;
+  const columns = [
+    {
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
+    },
+    {
+      Header: content.name,
+      accessor: 'name'
+    },
+    {
+      Header: content.country,
+      accessor: 'country',
+      Filter: SearchMultipleFilter,
+      filter: 'includes'
+    },
+    {
+      Header: content.establishDate,
+      accessor: 'establishDate',
+      sortType: (rowA, rowB) => {
+        const dateA = new Date(rowA.values.establishDate).getTime();
+        const dateB = new Date(rowB.values.establishDate).getTime();
+        return dateA - dateB;
+      }
+    },
+    {
+      Header: content.logo,
+      accessor: 'logo',
+      Cell: ({ row, value }) => (
+        <img alt={row.values.name} src={value} className="img-thumbnail" />
+      ),
+      disableFilters: true,
+      disableSortBy: true
+    },
+    {
+      Header: 'createdDate',
+      accessor: 'createdDate'
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
+        return (
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-secondary flex-fill"
+              onClick={() => handleSetUpdateMode(row.original)}
+            >
+              {content.btnEdit}
+            </button>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
+            >
+              {content.btnDel}
+            </button>
+          </div>
+        );
+      },
+      disableFilters: true,
+      disableSortBy: true
+    }
+  ];
 
   return (
-    <SoftTable
-      headerList={headerList}
-      dataList={brandList}
-      totalRecordData={brandTotalRecord}
-      cb_handleRow={(idx_start, idx_end) =>
-        brandList.slice(idx_start, idx_end).map(brand => (
-          <tr key={brand.id} className="text-center">
-            <td>{brand.id}</td>
-            <td className="fw-bolder">{brand.name}</td>
-            <td className="fw-bold text-secondary">{brand.country}</td>
-            <td>{brand.establishDate}</td>
-            <td>
-              <img
-                src={brand.logo}
-                alt={brand.name + ' logo'}
-                className="rounded img-fluid img-thumbnail"
-                style={{ maxWidth: '8vw' }}
-              />
-            </td>
-            <td>
-              <p className="fw-bold">0</p>
-            </td>
-            <td style={{ width: '10%' }}>
-              <button
-                className="btn btn-secondary w-100 mb-2"
-                onClick={() => handleSetUpdateMode(brand)}
-              >
-                {titleButtonUpdate}
-              </button>{' '}
-              <br />
-              <button
-                className="btn btn-danger w-100"
-                onClick={() => handleShowDeleteModal(brand.id, brand.name)}
-              >
-                {titleButtonDelete}
-              </button>
-            </td>
-          </tr>
-        ))
-      }
+    <ReactTable
+      columns={columns}
+      hiddenColumns={['createdDate', 'modifiedDate']}
+      data={brandList}
+      isSortabled
+      isFiltered
+      hasGlobalFilter
     />
   );
 };
 
-export default BrandTable;
+export default React.memo(BrandTable);

@@ -1,193 +1,156 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ModalForm from '../../components/common/ModalForm';
+import { useForm } from 'react-hook-form';
 
-import apiBrands from '../../apis/product/brand.api';
-import apiUpload from '../../apis/upload.api';
+import { ModalForm } from '../../components/common';
+import { Form, InputImage, TextInput } from '../../components/validation';
 
-import { addToast } from '../../redux-feature/toast_notify';
-import { getUpdateByUserInSystem } from '../../helper/getUser';
-
-const titleName = 'Tên Thương hiệu';
-const titleCountry = 'Quốc gia';
-const titleEstablishDate = 'Ngày thành lập';
-const titleLogo = 'Logo đại diện';
-const hintToChooseImage = 'Nhấn trực tiếp vào hình ảnh để chọn file';
+import { brandService, uploadService } from '../../services';
+import {
+  makeToast,
+  toastType,
+  isEqualObject,
+  getUpdateByUserInSystem
+} from '../../utils';
+import content from './content';
 
 const BrandForm = ({ brand, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const nameRef = useRef();
-  const countryRef = useRef();
-  const dateRef = useRef();
-  const [logo, setLogo] = useState({
-    image:
-      brand?.logo ||
-      'https://placeholder.pics/svg/200x150/DEDEDE/555555/Choose%20image',
-    file: brand?.logo || '',
-    filename: ''
-  });
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting, isDirty }
+  } = useForm();
 
-  const handleChangeImage = e => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = event => {
-        setLogo({
-          image: event.target.result,
-          file: e.target.files[0],
-          filename: e.target.files[0].name
-        });
-      };
-      reader.readAsDataURL(e.target.files[0]);
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      makeToast(content.error.missing, toastType.error);
     }
+  }, [errors]);
+
+  const handleCreateData = data => {
+    const formData = new FormData();
+    formData.append('file', data.logo, data.logo.name);
+    const promise = new Promise((resolve, reject) => {
+      const result = uploadService.uploadImage(dispatch, formData, accessToken);
+      if (result) resolve(result);
+      reject(new Error('Cannot upload images!'));
+    });
+
+    const newBrand = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
+
+    promise
+      .then(async result => {
+        newBrand.logo = result;
+        await brandService.create(dispatch, newBrand, accessToken);
+        handleBack();
+      })
+      .catch(err => makeToast(content.error.upload, toastType.error));
   };
 
-  const handleCreateData = () => {
-    try {
+  const handleSaveData = async data => {
+    const newData = { ...brand, ...data };
+    if (isEqualObject(brand, newData)) {
+      makeToast(content.form.nothingChange, toastType.info);
+      return;
+    }
+
+    let promise;
+    if (data.logo !== brand.logo) {
       const formData = new FormData();
-      formData.append('file', logo.file, logo.filename);
-      const promise = new Promise((resolve, reject) => {
-        const result = apiUpload.uploadImage(dispatch, formData, accessToken);
+      formData.append('file', data.logo, data.logo.name);
+      // upload new image
+      promise = new Promise((resolve, reject) => {
+        const result = uploadService.uploadImage(
+          dispatch,
+          formData,
+          accessToken
+        );
         if (result) resolve(result);
         reject(new Error('Cannot upload images!'));
       });
-
-      promise.then(result => {
-        const newBrand = {
-          name: nameRef.current.value,
-          country: countryRef.current.value,
-          establishDate: dateRef.current.value,
-          logo: result,
-          ...getUpdateByUserInSystem()
-        };
-        apiBrands.createNewBrand(dispatch, newBrand, accessToken);
-        handleBack();
-      });
-    } catch (err) {
-      console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Bạn chưa cập nhật hình ảnh cho ứng dụng!'
-        })
-      );
     }
-  };
 
-  const handleSaveData = () => {
-    try {
-      let promise;
-      if (logo.image !== null && logo.image !== brand.logo) {
-        const formData = new FormData();
-        formData.append('file', logo.file, logo.filename);
-        // upload new image
-        promise = new Promise((resolve, reject) => {
-          const result = apiUpload.uploadImage(dispatch, formData, accessToken);
-          if (result) resolve(result);
-          reject(new Error('Cannot upload images!'));
-        });
-      }
+    const updateBrand = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
 
-      const updateBrand = {
-        name: nameRef.current.value,
-        country: countryRef.current.value,
-        establishDate: dateRef.current.value,
-        logo: brand.logo,
-        modifiedDate: new Date().toISOString(),
-        ...getUpdateByUserInSystem()
-      };
-      promise?.then(result => {
-        updateBrand.logo = result;
-      });
-
-      apiBrands.updateBrand(dispatch, updateBrand, brand.id, accessToken);
-      handleBack();
-    } catch (err) {
-      console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Bạn chưa cập nhật hình ảnh cho ứng dụng!'
+    if (promise) {
+      promise
+        .then(async result => {
+          updateBrand.logo = result;
+          await brandService.update(
+            dispatch,
+            updateBrand,
+            brand.id,
+            accessToken
+          );
+          handleBack();
         })
-      );
+        .catch(err => makeToast(content.error.upload, toastType.error));
+    } else {
+      await brandService.update(dispatch, updateBrand, brand.id, accessToken);
+      handleBack();
     }
   };
 
   return (
-    <ModalForm
-      object={brand}
-      handleBack={handleBack}
-      action={() => {
-        brand ? handleSaveData() : handleCreateData();
-      }}
-      FormContent={() => (
-        <>
-          <div className="mb-3">
-            <label htmlFor="brand-name" className="form-label">
-              {titleName}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="brand-name"
-              defaultValue={brand?.name}
-              ref={nameRef}
-              placeholder="ASUS, ACER, DELL, ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="brand-country" className="form-label">
-              {titleCountry}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="brand-country"
-              defaultValue={brand?.country}
-              ref={countryRef}
-              placeholder="China, USA, ..."
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="brand-name" className="form-label">
-              {titleEstablishDate}
-            </label>
-            <input
-              type="date"
-              className="form-control"
-              id="brand-name"
-              defaultValue={new Date(brand?.establishDate || '2000-01-01')
-                .toISOString()
-                .slice(0, 10)}
-              ref={dateRef}
-            />
-          </div>
-          <div className="mb-3">
-            <p>
-              {titleLogo + ' '}
-              <small className="text-primary">{hintToChooseImage}</small>
-            </p>
-            <label htmlFor="formFile" className="form-label">
-              <img
-                style={{ maxWidth: '200px', maxHeight: '150px' }}
-                src={logo.image}
-                alt={brand?.name || 'new logo'}
-              />
-              <input
-                className="form-control"
-                style={{ display: 'none' }}
-                type="file"
-                id="formFile"
-                onChange={handleChangeImage}
-              />
-            </label>
-          </div>
-        </>
-      )}
-    />
+    <ModalForm object={brand} disabledFooter>
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={brand ? handleSaveData : handleCreateData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <TextInput
+          label={content.form.name}
+          register={register}
+          errors={errors}
+          attribute="name"
+          defaultValue={brand?.name}
+          placeholder="ASUS, ACER, DELL, ..."
+          required
+          errorMessage={content.error.name}
+        />
+        <TextInput
+          label={content.form.country}
+          register={register}
+          errors={errors}
+          attribute="country"
+          defaultValue={brand?.country}
+          placeholder="China, USA, ..."
+          required
+          errorMessage={content.error.country}
+        />
+        <TextInput
+          label={content.form.establishDate}
+          register={register}
+          errors={errors}
+          type="date"
+          attribute="establishDate"
+          required
+          defaultValue={new Date(brand?.establishDate || '2000-01-01')
+            .toISOString()
+            .slice(0, 10)}
+        />
+        <InputImage
+          label={content.form.logo}
+          control={control}
+          errors={errors}
+          name="logo"
+          defaultValue={brand?.logo}
+          required
+        />
+      </Form>
+    </ModalForm>
   );
 };
 

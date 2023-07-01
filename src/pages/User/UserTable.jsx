@@ -1,70 +1,106 @@
 import React from 'react';
-import SoftTable from '../../components/common/SoftTable';
-import Loading from '../../components/common/Loading';
+import classNames from 'classnames';
 
-import { getStringBackTime } from '../../utils/HandleTimer';
-
-const titleButtonUpdate = 'Cập nhật';
-const titleButtonDelete = 'Xóa';
-const headerList = [
-  'ID',
-  'Tên người dùng',
-  'Số điện thoại',
-  'Giới tính',
-  'Trạng thái tài khoản',
-  'Lần đăng nhập gần nhất',
-  'Thiết lập'
-];
-const gender = {
-  MALE: 'Nam',
-  FEMALE: 'Nữ',
-  OTHER: 'Khác'
-};
+import { ReactTable } from '../../components/common';
+import { SelectFilter } from '../../components/common/filter/ColumnFilter';
+import content from './content';
 
 /**
  * @since 2023-02-14
  */
 const UserTable = ({
   userList,
-  userTotalRecord,
   handleSetUpdateMode,
   handleShowDeleteModal
 }) => {
-  if (userList === null || userList === undefined) return <Loading />;
+  const columns = [
+    {
+      Header: content.id,
+      accessor: 'id',
+      disableFilters: true
+    },
+    {
+      Header: content.name,
+      accessor: 'name'
+    },
+    {
+      Header: content.phone,
+      accessor: 'phone',
+      disableSortBy: true
+    },
+    {
+      Header: content.gender,
+      id: 'gender',
+      accessor: row => content.genderVietsub[row.gender],
+      Filter: SelectFilter,
+      filter: 'equals'
+    },
+    {
+      Header: content.form.dob,
+      accessor: 'dateOfBirth'
+    },
+    {
+      Header: content.status,
+      id: 'active',
+      accessor: row =>
+        (row.active ? content.active : content.inactive).toUpperCase(),
+      Cell: ({ row, value }) => (
+        <span
+          className={classNames(
+            'badge',
+            row.original.active ? 'text-bg-success' : 'text-bg-secondary'
+          )}
+        >
+          {value}
+        </span>
+      ),
+      Filter: SelectFilter,
+      filter: 'equals'
+    },
+    {
+      Header: 'createdDate',
+      accessor: 'createdDate'
+    },
+    {
+      Header: 'modifiedDate',
+      accessor: 'modifiedDate'
+    },
+    {
+      Header: content.setting,
+      accessor: 'setting',
+      Cell: ({ row }) => {
+        return (
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-secondary flex-fill"
+              onClick={() => handleSetUpdateMode(row.original)}
+            >
+              {content.btnEdit}
+            </button>
+            <button
+              className="btn btn-danger flex-fill"
+              onClick={() =>
+                handleShowDeleteModal(row.values.id, row.values.name)
+              }
+            >
+              {content.btnDel}
+            </button>
+          </div>
+        );
+      },
+      disableFilters: true,
+      disableSortBy: true
+    }
+  ];
 
   return (
-    <SoftTable
-      headerList={headerList}
-      dataList={userList}
-      totalRecordData={userTotalRecord}
-      cb_handleRow={(idx_start, idx_end) =>
-        userList.slice(idx_start, idx_end).map(user => (
-          <tr key={user.id} className="text-center">
-            <td>{user.id}</td>
-            <td>{user.name}</td>
-            <td>{user.phone}</td>
-            <td>{gender[user.gender]}</td>
-            <td>{gender.isActive && <span>?</span>}</td>
-            <td>{getStringBackTime(user.modifiedDate)}</td>
-            <td style={{ width: '10%' }}>
-              <button
-                className="btn btn-secondary w-100 mb-2"
-                onClick={() => handleSetUpdateMode(user)}
-              >
-                {titleButtonUpdate}
-              </button>{' '}
-              <br />
-              <button
-                className="btn btn-danger w-100"
-                onClick={() => handleShowDeleteModal(user.id, user.name)}
-                disabled={user.isActive}
-              >
-                {titleButtonDelete}
-              </button>
-            </td>
-          </tr>
-        ))
-      }
+    <ReactTable
+      columns={columns}
+      data={userList}
+      hiddenColumns={['createdDate', 'modifiedDate']}
+      isSortabled
+      isFiltered
+      hasGlobalFilter
     />
   );
 };

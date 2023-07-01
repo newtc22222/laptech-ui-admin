@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-
-const BASE_URL = 'http://localhost:8088/api/v1';
+import { BASE_URL } from '../apis/config';
 
 /**
  *
@@ -18,12 +17,12 @@ function useFetch(url, option) {
     const callApi = async () => {
       setLoading(true);
       await fetch(BASE_URL + url, option)
-        .then(res => {
-          if (res.ok) return res.json();
-          throw new Exception('Not found!');
+        .then(result => {
+          if (result.ok) return result.json();
+          throw new Error('Not found!');
         })
-        .then(data => {
-          if (isMount) setData(data);
+        .then(response => {
+          if (isMount) setData(response.data);
         })
         .catch(err => setError(err))
         .finally(setLoading(false));

@@ -1,14 +1,18 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import useWorkspace from '../../hooks/useWorkspace';
-import WorkMode from '../../common/WorkMode';
-import apiRole from '../../apis/role.api';
 
+import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
+
+import { roleService } from '../../services';
+
+import {
+  ModalConfirm,
+  PageHeader,
+  Loading,
+  ServerNotResponse
+} from '../../components/common';
 import RoleTable from './RoleTable';
 import RoleForm from './RoleForm';
-
-import ModalConfirm from '../../components/common/ModalConfirm';
-import Loading from '../../components/common/Loading';
 
 const pageName = 'Quyền sử dụng người dùng';
 const objectName = 'roles';
@@ -19,25 +23,23 @@ const titleButtonAdd = 'Thêm thông tin';
  */
 const Role = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
-  const [
+  const {
     dispatch,
-    navigate,
     workMode,
     showModal,
-    roleEdit,
+    objectEdit: roleEdit,
     modalValue,
     action
-  ] = useWorkspace();
+  } = useWorkspace();
 
-  if (accessToken === null || accessToken === undefined)
-    navigate('/auth/login');
-
-  const { roleList, isFetching, error } = useSelector(
-    state => state[objectName]
-  );
+  const {
+    data: roleList,
+    isFetching,
+    error
+  } = useSelector(state => state[objectName]);
 
   useEffect(() => {
-    if (!roleList) apiRole.getAllRoles(dispatch, accessToken);
+    if (!roleList || error) roleService.getAll(dispatch, accessToken);
   }, []);
 
   const handleShowDeleteModal = useCallback((roleId, roleName) => {
@@ -45,49 +47,56 @@ const Role = () => {
       `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
       `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${roleName} khỏi hệ thống không?`,
       () => {
-        apiRole.deleteRole(dispatch, roleId, accessToken);
+        roleService.delete(dispatch, roleId, accessToken);
         action.showModal(false);
       }
     );
     action.showModal(true);
   }, []);
 
-  if (isFetching) {
-    return <Loading />;
+  const handleBack = useCallback(
+    () => action.changeWorkMode(WorkMode.view),
+    []
+  );
+
+  const handleSetUpdateMode = useCallback(
+    role => action.setUpdateMode(role),
+    []
+  );
+
+  if (error) {
+    return <ServerNotResponse />;
   }
 
   return (
     <div>
-      {showModal && (
-        <ModalConfirm
-          show={showModal}
-          setShow={action.showModal}
-          props={modalValue}
-        />
-      )}
-      {workMode === WorkMode.create && (
-        <RoleForm handleBack={() => action.changeWorkMode(WorkMode.view)} />
-      )}
+      <ModalConfirm
+        show={showModal}
+        setShow={action.showModal}
+        {...modalValue}
+      />
+      {workMode === WorkMode.create && <RoleForm handleBack={handleBack} />}
       {workMode === WorkMode.edit && (
-        <RoleForm
-          role={roleEdit}
-          handleBack={() => action.changeWorkMode(WorkMode.view)}
-        />
+        <RoleForm role={roleEdit} handleBack={handleBack} />
       )}
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">{pageName}</h1>
+      <PageHeader pageName={pageName}>
         <button
           className="btn btn-primary fw-bold"
           onClick={action.setCreateMode}
+          disabled={!roleList || isFetching || error}
         >
           {titleButtonAdd}
         </button>
-      </div>
-      <RoleTable
-        roleList={roleList}
-        handleSetUpdateMode={role => action.setUpdateMode(role)}
-        handleShowDeleteModal={(id, name) => handleShowDeleteModal(id, name)}
-      />
+      </PageHeader>
+      {!roleList || isFetching ? (
+        <Loading />
+      ) : (
+        <RoleTable
+          roleList={roleList}
+          handleSetUpdateMode={handleSetUpdateMode}
+          handleShowDeleteModal={handleShowDeleteModal}
+        />
+      )}
     </div>
   );
 };

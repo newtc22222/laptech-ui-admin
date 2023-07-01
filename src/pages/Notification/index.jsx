@@ -1,9 +1,15 @@
 import React from 'react';
+import PageHeader from '../../components/common/PageHeader';
 
-const Notificaition = () => {
+const pageName = 'Thông báo ứng dụng';
+
+const Notification = () => {
   return (
-    <div>Notificaition</div>
+    <div>
+      <PageHeader pageName={pageName}></PageHeader>
+      <div className="d-grid gap-2"></div>
+    </div>
   );
-}
+};
 
-export default Notificaition;
+export default Notification;

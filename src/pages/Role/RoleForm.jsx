@@ -1,102 +1,86 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+
 import ModalForm from '../../components/common/ModalForm';
+import { Form, AreaInput, TextInput } from '../../components/validation';
 
-import apiRoles from '../../apis/role.api';
-
-import { addToast } from '../../redux-feature/toast_notify';
-import { getUpdateByUserInSystem } from '../../helper/getUser';
-
-const titleName = 'Tiêu đề (hiển thị trực tiếp)';
-const titleDescription = 'Thông tin chi tiết về phân quyền';
+import { roleService } from '../../services';
+import {
+  makeToast,
+  toastType,
+  isEqualObject,
+  getUpdateByUserInSystem
+} from '../../utils';
+import content from './content';
 
 const RoleForm = ({ role, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const nameRef = useRef();
-  const descriptionRef = useRef();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isDirty }
+  } = useForm();
 
-  const handleCreateData = async () => {
-    try {
-      const newRole = {
-        name: nameRef.current.value,
-        description: descriptionRef.current.value,
-        ...getUpdateByUserInSystem()
-      };
+  const handleCreateData = async data => {
+    const newRole = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
 
-      await apiRoles.createNewRole(dispatch, newRole, accessToken);
-      handleBack();
-    } catch (err) {
-      console.log(err);
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể tạo thông tin phân quyền mới!'
-        })
-      );
-    }
+    await roleService.create(dispatch, newRole, accessToken);
+    handleBack();
   };
 
-  const handleSaveData = async () => {
-    try {
-      const newRole = {
-        name: nameRef.current.value,
-        description: descriptionRef.current.value,
-        modifiedDate: new Date().toISOString(),
-        ...getUpdateByUserInSystem()
-      };
-      await apiRoles.updateRole(dispatch, newRole, role.id, accessToken);
-      handleBack();
-    } catch (err) {
-      dispatch(
-        addToast({
-          type: 'error',
-          title: 'Lỗi hệ thống',
-          content: 'Không thể cập nhật thông tin phân quyền!'
-        })
-      );
+  const handleSaveData = async data => {
+    const newData = { ...role, ...data };
+    if (isEqualObject(role, newData)) {
+      makeToast(content.form.nothingChange, toastType.info);
+      return;
     }
-  };
 
+    const newRole = {
+      ...data,
+      ...getUpdateByUserInSystem()
+    };
+
+    await roleService.update(dispatch, newRole, role.id, accessToken);
+    handleBack();
+  };
   return (
-    <ModalForm
-      object={role}
-      handleBack={handleBack}
-      action={() => {
-        role ? handleSaveData() : handleCreateData();
-      }}
-      FormContent={() => (
-        <>
-          <div className="mb-3">
-            <label htmlFor="role-name" className="form-role">
-              {titleName}
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="role-name"
-              defaultValue={role?.name}
-              ref={nameRef}
-              placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="role-description" className="form-role">
-              {titleDescription}
-            </label>
-            <textarea
-              className="form-control"
-              id="role-description"
-              defaultValue={role?.description}
-              ref={descriptionRef}
-              placeholder="The person who can controll fire and water?"
-            />
-          </div>
-        </>
-      )}
-    />
+    <ModalForm object={role} disabledFooter>
+      <Form
+        handleSubmit={handleSubmit}
+        submitAction={role ? handleSaveData : handleCreateData}
+        cancelAction={handleBack}
+        isSubmitting={isSubmitting}
+        isDirty={isDirty}
+      >
+        <TextInput
+          label={content.form.name}
+          register={register}
+          errors={errors}
+          attribute="name"
+          defaultValue={role?.name}
+          placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
+          readOnly={content.fixedRole.includes(role?.name)}
+          required
+          errorMessage={content.error.name}
+        />
+        <AreaInput
+          label={content.form.description}
+          register={register}
+          errors={errors}
+          attribute="description"
+          defaultValue={role?.description}
+          placeholder="STAFF, SUPERVISOR, DBA, KAREN?"
+          required
+          errorMessage={content.error.description}
+        />
+      </Form>
+    </ModalForm>
   );
 };
 
