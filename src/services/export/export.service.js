@@ -40,9 +40,7 @@ const handleExportExcelFile = async (
     }
   )
     .then(response => {
-      console.log(response.headers);
       const downloadUrl = window.URL.createObjectURL(response.data);
-      console.log(downloadUrl);
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.setAttribute('download', `data_${new Date().toJSON()}.xlsx`);
@@ -51,35 +49,40 @@ const handleExportExcelFile = async (
       link.remove();
     })
     .catch(error => {
-      console.log(error);
       makeRefreshToken(error, dispatch, (newAccessToken, dispatch) =>
         handleExportExcelFile(newAccessToken, dispatch)
       );
     });
 };
 
-const handleExportPdfFile = async (accessToken, dispatch, invoiceId) => {
-  await AxiosAPI.get('invoices/' + invoiceId + '/export-pdf', {
+const handleExportPdfFile = async (
+  accessToken,
+  dispatch,
+  objectId,
+  type = 'invoice'
+) => {
+  let url = 'invoices/' + objectId + '/export-pdf';
+  if (type === 'imported') url = 'imported/' + objectId + '/export-pdf';
+
+  await AxiosAPI.get(url, {
     headers: {
       Authorization: 'Bearer ' + accessToken
     },
     responseType: 'blob'
   })
     .then(response => {
-      console.log(response.headers);
       const downloadUrl = window.URL.createObjectURL(response.data);
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.setAttribute(
         'download',
-        `invoice_${invoiceId + '_' + new Date().toJSON()}.pdf`
+        `${type}_${objectId + '_' + new Date().toJSON()}.pdf`
       );
       document.body.appendChild(link);
       link.click();
       link.remove();
     })
     .catch(error => {
-      console.log(error);
       makeRefreshToken(error, dispatch, (newAccessToken, dispatch) =>
         handleExportPdfFile(newAccessToken, dispatch)
       );

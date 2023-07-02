@@ -1,7 +1,7 @@
 import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
-  user: 'người dùng',
+  pageName: 'Người dùng hệ thống',
   id: 'id',
   name: 'tên người dùng',
   phone: 'số điện thoại',
@@ -11,6 +11,8 @@ const content = {
   inactive: 'bị khóa',
   setting: 'thiết lập',
   rejected: 'Không được xóa tài khoản đang hoạt động trên hệ thống!',
+  titleBtnAdd: 'Thêm thông tin',
+  titleBtnExport: 'Tải thông tin',
   btnEdit: ico_edit,
   btnDel: ico_del,
   form: {

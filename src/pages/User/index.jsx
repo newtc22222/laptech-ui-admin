@@ -11,11 +11,9 @@ import UserTable from './UserTable';
 import UserForm from './UserForm';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-import { userService } from '../../services';
+import { exportService, userService } from '../../services';
 
-const pageName = 'Người dùng hệ thống';
-const objectName = 'users';
-const titleButtonAdd = 'Thêm thông tin';
+import content from './content';
 
 const User = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
@@ -33,7 +31,7 @@ const User = () => {
     data: userList,
     isFetching,
     error
-  } = useSelector(state => state[objectName]);
+  } = useSelector(state => state['users']);
 
   // Loading
   useEffect(() => {
@@ -43,8 +41,8 @@ const User = () => {
   // Show delete modal
   const handleShowDeleteModal = useCallback((userId, userName) => {
     action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${userName} khỏi hệ thống không?`,
+      `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${userName} khỏi hệ thống không?`,
       () => {
         userService.delete(dispatch, userId, accessToken);
         action.showModal(false);
@@ -78,13 +76,23 @@ const User = () => {
       {workMode === WorkMode.edit && (
         <UserForm user={userEdit} handleBack={handleBack} />
       )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
+      <PageHeader pageName={content.pageName}>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={() => exportService.csv(accessToken, dispatch, 'user')}
+            disabled={!userList || isFetching}
+          >
+            {content.titleBtnExport}
+          </button>
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={action.setCreateMode}
+            disabled={!userList || isFetching}
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       {!userList || isFetching ? (
         <Loading />

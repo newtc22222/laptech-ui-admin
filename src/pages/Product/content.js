@@ -3,6 +3,7 @@ import { ico_edit, ico_del } from '../../assets/svg/crud';
 const content = {
   pageName: 'Sản phẩm',
   titleBtnReload: 'Tải lại dữ liệu',
+  titleBtnExport: 'Tải thông tin',
   titleBtnAdd: 'Thêm thông tin',
   id: 'mã sản phẩm',
   name: 'tên sản phẩm',

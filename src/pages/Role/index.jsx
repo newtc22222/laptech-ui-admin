@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import { roleService } from '../../services';
+import { exportService, roleService } from '../../services';
 
 import {
   ModalConfirm,
@@ -13,10 +13,7 @@ import {
 } from '../../components/common';
 import RoleTable from './RoleTable';
 import RoleForm from './RoleForm';
-
-const pageName = 'Quyền sử dụng người dùng';
-const objectName = 'roles';
-const titleButtonAdd = 'Thêm thông tin';
+import content from './content';
 
 /**
  * @since 2023-02-13
@@ -36,7 +33,7 @@ const Role = () => {
     data: roleList,
     isFetching,
     error
-  } = useSelector(state => state[objectName]);
+  } = useSelector(state => state['roles']);
 
   useEffect(() => {
     if (!roleList || error) roleService.getAll(dispatch, accessToken);
@@ -44,8 +41,8 @@ const Role = () => {
 
   const handleShowDeleteModal = useCallback((roleId, roleName) => {
     action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${roleName} khỏi hệ thống không?`,
+      `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${roleName} khỏi hệ thống không?`,
       () => {
         roleService.delete(dispatch, roleId, accessToken);
         action.showModal(false);
@@ -79,14 +76,23 @@ const Role = () => {
       {workMode === WorkMode.edit && (
         <RoleForm role={roleEdit} handleBack={handleBack} />
       )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-          disabled={!roleList || isFetching || error}
-        >
-          {titleButtonAdd}
-        </button>
+      <PageHeader pageName={content.pageName}>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={() => exportService.csv(accessToken, dispatch, 'roles')}
+            disabled={!roleList || isFetching || error}
+          >
+            {content.titleBtnExport}
+          </button>
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={action.setCreateMode}
+            disabled={!roleList || isFetching || error}
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       {!roleList || isFetching ? (
         <Loading />

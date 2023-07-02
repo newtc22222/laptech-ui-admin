@@ -11,11 +11,9 @@ import LabelTable from './LabelTable';
 import LabelForm from './LabelForm';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-import { labelService } from '../../services';
+import { exportService, labelService } from '../../services';
 
-const pageName = 'Nhãn thuộc tính của sản phẩm';
-const objectName = 'labels';
-const titleButtonAdd = 'Thêm thông tin';
+import content from './content';
 
 /**
  * @since 2023-02-13
@@ -35,7 +33,7 @@ const Label = () => {
     data: labelList,
     isFetching,
     error
-  } = useSelector(state => state[objectName]);
+  } = useSelector(state => state['labels']);
 
   useEffect(() => {
     if (!labelList || error) labelService.getAll(dispatch);
@@ -43,8 +41,8 @@ const Label = () => {
 
   const handleShowDeleteModal = useCallback((labelId, labelName) => {
     action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${labelName} khỏi hệ thống không?`,
+      `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${labelName} khỏi hệ thống không?`,
       () => {
         labelService.delete(dispatch, labelId, accessToken);
         action.showModal(false);
@@ -78,13 +76,23 @@ const Label = () => {
       {workMode === WorkMode.edit && (
         <LabelForm label={labelEdit} handleBack={handleBack} />
       )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
+      <PageHeader pageName={content.pageName}>
+        <div className="btn-group">
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={() => exportService.csv(accessToken, dispatch, 'labels')}
+            disabled={!labelList || isFetching}
+          >
+            {content.titleBtnExport}
+          </button>
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={action.setCreateMode}
+            disabled={!labelList || isFetching}
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       {!labelList || isFetching ? (
         <Loading />

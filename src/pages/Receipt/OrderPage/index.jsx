@@ -14,7 +14,7 @@ import {
 import { InvoiceTable, ItemBox } from './components';
 
 import useWorkspace, { WorkMode } from '../../../hooks/useWorkspace';
-import { invoiceService, userService } from '../../../services';
+import { exportService, invoiceService, userService } from '../../../services';
 import { getUpdateByUserInSystem, makeToast, toastType } from '../../../utils';
 import content from './content';
 
@@ -211,7 +211,21 @@ const Invoice = () => {
           return <></>;
       }
     };
-    return <div className="d-flex gap-2">{otherStatus()}</div>;
+    return (
+      <div className="d-flex gap-2">
+        <button
+          type="button"
+          className="btn btn-info"
+          onClick={() => {
+            if (item) exportService.pdf(accessToken, dispatch, item.id);
+          }}
+          disabled={!item}
+        >
+          In hoá đơn
+        </button>
+        {otherStatus()}
+      </div>
+    );
   };
 
   if (error || isUserError) return <ServerNotResponse />;
@@ -258,6 +272,21 @@ const Invoice = () => {
             }
           >
             {content.titleBtnReload}
+          </button>
+          <button
+            type="button"
+            onClick={() => exportService.csv(accessToken, dispatch, 'invoices')}
+            className="btn btn-primary"
+            disabled={
+              !invoiceList ||
+              isFetching ||
+              error ||
+              !userList ||
+              isUserFetching ||
+              isUserError
+            }
+          >
+            {content.titleBtnExport}
           </button>
         </div>
       </PageHeader>

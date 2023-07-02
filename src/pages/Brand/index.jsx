@@ -11,11 +11,9 @@ import BrandForm from './BrandForm';
 import BrandTable from './BrandTable';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-import { brandService } from '../../services';
+import { brandService, exportService } from '../../services';
 
-const pageName = 'Thương hiệu';
-const objectName = 'brands';
-const titleButtonAdd = 'Thêm thông tin';
+import content from './content';
 
 const BrandPage = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
@@ -32,7 +30,7 @@ const BrandPage = () => {
     data: brandList,
     isFetching,
     error
-  } = useSelector(state => state[objectName]);
+  } = useSelector(state => state['brands']);
 
   // Loading
   useEffect(() => {
@@ -43,8 +41,8 @@ const BrandPage = () => {
   const handleShowDeleteModal = useCallback(
     (brandId, brandName) => {
       action.addModalValue(
-        `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-        `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
+        `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${brandName} khỏi hệ thống không?`,
         () => {
           brandService.delete(dispatch, brandId, accessToken);
           action.showModal(false);
@@ -80,14 +78,23 @@ const BrandPage = () => {
         <BrandForm brand={brandEdit} handleBack={handleBack} />
       )}
       {workMode === WorkMode.create && <BrandForm handleBack={handleBack} />}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-          disabled={!brandList || isFetching || error}
-        >
-          {titleButtonAdd}
-        </button>
+      <PageHeader pageName={content.pageName}>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={() => exportService.csv(accessToken, dispatch, 'brands')}
+            disabled={!brandList || isFetching || error}
+          >
+            {content.titleBtnExport}
+          </button>
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={action.setCreateMode}
+            disabled={!brandList || isFetching || error}
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       {!brandList || isFetching ? (
         <Loading />

@@ -21,6 +21,8 @@ export { roleService, userRoleService } from './role.service';
 export { default as uploadService } from './upload.service';
 export { default as userService } from './user.service';
 
+export { default as exportService } from './export/export.service';
+
 // statistic
 export { default as dashboardStatisticService } from './statistic/dashboard.service';
 export { default as statisticService } from './statistic/statistic.service';

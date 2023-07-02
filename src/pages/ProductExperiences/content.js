@@ -1,5 +1,7 @@
 const content = {
   pageName: 'Trải nghiệm sản phẩm',
+  titleBtnExportFeedback: 'Tải dữ liệu đánh giá',
+  titleBtnExportComment: 'Tải dữ liệu bình luận',
   selectProduct: 'Chọn sản phẩm muốn xem',
   feedback: 'Đánh giá sản phẩm',
   comment: 'Bình luận về sản phẩm',

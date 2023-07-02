@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import { categoryService } from '../../services';
+import { categoryService, exportService } from '../../services';
 
 import {
   ModalConfirm,
@@ -15,9 +15,7 @@ import {
 import CategoryTable from './CategoryTable';
 import CategoryForm from './CategoryForm';
 
-const pageName = 'Phân loại hàng hóa';
-const objectName = 'categories';
-const titleButtonAdd = 'Thêm thông tin';
+import content from './content';
 
 const Category = () => {
   const accessToken = useSelector(state => state.auth.accessToken);
@@ -34,7 +32,7 @@ const Category = () => {
     data: categoryList,
     isFetching,
     error
-  } = useSelector(state => state[objectName]);
+  } = useSelector(state => state['categories']);
 
   useEffect(() => {
     if (!categoryList || error) categoryService.getAll(dispatch);
@@ -43,8 +41,8 @@ const Category = () => {
   const handleShowDeleteModal = useCallback(
     (categoryId, categoryName) => {
       action.addModalValue(
-        `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-        `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
+        `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+        `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${categoryName} khỏi hệ thống không?`,
         () => {
           categoryService.delete(dispatch, categoryId, accessToken);
           action.showModal(false);
@@ -84,14 +82,25 @@ const Category = () => {
           handleBack={handleBack}
         />
       )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-          disabled={!categoryList || isFetching || error}
-        >
-          {titleButtonAdd}
-        </button>
+      <PageHeader pageName={content.pageName}>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={() =>
+              exportService.csv(accessToken, dispatch, 'categories')
+            }
+            disabled={!categoryList || isFetching || error}
+          >
+            {content.titleBtnExport}
+          </button>
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={action.setCreateMode}
+            disabled={!categoryList || isFetching || error}
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       {!categoryList || isFetching ? (
         <Loading />

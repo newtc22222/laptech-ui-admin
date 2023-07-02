@@ -11,7 +11,11 @@ import ImportedForm from './ImportedForm';
 import ImportedTable from './ImportedTable';
 
 import useWorkspace, { WorkMode } from '../../../hooks/useWorkspace';
-import { importProductService, productService } from '../../../services';
+import {
+  exportService,
+  importProductService,
+  productService
+} from '../../../services';
 import content from './content';
 
 /**
@@ -93,21 +97,40 @@ const ImportPage = () => {
         />
       )}
       <PageHeader pageName={content.pageName}>
-        <button
-          type="button"
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-          disabled={
-            !importList ||
-            !productList ||
-            isFetching ||
-            isProductFetching ||
-            error ||
-            isProductError
-          }
-        >
-          {content.titleBtnAdd}
-        </button>
+        <div className="btn-group" role="group">
+          <button
+            type="button"
+            className="btn btn-outline-primary fw-bold"
+            onClick={() =>
+              exportService.csv(accessToken, dispatch, 'import-products')
+            }
+            disabled={
+              !importList ||
+              !productList ||
+              isFetching ||
+              isProductFetching ||
+              error ||
+              isProductError
+            }
+          >
+            {content.titleBtnExport}
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline-primary fw-bold"
+            onClick={action.setCreateMode}
+            disabled={
+              !importList ||
+              !productList ||
+              isFetching ||
+              isProductFetching ||
+              error ||
+              isProductError
+            }
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       {isFetching || !importList || isProductFetching || !productList ? (
         <Loading />

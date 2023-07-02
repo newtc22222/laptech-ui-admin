@@ -1,7 +1,7 @@
 import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
-  discount: 'phân loại',
+  pageName: 'Mã chiết khấu sản phẩm',
   id: 'id',
   code: 'mã chiết khấu',
   appliedType: 'kiểu áp dụng',
@@ -10,6 +10,8 @@ const content = {
   appliedDate: 'ngày áp dụng',
   endedDate: 'ngày hết hạn',
   setting: 'thiết lập',
+  titleBtnAdd: 'Thêm thông tin',
+  titleBtnExport: 'Tải thông tin',
   btnEdit: ico_edit,
   btnDel: ico_del,
   form: {

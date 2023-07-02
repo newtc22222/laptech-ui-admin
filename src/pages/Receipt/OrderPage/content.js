@@ -1,6 +1,7 @@
 const content = {
   pageName: 'Thông tin đơn đặt hàng',
   titleBtnReload: 'Tải lại thủ công',
+  titleBtnExport: 'Tải thông tin',
   invoice: 'Đơn bán hàng',
   box: {
     id: 'Mã đơn hàng',

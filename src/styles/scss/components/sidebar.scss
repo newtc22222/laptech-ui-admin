@@ -11,11 +11,11 @@
   &.toggleOpen {
     width: 300px;
     animation-name: openSidebar;
-    animation-duration: 1.5s;
+    animation-duration: 1.0s;
   }
   &.toggleClose {
     animation-name: closeSidebar;
-    animation-duration: 1.5s;
+    animation-duration: 1.0s;
   }
 }
 

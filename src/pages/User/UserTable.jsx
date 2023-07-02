@@ -82,6 +82,7 @@ const UserTable = ({
               onClick={() =>
                 handleShowDeleteModal(row.values.id, row.values.name)
               }
+              disabled={row.original.active}
             >
               {content.btnDel}
             </button>

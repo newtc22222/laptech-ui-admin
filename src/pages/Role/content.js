@@ -1,13 +1,15 @@
 import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
-  role: 'phân quyền',
+  pageName: 'Quyền sử dụng hệ thống',
   id: 'id',
   name: 'tên phân quyền',
   description: 'thông tin chung',
   setting: 'thiết lập',
   createdDate: 'Ngày tạo',
   modifiedDate: 'Ngày chỉnh sửa',
+  titleBtnAdd: 'Thêm thông tin',
+  titleBtnExport: 'Tải thông tin',
   btnEdit: ico_edit,
   btnDel: ico_del,
   form: {

@@ -11,6 +11,7 @@ const content = {
   date: 'ngày nhập',
   total: 'tổng giá trị',
   titleBtnAdd: 'Tạo phiếu nhập hàng',
+  titleBtnExport: 'Tải thông tin',
   setting: 'thiết lập',
   recommendPrice: 'Giá bán hiện tại của sản phẩm: ',
   btnEdit: ico_edit,

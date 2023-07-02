@@ -1,6 +1,7 @@
 import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
+  pageName: 'Nhãn thuộc tính sản phẩm',
   id: 'id',
   name: 'tiêu đề',
   icon: 'biểu tượng',
@@ -8,6 +9,8 @@ const content = {
   description: 'mô tả chi tiết',
   sample: 'mẫu hiển thị',
   setting: 'thiết lập',
+  titleBtnAdd: 'Thêm thông tin',
+  titleBtnExport: 'Tải thông tin',
   btnEdit: ico_edit,
   btnDel: ico_del,
   form: {

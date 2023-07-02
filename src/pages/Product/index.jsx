@@ -17,7 +17,12 @@ import ProductTable from './ProductTable';
 import ProductForm from './ProductForm';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
-import { brandService, categoryService, productService } from '../../services';
+import {
+  brandService,
+  categoryService,
+  exportService,
+  productService
+} from '../../services';
 import content from './content';
 
 const ProductPage = () => {
@@ -143,29 +148,51 @@ const ProductPage = () => {
         <div className="d-flex flex-row gap-2">
           <button
             type="button"
-            className="btn btn-success fw-bold"
+            className="btn btn-outline-success fw-bold"
             onClick={handleFetchProduct}
           >
             {content.titleBtnReload}
           </button>
-          <button
-            type="button"
-            className="btn btn-primary fw-bold"
-            onClick={action.setCreateMode}
-            disabled={
-              isFetching ||
-              isBrandFetching ||
-              isCategoryFetching ||
-              !productList ||
-              !brandList ||
-              !categoryList ||
-              error ||
-              errorBrand ||
-              errorCategory
-            }
-          >
-            {content.titleBtnAdd}
-          </button>
+          <div className="btn-group" role="group">
+            <button
+              type="button"
+              className="btn btn-outline-primary fw-bold"
+              onClick={() =>
+                exportService.csv(accessToken, dispatch, 'products')
+              }
+              disabled={
+                isFetching ||
+                isBrandFetching ||
+                isCategoryFetching ||
+                !productList ||
+                !brandList ||
+                !categoryList ||
+                error ||
+                errorBrand ||
+                errorCategory
+              }
+            >
+              {content.titleBtnExport}
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-primary fw-bold"
+              onClick={action.setCreateMode}
+              disabled={
+                isFetching ||
+                isBrandFetching ||
+                isCategoryFetching ||
+                !productList ||
+                !brandList ||
+                !categoryList ||
+                error ||
+                errorBrand ||
+                errorCategory
+              }
+            >
+              {content.titleBtnAdd}
+            </button>
+          </div>
         </div>
       </PageHeader>
       {isFetching ||

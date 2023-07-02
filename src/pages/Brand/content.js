@@ -1,13 +1,15 @@
 import { ico_edit, ico_del } from '../../assets/svg/crud';
 
 const content = {
-  brand: 'thương hiệu',
+  pageName: 'thương hiệu',
   id: 'id',
   name: 'tên',
   country: 'quốc gia',
   establishDate: 'ngày thành lập',
   logo: 'logo',
   setting: 'thiết lập',
+  titleBtnExport: 'Tải thông tin',
+  titleBtnAdd: 'Thêm thương hiệu',
   btnEdit: ico_edit,
   btnDel: ico_del,
   form: {

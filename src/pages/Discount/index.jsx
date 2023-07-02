@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 
 import useWorkspace, { WorkMode } from '../../hooks/useWorkspace';
 
-import { discountService } from '../../services';
-
 import {
   ModalConfirm,
   PageHeader,
@@ -14,9 +12,9 @@ import {
 import DiscountTable from './DiscountTable';
 import DiscountForm from './DiscountForm';
 
-const pageName = 'Mã chiết khấu sản phẩm';
-const objectName = 'discounts';
-const titleButtonAdd = 'Thêm thông tin';
+import { discountService, exportService } from '../../services';
+
+import content from './content';
 
 /**
  * @since 2023-02-13
@@ -36,7 +34,7 @@ const Discount = () => {
     data: discountList,
     isFetching,
     error
-  } = useSelector(state => state[objectName]);
+  } = useSelector(state => state['discounts']);
 
   useEffect(() => {
     if (!discountList || error) discountService.getAll(dispatch);
@@ -44,8 +42,8 @@ const Discount = () => {
 
   const handleShowDeleteModal = useCallback((discountId, discountCode) => {
     action.addModalValue(
-      `Xác nhận xoá thông tin ${pageName.toLowerCase()}`,
-      `Bạn có thực sự muốn loại bỏ ${pageName.toLowerCase()} ${discountCode} khỏi hệ thống không?`,
+      `Xác nhận xoá thông tin ${content.pageName.toLowerCase()}`,
+      `Bạn có thực sự muốn loại bỏ ${content.pageName.toLowerCase()} ${discountCode} khỏi hệ thống không?`,
       () => {
         discountService.delete(dispatch, discountId, accessToken);
         action.showModal(false);
@@ -79,13 +77,25 @@ const Discount = () => {
       {workMode === WorkMode.edit && (
         <DiscountForm discount={discountEdit} handleBack={handleBack} />
       )}
-      <PageHeader pageName={pageName}>
-        <button
-          className="btn btn-primary fw-bold"
-          onClick={action.setCreateMode}
-        >
-          {titleButtonAdd}
-        </button>
+      <PageHeader pageName={content.pageName}>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={() =>
+              exportService.csv(accessToken, dispatch, 'discounts')
+            }
+            disabled={!discountList || isFetching}
+          >
+            {content.titleBtnExport}
+          </button>
+          <button
+            className="btn btn-outline-primary fw-bold"
+            onClick={action.setCreateMode}
+            disabled={!discountList || isFetching}
+          >
+            {content.titleBtnAdd}
+          </button>
+        </div>
       </PageHeader>
       {!discountList || isFetching ? (
         <Loading />

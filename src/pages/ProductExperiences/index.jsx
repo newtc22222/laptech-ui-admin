@@ -7,7 +7,7 @@ import FilterProductForm from './FilterProductForm';
 import FeedbackTab from './feedbacks/FeedbackTab';
 import CommentTab from './comments/CommentTab';
 
-import { productService, userService } from '../../services';
+import { exportService, productService, userService } from '../../services';
 import { getUpdateByUserInSystem } from '../../utils';
 import content from './content';
 
@@ -74,7 +74,28 @@ const ProductExperiences = () => {
 
   return (
     <>
-      <PageHeader pageName={content.pageName}></PageHeader>
+      <PageHeader pageName={content.pageName}>
+        <div className="btn-group" role="group">
+          <button
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={() =>
+              exportService.csv(accessToken, dispatch, 'feedbacks')
+            }
+            disabled={!productList || !userList}
+          >
+            {content.titleBtnExportFeedback}
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={() => exportService.csv(accessToken, dispatch, 'comments')}
+            disabled={!productList || !userList}
+          >
+            {content.titleBtnExportComment}
+          </button>
+        </div>
+      </PageHeader>
 
       <div className="container-fluid">
         <FilterProductForm
