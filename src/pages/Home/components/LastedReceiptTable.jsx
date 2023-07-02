@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { importProductService, invoiceService } from '../../../services';
-import { getStringBackTime } from '../../../utils';
+import { getCurrencyString, getStringBackTime } from '../../../utils';
 
 const LatestedReceiptTable = () => {
   const dispatch = useDispatch();
@@ -20,6 +20,8 @@ const LatestedReceiptTable = () => {
       const row = {
         id: importProduct.id,
         type: 'Nhập hàng',
+        quantity: importProduct.quantity,
+        totalPrice: importProduct.importedPrice * importProduct.quantity,
         createdDate: importProduct.createdDate,
         modifiedDate: importProduct.modifiedDate
       };
@@ -29,6 +31,8 @@ const LatestedReceiptTable = () => {
       const row = {
         id: invoice.id,
         type: 'Bán hàng',
+        quantity: invoice.paymentAmount,
+        totalPrice: invoice.paymentTotal,
         createdDate: invoice.createdDate,
         modifiedDate: invoice.modifiedDate
       };
@@ -66,6 +70,8 @@ const LatestedReceiptTable = () => {
           <tr>
             <th>Mã phiếu</th>
             <th>Loại phiếu</th>
+            <th>Số lượng hàng</th>
+            <th>Tổng giá trị</th>
             <th>Ngày tạo</th>
             <th>Ngày cập nhật</th>
           </tr>
@@ -76,6 +82,8 @@ const LatestedReceiptTable = () => {
               <tr key={index}>
                 <td>{row.id}</td>
                 <td>{row.type}</td>
+                <td>{row.quantity}</td>
+                <td>{getCurrencyString(row.totalPrice, 'vi-VN', 'VND')}</td>
                 <td>{getStringBackTime(row.createdDate)}</td>
                 <td>{getStringBackTime(row.modifiedDate)}</td>
               </tr>
