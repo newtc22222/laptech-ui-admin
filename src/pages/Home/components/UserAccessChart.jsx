@@ -36,11 +36,13 @@ const UserAccessChart = ({ userFigures }) => {
 
   const handleUpdateChartData = () => {
     const { accessFigures, interactFigures } = userFigures;
-    Object.keys(accessFigures).forEach(key => {
-      chartData.labels.push(key);
-      chartData.datasets[0].data.push(accessFigures[key]);
-      chartData.datasets[1].data.push(interactFigures[key]);
-    });
+    Object.keys(accessFigures)
+      .sort((key1, key2) => new Date(key1).getTime() - new Date(key2).getTime())
+      .forEach(key => {
+        chartData.labels.push(key);
+        chartData.datasets[0].data.push(accessFigures[key]);
+        chartData.datasets[1].data.push(interactFigures[key]);
+      });
     setChartData(chartData);
   };
 

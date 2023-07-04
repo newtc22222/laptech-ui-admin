@@ -12,13 +12,13 @@ const RatingMap = ({ ratingArr = [] }) => {
   const ratingArrReverse = window.structuredClone(ratingArr).reverse();
 
   return (
-    <div className="mx-2 border rounded py-1 px-2">
+    <div className="border rounded py-1 px-2">
       <h5
         className={classNames({
           'text-danger': avgPoint <= 2,
           'text-success': avgPoint >= 4
         })}
-      >{`Average point: ${avgPoint.toFixed(2)}/5`}</h5>
+      >{`Điểm số trung bình: ${avgPoint.toFixed(2)}/5`}</h5>
       {ratingArrReverse.map((quantity, idx) => {
         return (
           <div key={idx} className="d-flex align-items-center">

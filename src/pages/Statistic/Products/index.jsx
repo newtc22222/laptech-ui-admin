@@ -18,17 +18,25 @@ function ProductStatistic() {
     isFetching,
     error
   } = useSelector(state => state.products);
+  const [options, setOptions] = useState([]);
   const [showPages, setShowPages] = useState([]);
 
   useEffect(() => {
-    if (!productList) productService.getAll(dispatch);
+    if (!productList) {
+      productService.getAll(dispatch);
+    } else {
+      const optionList = productList.map(product => ({
+        value: product.id,
+        label: product.name
+      }));
+      setOptions(optionList);
+      setShowPages(_.shuffle(optionList).slice(0, 3)); // random 3 products when mount
+    }
   }, [productList, dispatch]);
 
   const handleClosePage = useCallback(pageId => {
     setShowPages(prev => prev.filter(page => page.value !== pageId));
   }, []);
-
-  if (isFetching) return <Loading />;
 
   return (
     <div>
@@ -38,13 +46,8 @@ function ProductStatistic() {
         isClearable
         name="products"
         classNamePrefix="select"
-        isDisabled={!productList || error}
-        options={productList?.map(product => {
-          return {
-            value: product.id,
-            label: product.name
-          };
-        })}
+        isDisabled={!productList || isFetching || error}
+        options={options}
         value={showPages}
         onChange={setShowPages}
       />

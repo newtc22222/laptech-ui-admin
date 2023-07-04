@@ -13,12 +13,12 @@ const sideBarTab = [
     url: '/home',
     icon: <i className="fs-4 bi-house-fill"></i>
   },
-  {
-    name: 'notification',
-    title: 'Thông báo',
-    url: '/notification',
-    icon: <i className="fs-4 bi bi-bell-fill"></i>
-  },
+  // {
+  //   name: 'notification',
+  //   title: 'Thông báo',
+  //   url: '/notification',
+  //   icon: <i className="fs-4 bi bi-bell-fill"></i>
+  // },
   {
     name: 'banner',
     title: 'Bảng hiệu',
@@ -74,9 +74,9 @@ const sideBarTab = [
         icon: <i className="fs-5 me-2 bi bi-tag"></i>
       },
       {
-        name: 'all',
+        name: 'all-products',
         title: 'Tất cả sản phẩm',
-        url: '/product/all',
+        url: '/product/all-products',
         icon: <i className="fs-5 me-2 bi bi-laptop"></i>
       },
       {
@@ -99,9 +99,9 @@ const sideBarTab = [
         icon: <i className="fs-5 me-2 bi bi-person-fill-lock"></i>
       },
       {
-        name: 'all',
+        name: 'all-users',
         title: 'Tất cả người dùng',
-        url: '/user/all',
+        url: '/user/all-users',
         icon: <i className="fs-4 bi bi-people"></i>
       }
     ]
@@ -122,13 +122,13 @@ const sideBarTab = [
         title: 'Doanh thu',
         icon: <i className="fs-5 bi bi-graph-up"></i>,
         url: '/statistic/profits'
-      },
-      {
-        name: 'system',
-        title: 'Trải nghiệm khách hàng',
-        icon: <i className="fs-5 bi bi-clipboard-data-fill"></i>,
-        url: '/statistic/system'
       }
+      // {
+      //   name: 'system',
+      //   title: 'Trải nghiệm khách hàng',
+      //   icon: <i className="fs-5 bi bi-clipboard-data-fill"></i>,
+      //   url: '/statistic/system'
+      // }
     ]
   }
 ];

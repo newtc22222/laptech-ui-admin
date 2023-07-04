@@ -52,12 +52,12 @@ const AppRoute = () => {
           <Route path="category" element={<Category />} />
           <Route path="discount" element={<Discount />} />
           <Route path="label" element={<Label />} />
-          <Route path="all" element={<ProductPage />} />
+          <Route path="all-products" element={<ProductPage />} />
           <Route path="product-experiences" element={<ProductExperiences />} />
         </Route>
         <Route path="user">
           <Route path="role" element={<Role />} />
-          <Route path="all" element={<User />} />
+          <Route path="all-users" element={<User />} />
         </Route>
         <Route path="setting" element={<Setting />} />
         <Route path="profile" element={<Profile />} />
