@@ -31,6 +31,7 @@ const Header = () => {
     if (storage.get('user')) {
       const payload = {
         user: storage.get('user'),
+        roleList: storage.get('roleList'),
         accessToken: storage.get('accessToken'),
         refreshToken: storage.get('refreshToken')
       };

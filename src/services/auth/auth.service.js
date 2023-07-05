@@ -95,10 +95,10 @@ const authService = {
             x => x.name !== 'USER'
           );
 
-          const maxAgeToken = new Date(Date.now() + 1000 * 60 * 60 * 24 * 2); // support refresh token in 2 days
           if (listRoleNotUser.length > 0) {
             const storage = createLocalStorage('laptech');
             storage.set('user', result.user);
+            storage.set('roleList', result.roleList);
             storage.set('accessToken', result.accessToken);
             storage.set('refreshToken', result.refreshToken);
             storage.set('maxAgeToken', result.maxAgeToken);

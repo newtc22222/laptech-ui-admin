@@ -1,8 +1,9 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
 import AuthRoutes from './AuthRoutes';
-import { PageNotFound } from '../components/common';
+import { PageNotFound, Unauthorization } from '../components/common';
 import {
   About,
   Banner,
@@ -29,6 +30,8 @@ import {
 } from '../pages';
 
 const AppRoute = () => {
+  const { roleList } = useSelector(state => state.auth);
+
   return (
     <Routes>
       <Route path="auth/login" element={<Login />} />
@@ -56,8 +59,26 @@ const AppRoute = () => {
           <Route path="product-experiences" element={<ProductExperiences />} />
         </Route>
         <Route path="user">
-          <Route path="role" element={<Role />} />
-          <Route path="all-users" element={<User />} />
+          <Route
+            path="role"
+            element={
+              roleList && roleList.find(role => role.name === 'ADMIN') ? (
+                <Role />
+              ) : (
+                <Unauthorization />
+              )
+            }
+          />
+          <Route
+            path="all-users"
+            element={
+              roleList && roleList.find(role => role.name === 'ADMIN') ? (
+                <User />
+              ) : (
+                <Unauthorization />
+              )
+            }
+          />
         </Route>
         <Route path="setting" element={<Setting />} />
         <Route path="profile" element={<Profile />} />
