@@ -46,32 +46,6 @@ const Banner = () => {
     action.showModal(true);
   };
 
-  function renderFormModal() {
-    switch (workMode) {
-      case WorkMode.create:
-        return (
-          <BannerForm
-            handleBack={() => {
-              setRefreshKey(prev => prev + 1);
-              action.changeWorkMode(WorkMode.view);
-            }}
-          />
-        );
-      case WorkMode.edit:
-        return (
-          <BannerForm
-            banner={bannerEdit}
-            handleBack={() => {
-              setRefreshKey(prev => prev + 1);
-              action.changeWorkMode(WorkMode.view);
-            }}
-          />
-        );
-      default:
-        return <></>;
-    }
-  }
-
   return (
     <>
       <ModalConfirm
@@ -79,7 +53,21 @@ const Banner = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {renderFormModal()}
+      <BannerForm
+        show={workMode === WorkMode.create}
+        handleBack={() => {
+          setRefreshKey(prev => prev + 1);
+          action.changeWorkMode(WorkMode.view);
+        }}
+      />
+      <BannerForm
+        show={workMode === WorkMode.edit}
+        banner={bannerEdit}
+        handleBack={() => {
+          setRefreshKey(prev => prev + 1);
+          action.changeWorkMode(WorkMode.view);
+        }}
+      />
       <PageHeader pageName={content.pageName}>
         <button
           className="btn btn-primary fw-bold"

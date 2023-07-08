@@ -13,13 +13,12 @@ const titleModifiedDate = 'Thời gian chỉnh sửa gần nhất: ';
 
 /**
  * @since 2023-02-10
- * @param {{ children: JSX.Element, object: object, action: () => {}, handleBack: function, disabledFooter: boolean, props: object}}
- * @return {JSX.Element}
  */
 function ModalForm({
   children,
   object,
   action,
+  show = true,
   handleBack,
   disabledFooter,
   ...props
@@ -41,7 +40,7 @@ function ModalForm({
 
   return (
     <Modal
-      show
+      show={show}
       centered={props.centered}
       onHide={handleBack}
       backdrop={props.backdrop || 'static'}
@@ -50,11 +49,13 @@ function ModalForm({
       <Modal.Header>
         <h2>{props.title || (object ? titleEditMode : titleCreateMode)}</h2>
         {object && (
-          <div style={{ fontSize: '0.65rem' }}>
-            <p>{titleCreatedDate + getStringBackTime(object?.createdDate)}</p>
-            <p className="fw-bold">
-              {titleModifiedDate + getStringBackTime(object?.modifiedDate)}
-            </p>
+          <div className="d-flex flex-column">
+            <small>
+              {titleCreatedDate + getStringBackTime(object.createdDate)}
+            </small>
+            <small className="fw-bold">
+              {titleModifiedDate + getStringBackTime(object.modifiedDate)}
+            </small>
           </div>
         )}
       </Modal.Header>

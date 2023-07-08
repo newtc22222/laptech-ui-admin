@@ -72,10 +72,12 @@ const Label = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && <LabelForm handleBack={handleBack} />}
-      {workMode === WorkMode.edit && (
-        <LabelForm label={labelEdit} handleBack={handleBack} />
-      )}
+      <LabelForm show={workMode === WorkMode.create} handleBack={handleBack} />
+      <LabelForm
+        show={workMode === WorkMode.edit}
+        label={labelEdit}
+        handleBack={handleBack}
+      />
       <PageHeader pageName={content.pageName}>
         <div className="btn-group">
           <button

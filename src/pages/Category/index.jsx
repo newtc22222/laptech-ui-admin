@@ -74,14 +74,16 @@ const Category = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && <CategoryForm handleBack={handleBack} />}
-      {workMode === WorkMode.edit && (
-        <CategoryForm
-          category={categoryEdit}
-          handleSetUpdateMode={handleSetUpdateMode}
-          handleBack={handleBack}
-        />
-      )}
+      <CategoryForm
+        show={workMode === WorkMode.create}
+        handleBack={handleBack}
+      />
+      <CategoryForm
+        show={workMode === WorkMode.edit}
+        category={categoryEdit}
+        handleSetUpdateMode={handleSetUpdateMode}
+        handleBack={handleBack}
+      />
       <PageHeader pageName={content.pageName}>
         <div className="btn-group" role="group">
           <button

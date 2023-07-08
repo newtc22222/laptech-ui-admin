@@ -1,7 +1,4 @@
-import apiCall from '../apis';
-import MakeRefreshToken from './common/makeRefreshToken';
 import { CLOUDINARY } from '../config/constract';
-import { makeToast, toastType } from '../utils/makeToast';
 
 /**
  * **use for upload data**

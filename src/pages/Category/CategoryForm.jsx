@@ -14,7 +14,7 @@ import {
 } from '../../utils';
 import content from './content';
 
-const CategoryForm = ({ category, handleBack }) => {
+const CategoryForm = ({ category, show, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
@@ -22,14 +22,14 @@ const CategoryForm = ({ category, handleBack }) => {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isDirty, isSubmitting }
   } = useForm();
 
   useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      makeToast(content.error.missing, toastType.error);
-    }
-  }, [errors]);
+    if (show) reset(category);
+    else reset();
+  }, [show]);
 
   const handleCreateData = async data => {
     const newCategory = {
@@ -82,7 +82,7 @@ const CategoryForm = ({ category, handleBack }) => {
   };
 
   return (
-    <ModalForm object={category} disabledFooter>
+    <ModalForm show={show} object={category} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={category ? handleSaveData : handleCreateData}

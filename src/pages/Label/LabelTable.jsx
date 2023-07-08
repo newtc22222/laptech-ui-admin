@@ -104,4 +104,4 @@ const LabelTable = ({
   );
 };
 
-export default LabelTable;
+export default React.memo(LabelTable);

@@ -1,4 +1,4 @@
-import apiCall from '../../apis';
+import apiCall, { AxiosAPI } from '../../apis';
 import makeRefreshToken from '../common/makeRefreshToken';
 import { makeToast, toastType } from '../../utils/makeToast';
 
@@ -36,6 +36,10 @@ const handleRemoveImage = async (dispatch, data, imageId, token) => {
 };
 
 const productImageService = {
+  getImagesByProductId: async productId => {
+    const response = await AxiosAPI.get('/products/' + productId + '/images');
+    return response.data;
+  },
   add: handleAddImage,
   updateMultiple: handleUpdateMultipleImages,
   remove: handleRemoveImage

@@ -101,6 +101,11 @@ const CommentTab = ({ productIdList, productData, ...rest }) => {
             />
           );
         })}
+      {commentList.length === 0 && (
+        <div>
+          <em>Chưa có tin nhắn thảo luận nào!</em>
+        </div>
+      )}
     </div>
   );
 };

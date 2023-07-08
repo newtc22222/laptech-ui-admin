@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -14,21 +14,27 @@ import {
 } from '../../utils';
 import content from './content';
 
-const appliedTypes = [
-  { label: 'Sản phẩm', value: 'PRODUCT' },
-  { label: 'Đơn hàng', value: 'PURCHASE' }
-];
-
-const DiscountForm = ({ discount, handleBack }) => {
+const DiscountForm = ({ discount, show, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const {
     register,
     control,
+    reset,
     handleSubmit,
     formState: { errors, isDirty, isSubmitting }
   } = useForm();
+
+  useEffect(() => {
+    if (show) {
+      const discountClone = window.structuredClone(discount);
+      if (!!discount) {
+        discountClone.rate = discount.rate * 100;
+      }
+      reset(discountClone);
+    } else reset();
+  }, [show]);
 
   const handleCreateData = async data => {
     if (data.appliedDate >= data.endedDate) {
@@ -76,7 +82,7 @@ const DiscountForm = ({ discount, handleBack }) => {
   };
 
   return (
-    <ModalForm object={discount} disabledFooter>
+    <ModalForm show={show} object={discount} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={discount ? handleSaveData : handleCreateData}
@@ -100,7 +106,7 @@ const DiscountForm = ({ discount, handleBack }) => {
           control={control}
           name="appliedType"
           defaultValue={discount?.appliedType}
-          options={appliedTypes}
+          options={content.appliedTypes}
         />
         <fieldset>
           <legend className="text-uppercase">

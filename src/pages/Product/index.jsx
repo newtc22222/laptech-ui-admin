@@ -93,23 +93,6 @@ const ProductPage = () => {
 
   function renderFormModal() {
     switch (workMode) {
-      case WorkMode.create:
-        return (
-          <ProductForm
-            brandList={brandList}
-            categoryList={categoryList}
-            handleBack={handleBack}
-          />
-        );
-      case WorkMode.edit:
-        return (
-          <ProductForm
-            brandList={brandList}
-            categoryList={categoryList}
-            product={productEdit}
-            handleBack={handleBack}
-          />
-        );
       case 'edit_image':
         return (
           <ProductImageForm product={productEdit} handleBack={handleBack} />
@@ -117,15 +100,6 @@ const ProductPage = () => {
       case 'edit_label':
         return (
           <ProductLabelForm product={productEdit} handleBack={handleBack} />
-        );
-      case 'edit_accessories':
-        return (
-          <ProductAccessoriesForm
-            product={productEdit}
-            brandList={brandList}
-            categoryList={categoryList}
-            handleBack={handleBack}
-          />
         );
       case 'edit_discount':
         return (
@@ -203,18 +177,40 @@ const ProductPage = () => {
       !categoryList ? (
         <Loading />
       ) : (
-        <ProductTable
-          brandList={brandList}
-          categoryList={categoryList}
-          productList={productList}
-          productTotalRecord={productList?.length || 0}
-          handleShowDeleteModal={handleShowDeleteModal}
-          handleSetUpdateMode={handleSetUpdateMode}
-          handleSetUpdateImageMode={handleSetUpdateMode}
-          handleSetUpdateLabelMode={handleSetUpdateMode}
-          handleSetUpdateAccessoriesMode={handleSetUpdateMode}
-          handleSetUpdateDiscountMode={handleSetUpdateMode}
-        />
+        <>
+          <ProductForm
+            show={workMode === WorkMode.create}
+            brandList={brandList}
+            categoryList={categoryList}
+            handleBack={handleBack}
+          />
+          <ProductForm
+            show={workMode === WorkMode.edit}
+            product={productEdit}
+            brandList={brandList}
+            categoryList={categoryList}
+            handleBack={handleBack}
+          />
+          <ProductAccessoriesForm
+            show={workMode === 'edit_accessories'}
+            product={productEdit}
+            brandList={brandList}
+            categoryList={categoryList}
+            handleBack={handleBack}
+          />
+          <ProductTable
+            brandList={brandList}
+            categoryList={categoryList}
+            productList={productList}
+            productTotalRecord={productList?.length || 0}
+            handleShowDeleteModal={handleShowDeleteModal}
+            handleSetUpdateMode={handleSetUpdateMode}
+            handleSetUpdateImageMode={handleSetUpdateMode}
+            handleSetUpdateLabelMode={handleSetUpdateMode}
+            handleSetUpdateAccessoriesMode={handleSetUpdateMode}
+            handleSetUpdateDiscountMode={handleSetUpdateMode}
+          />
+        </>
       )}
     </>
   );

@@ -74,10 +74,12 @@ const BrandPage = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.edit && (
-        <BrandForm brand={brandEdit} handleBack={handleBack} />
-      )}
-      {workMode === WorkMode.create && <BrandForm handleBack={handleBack} />}
+      <BrandForm show={workMode === WorkMode.create} handleBack={handleBack} />
+      <BrandForm
+        show={workMode === WorkMode.edit}
+        brand={brandEdit}
+        handleBack={handleBack}
+      />
       <PageHeader pageName={content.pageName}>
         <div className="btn-group" role="group">
           <button

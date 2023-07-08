@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import Select from 'react-select';
 
-import { Accordion, ModalForm, Loading } from '../../components/common';
+import { Accordion, ModalForm } from '../../components/common';
 import {
   Form,
   SeletedInputBox,
@@ -12,17 +13,14 @@ import {
 } from '../../components/validation';
 
 import { productService } from '../../services';
-import {
-  chooseFieldsOfObject,
-  createSlug,
-  getUpdateByUserInSystem
-} from '../../utils';
+import { createSlug, getUpdateByUserInSystem } from '../../utils';
 import content from './content';
 
 // 1: brand, category
 // n: image, label, discount
 const ProductForm = ({
   product,
+  show,
   handleBack,
   brandList,
   categoryList,
@@ -31,34 +29,25 @@ const ProductForm = ({
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
-  const brandOptions = useMemo(
-    () =>
-      brandList.map(brand => {
-        return { id: brand.id, label: brand.name };
-      }),
-    []
-  );
-  const categoryOptions = useMemo(
-    () =>
-      categoryList.map(i => {
-        return { id: i.id, label: i.name };
-      }),
-    []
-  );
-
   const {
     control,
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors, isDirty, isSubmitting }
   } = useForm();
+
+  useEffect(() => {
+    if (show) reset(product);
+    else reset();
+  }, [show]);
 
   const handleCreateData = async data => {
     const newProduct = {
       id: createSlug(data.name.slice(0, data.name.indexOf('/'))),
-      brandId: data.brand[0].id,
-      categoryId: data.category[0].id,
+      brandId: data.brandId.value,
+      categoryId: data.categoryId.value,
       name: data.name,
       releasedDate: data.releasedDate,
       quantityInStock: 0,
@@ -75,22 +64,32 @@ const ProductForm = ({
   };
 
   const handleSaveData = async data => {
-    const newProduct = {
+    const newData = {
       id: data.id,
-      brandId: data.brand[0].id,
-      categoryId: data.category[0].id,
+      brandId: data.brandId.value || data.brandId,
+      categoryId: data.categoryId.value || data.categoryId,
       name: data.name,
       releasedDate: data.releasedDate,
       quantityInStock: product.quantityInStock, // fixed
       listedPrice: data.listedPrice,
-      specifications:
-        data.specifications.length > 1
-          ? JSON.stringify(data.specifications)
-          : undefined,
-      descriptionDetail: JSON.stringify(data.descriptionDetail),
+      specifications: data.specifications,
+      descriptionDetail: data.descriptionDetail,
       ...getUpdateByUserInSystem()
     };
-    await productService.update(dispatch, newProduct, product.id, accessToken);
+
+    if (!!data.specifications && typeof data.specifications !== 'string') {
+      newData.specifications =
+        data.specifications.length > 0
+          ? JSON.stringify(data.specifications)
+          : undefined;
+    }
+    if (
+      !!data.descriptionDetail &&
+      typeof data.descriptionDetail !== 'string'
+    ) {
+      newData.descriptionDetail = JSON.stringify(data.descriptionDetail);
+    }
+    await productService.update(dispatch, newData, product.id, accessToken);
     handleBack();
   };
 
@@ -101,37 +100,71 @@ const ProductForm = ({
         <>
           <div className="row border rounded-2 mx-1 mb-3">
             <div className="col-6">
-              <SeletedInputBox
-                name="brand"
+              <Controller
                 control={control}
-                errors={errors}
-                label={content.form.brandChoice}
-                placeholder="Choose brand..."
-                required
-                getValues={getValues}
-                errorMessage=""
-                defaultValue={
-                  product?.brandId &&
-                  brandOptions.filter(b => b.id === product.brandId)[0]
-                }
-                options={brandOptions}
+                name="brandId"
+                rules={{ required: 'Vui lòng cung cấp thương hiệu!' }}
+                render={({ field: { value, onChange } }) => {
+                  const brandOptions = brandList.map(b => ({
+                    value: b.id,
+                    label: b.name
+                  }));
+                  if (value !== undefined)
+                    value = brandOptions.find(b => b.value === value);
+                  return (
+                    <div className="d-flex flex-column gap-1 p-2">
+                      <div className="text-uppercase">{content.brand}</div>
+                      <Select
+                        className={
+                          errors['brandId'] && 'border border-danger rounded'
+                        }
+                        placeholder={content.form.brandChoice}
+                        options={brandOptions}
+                        onChange={onChange}
+                        value={value}
+                      />
+                      {errors['brandId'] && (
+                        <span className="text-danger">
+                          {errors['brandId'].message}
+                        </span>
+                      )}
+                    </div>
+                  );
+                }}
               />
             </div>
             <div className="col-6">
-              <SeletedInputBox
-                name="category"
+              <Controller
                 control={control}
-                errors={errors}
-                label={content.form.categoryChoice}
-                placeholder="Choose category..."
-                required
-                getValues={getValues}
-                errorMessage=""
-                defaultValue={
-                  product?.categoryId &&
-                  categoryOptions.filter(b => b.id === product.categoryId)[0]
-                }
-                options={categoryOptions}
+                name="categoryId"
+                rules={{ required: 'Vui lòng cung cấp phân loại!' }}
+                render={({ field: { value, onChange } }) => {
+                  const categoryOptions = categoryList.map(c => ({
+                    value: c.id,
+                    label: c.name
+                  }));
+                  if (value !== undefined)
+                    value = categoryOptions.find(c => c.value === value);
+                  return (
+                    <div className="d-flex flex-column gap-1 p-2">
+                      <div className="text-uppercase">{content.category}</div>
+                      <Select
+                        className={
+                          errors['categoryId'] && 'border border-danger rounded'
+                        }
+                        placeholder={content.form.categoryChoice}
+                        options={categoryOptions}
+                        onChange={onChange}
+                        value={value}
+                      />
+                      {errors['categoryId'] && (
+                        <span className="text-danger">
+                          {errors['categoryId'].message}
+                        </span>
+                      )}
+                    </div>
+                  );
+                }}
               />
             </div>
           </div>
@@ -189,7 +222,6 @@ const ProductForm = ({
         <SpecificationTable
           control={control}
           errors={errors}
-          getValues={getValues}
           name="specifications"
           defaultValue={product?.specifications}
         />
@@ -202,7 +234,6 @@ const ProductForm = ({
         <DescriptionBox
           control={control}
           errors={errors}
-          getValues={getValues}
           name="descriptionDetail"
           defaultValue={product?.descriptionDetail}
         />
@@ -212,7 +243,7 @@ const ProductForm = ({
   ];
 
   return (
-    <ModalForm object={product} disabledFooter>
+    <ModalForm show={show} object={product} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={product ? handleSaveData : handleCreateData}

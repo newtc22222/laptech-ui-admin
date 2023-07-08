@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -14,7 +14,7 @@ import {
 } from '../../../utils';
 import content from '../content';
 
-const BannerForm = ({ banner, handleBack }) => {
+const BannerForm = ({ banner, show, handleBack }) => {
   const dispatch = useDispatch();
   const accessToken = useSelector(state => state.auth.accessToken);
   const {
@@ -25,13 +25,17 @@ const BannerForm = ({ banner, handleBack }) => {
     formState: { errors, isDirty, isSubmitting }
   } = useForm();
 
+  useEffect(() => {
+    if (show) reset(banner);
+    else reset();
+  }, [show]);
+
   const handleCreateData = async data => {
     await bannerService.add(
       dispatch,
       { ...data, ...getUpdateByUserInSystem() },
       accessToken
     );
-    reset();
     handleBack();
   };
 
@@ -47,12 +51,11 @@ const BannerForm = ({ banner, handleBack }) => {
       banner.id,
       accessToken
     );
-    reset();
     handleBack();
   };
 
   return (
-    <ModalForm object={banner} disabledFooter>
+    <ModalForm show={show} object={banner} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={banner ? handleSaveData : handleCreateData}

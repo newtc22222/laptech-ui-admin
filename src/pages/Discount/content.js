@@ -14,6 +14,10 @@ const content = {
   titleBtnExport: 'Tải thông tin',
   btnEdit: ico_edit,
   btnDel: ico_del,
+  appliedTypes: [
+    { label: 'Sản phẩm', value: 'PRODUCT' },
+    { label: 'Đơn hàng', value: 'PURCHASE' }
+  ],
   form: {
     code: 'Mã được sử dụng',
     appliedTypeTitle: 'Kiểu giảm giá được áp dụng',

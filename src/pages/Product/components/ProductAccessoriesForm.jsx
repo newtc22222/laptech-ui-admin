@@ -36,11 +36,13 @@ const renderOption = (brandList, categoryList, accessory) => {
 
 const ProductAccessoriesForm = ({
   product,
+  show,
   handleBack,
   brandList,
   categoryList,
   ...rest
 }) => {
+  if (!product) return <></>;
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
@@ -58,7 +60,7 @@ const ProductAccessoriesForm = ({
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty, isSubmitting }
+    formState: { isDirty, isSubmitting }
   } = useForm({
     defaultValues: {
       accessoryList: accessoriesOfProduct || []
@@ -105,6 +107,7 @@ const ProductAccessoriesForm = ({
 
   return (
     <ModalForm
+      show={show}
       object={product}
       title={content.form_accessory.title}
       disabledFooter

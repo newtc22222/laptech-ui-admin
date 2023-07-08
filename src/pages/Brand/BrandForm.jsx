@@ -14,7 +14,7 @@ import {
 } from '../../utils';
 import content from './content';
 
-const BrandForm = ({ brand, handleBack }) => {
+const BrandForm = ({ brand, show, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
@@ -22,14 +22,14 @@ const BrandForm = ({ brand, handleBack }) => {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting, isDirty }
   } = useForm();
 
   useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      makeToast(content.error.missing, toastType.error);
-    }
-  }, [errors]);
+    if (show) reset(brand);
+    else reset();
+  }, [show]);
 
   const handleCreateData = async data => {
     const newBrand = {
@@ -74,7 +74,7 @@ const BrandForm = ({ brand, handleBack }) => {
   };
 
   return (
-    <ModalForm object={brand} disabledFooter>
+    <ModalForm show={show} object={brand} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={brand ? handleSaveData : handleCreateData}

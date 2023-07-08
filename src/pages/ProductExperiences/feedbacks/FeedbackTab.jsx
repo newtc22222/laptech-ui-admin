@@ -86,6 +86,11 @@ const FeedbackTab = ({ productIdList, productData, userData, ...rest }) => {
             />
           );
         })}
+      {feedbackList.length === 0 && (
+        <div>
+          <em>Chưa có bình luận nào về sản phẩm!</em>
+        </div>
+      )}
     </div>
   );
 };

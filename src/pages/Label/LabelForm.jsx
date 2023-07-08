@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -17,22 +17,27 @@ import content from './content';
 /**
  * @since 2023-02-13
  */
-const LabelForm = ({ label, handleBack }) => {
+const LabelForm = ({ label, show, handleBack }) => {
   const accessToken = useSelector(state => state.auth.accessToken);
   const dispatch = useDispatch();
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors, isDirty, isSubmitting }
   } = useForm();
+
+  useEffect(() => {
+    if (show) reset(label);
+    else reset();
+  }, [show]);
 
   const handleCreateData = async data => {
     const newLabel = {
       ...data,
       ...getUpdateByUserInSystem()
     };
-
     await labelService.create(dispatch, newLabel, accessToken);
     handleBack();
   };
@@ -43,7 +48,6 @@ const LabelForm = ({ label, handleBack }) => {
       makeToast(content.form.nothingChange, toastType.info);
       return;
     }
-
     const newLabel = {
       ...data,
       ...getUpdateByUserInSystem()
@@ -53,7 +57,7 @@ const LabelForm = ({ label, handleBack }) => {
   };
 
   return (
-    <ModalForm object={label} disabledFooter>
+    <ModalForm show={show} object={label} disabledFooter>
       <Form
         handleSubmit={handleSubmit}
         submitAction={label ? handleSaveData : handleCreateData}

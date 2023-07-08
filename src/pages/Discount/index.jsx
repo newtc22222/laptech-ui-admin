@@ -73,10 +73,15 @@ const Discount = () => {
         setShow={action.showModal}
         {...modalValue}
       />
-      {workMode === WorkMode.create && <DiscountForm handleBack={handleBack} />}
-      {workMode === WorkMode.edit && (
-        <DiscountForm discount={discountEdit} handleBack={handleBack} />
-      )}
+      <DiscountForm
+        show={workMode === WorkMode.create}
+        handleBack={handleBack}
+      />
+      <DiscountForm
+        show={workMode === WorkMode.edit}
+        discount={discountEdit}
+        handleBack={handleBack}
+      />
       <PageHeader pageName={content.pageName}>
         <div className="btn-group" role="group">
           <button
