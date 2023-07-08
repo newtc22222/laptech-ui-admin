@@ -31,27 +31,23 @@ const CategoryForm = ({ category, handleBack }) => {
     }
   }, [errors]);
 
-  const handleCreateData = data => {
-    const formData = new FormData();
-    formData.append('file', data.image, data.image.name);
-    const promise = new Promise((resolve, reject) => {
-      const result = uploadService.uploadImage(dispatch, formData, accessToken);
-      if (result) resolve(result);
-      reject(new Error('Cannot upload images!'));
-    });
-
+  const handleCreateData = async data => {
     const newCategory = {
       ...data,
       ...getUpdateByUserInSystem()
     };
 
-    promise
-      .then(async result => {
-        newCategory.image = result;
-        await categoryService.create(dispatch, newCategory, accessToken);
-        handleBack();
-      })
-      .catch(err => makeToast(content.error.upload, toastType.error));
+    try {
+      const result = await uploadService.cloudinarySingle(
+        data.image,
+        'categories'
+      ); // public_id, url, secure_url, format
+      newCategory.image = result.secure_url;
+      await categoryService.create(dispatch, newCategory, accessToken);
+      handleBack();
+    } catch (err) {
+      makeToast(content.error.upload, toastType.error);
+    }
   };
 
   const handleSaveData = async data => {
@@ -61,40 +57,18 @@ const CategoryForm = ({ category, handleBack }) => {
       return;
     }
 
-    let promise;
-    if (data.image !== category.image) {
-      const formData = new FormData();
-      formData.append('file', data.image, data.image.name);
-      promise = new Promise((resolve, reject) => {
-        const result = uploadService.uploadImage(
-          dispatch,
-          formData,
-          accessToken
+    try {
+      if (data.image !== category.image) {
+        const result = await uploadService.cloudinarySingle(
+          data.image,
+          'categories'
         );
-        if (result) resolve(result);
-        reject(new Error('Cannot upload images!'));
-      });
-    }
-
-    const updateCategory = {
-      ...data,
-      ...getUpdateByUserInSystem()
-    };
-
-    if (promise) {
-      promise
-        .then(async result => {
-          updateCategory.image = result;
-          await categoryService.update(
-            dispatch,
-            updateCategory,
-            category.id,
-            accessToken
-          );
-          handleBack();
-        })
-        .catch(err => makeToast(content.error.upload, toastType.error));
-    } else {
+        newData.image = result.secure_url;
+      }
+      const updateCategory = {
+        ...newData,
+        ...getUpdateByUserInSystem()
+      };
       await categoryService.update(
         dispatch,
         updateCategory,
@@ -102,6 +76,8 @@ const CategoryForm = ({ category, handleBack }) => {
         accessToken
       );
       handleBack();
+    } catch (err) {
+      makeToast(content.error.upload, toastType.error);
     }
   };
 

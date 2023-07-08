@@ -31,27 +31,20 @@ const BrandForm = ({ brand, handleBack }) => {
     }
   }, [errors]);
 
-  const handleCreateData = data => {
-    const formData = new FormData();
-    formData.append('file', data.logo, data.logo.name);
-    const promise = new Promise((resolve, reject) => {
-      const result = uploadService.uploadImage(dispatch, formData, accessToken);
-      if (result) resolve(result);
-      reject(new Error('Cannot upload images!'));
-    });
-
+  const handleCreateData = async data => {
     const newBrand = {
       ...data,
       ...getUpdateByUserInSystem()
     };
 
-    promise
-      .then(async result => {
-        newBrand.logo = result;
-        await brandService.create(dispatch, newBrand, accessToken);
-        handleBack();
-      })
-      .catch(err => makeToast(content.error.upload, toastType.error));
+    try {
+      const result = await uploadService.cloudinarySingle(data.logo, 'brands'); // public_id, url, secure_url, format
+      newBrand.logo = result.secure_url;
+      await brandService.create(dispatch, newBrand, accessToken);
+      handleBack();
+    } catch (err) {
+      makeToast(content.error.upload, toastType.error);
+    }
   };
 
   const handleSaveData = async data => {
@@ -61,43 +54,22 @@ const BrandForm = ({ brand, handleBack }) => {
       return;
     }
 
-    let promise;
-    if (data.logo !== brand.logo) {
-      const formData = new FormData();
-      formData.append('file', data.logo, data.logo.name);
-      // upload new image
-      promise = new Promise((resolve, reject) => {
-        const result = uploadService.uploadImage(
-          dispatch,
-          formData,
-          accessToken
-        );
-        if (result) resolve(result);
-        reject(new Error('Cannot upload images!'));
-      });
-    }
-
-    const updateBrand = {
-      ...data,
-      ...getUpdateByUserInSystem()
-    };
-
-    if (promise) {
-      promise
-        .then(async result => {
-          updateBrand.logo = result;
-          await brandService.update(
-            dispatch,
-            updateBrand,
-            brand.id,
-            accessToken
-          );
-          handleBack();
-        })
-        .catch(err => makeToast(content.error.upload, toastType.error));
-    } else {
+    try {
+      if (data.logo !== brand.logo) {
+        const result = await uploadService.cloudinarySingle(
+          data.logo,
+          'brands'
+        ); // public_id, url, secure_url, format
+        newData.logo = result.secure_url;
+      }
+      const updateBrand = {
+        ...newData,
+        ...getUpdateByUserInSystem()
+      };
       await brandService.update(dispatch, updateBrand, brand.id, accessToken);
       handleBack();
+    } catch (err) {
+      makeToast(content.error.upload, toastType.error);
     }
   };
 

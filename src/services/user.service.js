@@ -18,7 +18,7 @@ const extraAction = {
       },
       err => {
         const defaultMessage = 'Dữ liệu lỗi, không thể gửi đến server!';
-        makeToast(customMessage || defaultMessage, toastType.error);
+        makeToast(defaultMessage, toastType.error);
       }
     );
   },
@@ -33,7 +33,7 @@ const extraAction = {
       },
       err => {
         const defaultMessage = 'Dữ liệu lỗi, không thể gửi đến server!';
-        makeToast(customMessage || defaultMessage, toastType.error);
+        makeToast(defaultMessage, toastType.error);
       }
     );
   }

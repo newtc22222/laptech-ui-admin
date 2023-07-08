@@ -1,5 +1,6 @@
 import apiCall from '../apis';
 import MakeRefreshToken from './common/makeRefreshToken';
+import { CLOUDINARY } from '../config/constract';
 import { makeToast, toastType } from '../utils/makeToast';
 
 /**
@@ -10,39 +11,36 @@ import { makeToast, toastType } from '../utils/makeToast';
  */
 
 const uploadService = {
-  uploadImage: async (dispatch, data, token) => {
-    let result;
-    await apiCall.POST_FILE(
-      'uploads',
-      data,
-      token,
-      () => {},
-      response => {
-        result = response;
-      },
-      err => {
-        makeToast('Không thể gửi file đến Server!', toastType.error);
-        MakeRefreshToken(err, dispatch);
-      }
-    );
-    return result;
+  cloudinarySingle: async (file, folderName) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY.UPLOAD_PRESET);
+    if (folderName) formData.append('folder', folderName);
+    const response = await fetch(CLOUDINARY.URL, {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
   },
-  uploadMultipleImage: async (dispatch, data, token) => {
-    let result;
-    await apiCall.POST_FILE(
-      'uploads-multiple',
-      data,
-      token,
-      () => {},
-      response => {
-        result = response;
-      },
-      err => {
-        makeToast('Không thể gửi file đến Server!', toastType.error);
-        MakeRefreshToken(err, dispatch);
-      }
+  cloudinaryMultiple: async (files = [], folderName) => {
+    const uploadPromises = Array.from(files).map(file => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY.UPLOAD_PRESET);
+      if (folderName) formData.append('folder', folderName);
+
+      return fetch(CLOUDINARY.URL, {
+        method: 'POST',
+        body: formData
+      });
+    });
+
+    const responses = await Promise.all(uploadPromises);
+
+    const uploadResults = await Promise.all(
+      responses.map(response => response.json())
     );
-    return result;
+    return uploadResults;
   }
 };
 

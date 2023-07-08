@@ -75,7 +75,7 @@ const handleUpdatePassword = async (dispatch, object, token) => {
       }
 
       makeRefreshToken(error, dispatch, newToken =>
-        handleUpdatePassword(dispatch, newPassword, newToken)
+        handleUpdatePassword(dispatch, object, newToken)
       );
     }
   );

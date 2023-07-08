@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -13,12 +13,6 @@ const sideBarTab = [
     url: '/home',
     icon: <i className="fs-4 bi-house-fill"></i>
   },
-  // {
-  //   name: 'notification',
-  //   title: 'Thông báo',
-  //   url: '/notification',
-  //   icon: <i className="fs-4 bi bi-bell-fill"></i>
-  // },
   {
     name: 'banner',
     title: 'Bảng hiệu',
@@ -122,13 +116,13 @@ const sideBarTab = [
         title: 'Doanh thu',
         icon: <i className="fs-5 bi bi-graph-up"></i>,
         url: '/statistic/profits'
+      },
+      {
+        name: 'system',
+        title: 'Hệ thống',
+        icon: <i className="fs-5 bi bi-clipboard-data-fill"></i>,
+        url: '/statistic/system'
       }
-      // {
-      //   name: 'system',
-      //   title: 'Trải nghiệm khách hàng',
-      //   icon: <i className="fs-5 bi bi-clipboard-data-fill"></i>,
-      //   url: '/statistic/system'
-      // }
     ]
   }
 ];

@@ -4,7 +4,7 @@ const content = {
   titleBtnExportComment: 'Tải dữ liệu bình luận',
   selectProduct: 'Chọn sản phẩm muốn xem',
   feedback: 'Đánh giá sản phẩm',
-  comment: 'Bình luận về sản phẩm',
+  comment: 'Thảo luận về sản phẩm',
   card: {
     viewUser: 'Thông tin người dùng',
     viewProduct: 'Thông tin sản phẩm',

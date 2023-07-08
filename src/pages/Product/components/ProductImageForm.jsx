@@ -69,26 +69,22 @@ const ProductImageForm = ({ product, handleBack, ...rest }) => {
     const imgRemove = _.differenceWith(oldData, newData_is_string, _.isEqual);
 
     const imgAdd = newData.filter(img => typeof img.url !== 'string');
-    const formData = new FormData();
-    imgAdd.forEach(img => formData.append('files', img.url, img.url.name));
 
-    const result = await uploadService.uploadMultipleImage(
-      dispatch,
-      formData,
-      accessToken
-    );
+    try {
+      const result = await uploadService.cloudinaryMultiple(
+        imgAdd.map(img => img.url),
+        'product/' + product.id
+      );
 
-    productImageService
-      .updateMultiple(
+      productImageService.updateMultiple(
         dispatch,
         {
-          addList: result.map((url, idx) => {
+          addList: result.map((object, idx) => {
             const newImage = {
               id: crypto.randomUUID().replace(/\s/g, ''),
               productId: product.id,
               type: imgAdd[idx].type,
-              url: url,
-              // feedbackId: "",
+              url: object.secure_url,
               ...getUpdateByUserInSystem()
             };
             return newImage;
@@ -97,10 +93,11 @@ const ProductImageForm = ({ product, handleBack, ...rest }) => {
         },
         product.id,
         accessToken
-      )
-      .catch(err => makeToast(content.error.upload, toastType.error));
-
-    handleBack();
+      );
+      handleBack();
+    } catch (error) {
+      makeToast(content.error.upload, toastType.error);
+    }
   };
 
   function getConfigTab(imageList) {

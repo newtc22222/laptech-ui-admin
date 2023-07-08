@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import { statisticService } from '../../../../services';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProductShow = ({ topProduct = [], variant = 'primary' }) => {
   return (
@@ -53,9 +53,9 @@ const TopProductList = () => {
 
   return (
     <div className="row mx-1 gap-1">
-      <div className="col border rounded p-1">
+      <div className="col border p-1">
         <h5
-          className="text-center"
+          className="text-center bg-dark text-white py-2"
           style={{ cursor: 'pointer' }}
           onClick={() => navigate('/invoice/import')}
         >
@@ -63,9 +63,9 @@ const TopProductList = () => {
         </h5>
         <ProductShow topProduct={topProductImport} />
       </div>
-      <div className="col border rounded p-1">
+      <div className="col border p-1">
         <h5
-          className="text-center"
+          className="text-center bg-dark text-white py-2"
           style={{ cursor: 'pointer' }}
           onClick={() => navigate('/invoice/order')}
         >
@@ -74,11 +74,11 @@ const TopProductList = () => {
         <ProductShow topProduct={topProductSeller} variant="success" />
       </div>
       <div
-        className="col border rounded p-1"
-        style={{ maxHeight: '693px', overflowY: 'auto' }}
+        className="col border p-1"
+        style={{ maxHeight: '720px', overflowY: 'auto' }}
       >
         <h5
-          className="text-center"
+          className="text-center bg-dark text-white py-2"
           style={{ cursor: 'pointer' }}
           onClick={() => navigate('/product/all-products')}
         >
