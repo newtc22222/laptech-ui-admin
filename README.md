@@ -132,6 +132,11 @@
 ![Category Table](./resources/images/CategoryTable.png)
 ![Category Form](./resources/images/CategoryForm.png)
 
+### Discount
+
+![Discount Table](./resources/images/DiscountTable.png)
+![Discount Form](./resources/images/DiscountForm.png)
+
 ### Label
 
 ![Label Table](./resources/images/LabelTable.png)
