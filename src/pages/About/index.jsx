@@ -14,7 +14,7 @@ const About = () => {
           <li className="list-group-item">BE - Server API: Nhật Phi Võ</li>
           <li className="list-group-item">FE - UI Admin: Nhật Phi Võ</li>
           <li className="list-group-item">FE - UI Client: Quang Sang Nguyễn</li>
-          <li className="list-group-item">FE - UI Mobile: Quang Sang Nguyễn</li>
+          <li className="list-group-item">FE - UI Mobile: Nhật Phi Võ</li>
         </ul>
         <h4>Tài liệu tham khảo</h4>
       </div>
