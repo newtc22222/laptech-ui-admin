@@ -1,10 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-// function srcPath(subdir) {
-//   return path.join(__dirname, 'src', subdir);
-// }
-
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -36,15 +32,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx']
-    // https://decembersoft.com/posts/say-goodbye-to-relative-paths-in-typescript-imports/
-    // alias: {
-    //   'apis': srcPath('apis'),
-    //   'assets': srcPath('assets'),
-    //   'components': srcPath('components'),
-    //   'context': srcPath('context'),
-    //   'pages': srcPath('page'),
-    //   'utils': srcPath('utils'),
-    // },
   },
   devServer: {
     port: 3001,
