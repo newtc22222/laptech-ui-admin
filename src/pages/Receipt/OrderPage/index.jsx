@@ -138,15 +138,16 @@ const Invoice = () => {
             <>
               <button
                 className="btn btn-primary"
-                onClick={() => changeStatus('WAIT_CONFIRMED')}
+                disabled={!item.isPaid}
+                onClick={() => changeStatus('PREPARED')}
               >
-                {content.changeStatus['CONFIRMED']}
+                {content.changeStatus['PREPARED']}
               </button>
               <button
                 className="btn btn-danger"
-                onClick={() => changeStatus('IGNORED')}
+                onClick={() => changeStatus('CANCELED')}
               >
-                {content.changeStatus['REJECTED']}
+                {content.changeStatus['CANCELED']}
               </button>
             </>
           );

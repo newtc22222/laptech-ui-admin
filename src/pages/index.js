@@ -21,3 +21,4 @@ export { default as SystemStatistic } from './Statistic/System';
 export { default as Setting } from './Setting';
 export { default as Role } from './Role';
 export { default as User } from './User';
+export { default as ResetPassword } from './ResetPassword';

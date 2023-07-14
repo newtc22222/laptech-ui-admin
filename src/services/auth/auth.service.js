@@ -1,4 +1,4 @@
-import apiCall from '../../apis';
+import apiCall, { AxiosAPI } from '../../apis';
 import makeRefreshToken from '../common/makeRefreshToken';
 import { makeToast, toastType } from '../../utils/makeToast';
 import { createLocalStorage } from '../../utils/createStorage';
@@ -154,33 +154,25 @@ const authService = {
   getCurrentUser: handleGetCurrentUser,
   updateInformation: handleUpdateInformation,
   updatePassword: handleUpdatePassword,
-  forgotPassword: async (phone, email, username, accountCreatedDate) => {
-    let response;
-    await apiCall.POST(
-      'auth/forgotPassword',
-      { phone, email, username, accountCreatedDate },
-      () => {},
-      res => (response = res),
-      err => {
-        makeToast('Thông tin chưa chính xác!', toastType.error);
-        console.log(err);
-      }
-    );
-    return response;
+  forgotPassword: async (
+    phone,
+    email,
+    username = '',
+    accountCreatedDate = ''
+  ) => {
+    const res = await AxiosAPI.post('auth/forgotPassword', {
+      phone,
+      email,
+      username,
+      accountCreatedDate
+    });
+    return res.data;
   },
   resetPassword: async (token, newPassword) => {
-    let response;
-    await apiCall.POST(
-      'auth/updatePassword?token=' + token,
-      { newPassword },
-      () => {},
-      res => (response = res),
-      err => {
-        makeToast('Thông tin chưa chính xác!', toastType.error);
-        console.log(err);
-      }
-    );
-    return response;
+    const res = await AxiosAPI.post('auth/updatePassword?token=' + token, {
+      newPassword
+    });
+    return res.data;
   }
 };
 

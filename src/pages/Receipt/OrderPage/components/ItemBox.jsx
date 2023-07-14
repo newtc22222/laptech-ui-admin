@@ -58,7 +58,7 @@ function ItemBox({ data: invoice, user, ...rest }) {
           <tr>
             <td>{content.box.paymentType}</td>
             <td className="fw-bold">
-              {content.box.paymentTypeSub[invoice.paymentType]}
+              {content.box.paymentTypeSub[invoice.paymentType.toLowerCase()]}
             </td>
           </tr>
           <tr>

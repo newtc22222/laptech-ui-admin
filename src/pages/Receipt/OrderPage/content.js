@@ -13,7 +13,8 @@ const content = {
     paymentTypeSub: {
       cash: 'Tiền mặt',
       banking: 'Chuyển khoản',
-      eWallet: 'Ví điện tử'
+      eWallet: 'Ví điện tử',
+      momo: 'Momo'
     },
     itemQuantity: 'Số lượng hàng hóa',
     discountAmount: 'Giá giảm',

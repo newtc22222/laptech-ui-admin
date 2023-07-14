@@ -40,11 +40,11 @@ function DashBoard() {
 
   useEffect(() => {
     if (!productObject.data) productService.getAll(dispatch);
-  }, [productObject.data, dispatch]);
+  }, [productObject, dispatch]);
 
   useEffect(() => {
     if (!userObject.data) userService.getAll(dispatch, accessToken);
-  }, [userObject.data, dispatch]);
+  }, [userObject, dispatch]);
 
   return (
     <>

@@ -27,7 +27,8 @@ import {
   SystemStatistic,
   Setting,
   Role,
-  User
+  User,
+  ResetPassword
 } from '../pages';
 
 const AppRoute = () => {
@@ -36,6 +37,7 @@ const AppRoute = () => {
   return (
     <Routes>
       <Route path="auth/login" element={<Login />} />
+      <Route path="auth/reset-password" element={<ResetPassword />} />
       <Route element={<AuthRoutes />}>
         <Route path="about" element={<About />} />
         <Route path="faqs" element={<FAQ />} />

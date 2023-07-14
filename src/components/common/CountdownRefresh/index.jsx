@@ -23,7 +23,12 @@ const icon = {
   )
 };
 
-const CountdownRefresh = ({ countdownTime, handleChange, isPause }) => {
+const CountdownRefresh = ({
+  countdownTime,
+  handleChange,
+  isPause,
+  disabledPause
+}) => {
   const timeId = useRef();
   const [pause, setPause] = useState(isPause);
   const [timeShow, setTimeShow] = useState(countdownTime / 1000);
@@ -46,6 +51,7 @@ const CountdownRefresh = ({ countdownTime, handleChange, isPause }) => {
     <button
       className="btn btn-success"
       type="button"
+      disabled={disabledPause}
       onClick={() => setPause(prev => !prev)}
     >
       {pause ? icon.pause : icon.run}

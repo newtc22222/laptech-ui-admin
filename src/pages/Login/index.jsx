@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -88,7 +88,7 @@ const Login = () => {
                 <div className="row">
                   <div className="col-lg-6 d-none d-lg-block bg-login-image">
                     <img
-                      src={require('./work.png')}
+                      src={require('../../assets/images/login_work.png')}
                       alt="Login image"
                       className="h-100 w-100"
                     />
@@ -171,13 +171,13 @@ const Login = () => {
                         <hr />
                       </form>
                       <div className="text-center">
-                        <a
-                          className="small"
-                          href="forgot-password.html"
-                          target="_blank"
+                        <button
+                          type="button"
+                          className="btn btn-link"
+                          onClick={() => navigate('/auth/reset-password')}
                         >
                           {content.forgotPassword}
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
